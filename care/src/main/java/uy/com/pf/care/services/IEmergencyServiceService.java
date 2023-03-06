@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface IEmergencyServiceService {
-    void save(EmergencyService emergencyService);
+    EmergencyService save(EmergencyService emergencyService);
     List<EmergencyService> findAll(String countryName);
     Optional<EmergencyService> findId(String id);
     List<EmergencyService> findByCity(String cityName, String departmentName, String countryName);

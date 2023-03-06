@@ -1,8 +1,12 @@
 package uy.com.pf.care.infra.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
+import uy.com.pf.care.exceptions.EmergencyServiceSaveException;
 import uy.com.pf.care.model.documents.EmergencyService;
+import uy.com.pf.care.model.objects.EmergencyServiceIdObject;
 import uy.com.pf.care.services.IEmergencyServiceService;
 
 import java.util.List;
@@ -16,8 +20,12 @@ public class EmergencyServiceController {
     private IEmergencyServiceService emergencyServiceService;
 
     @PostMapping("/add")
-    public void add( @RequestBody EmergencyService emergencyService){
-        emergencyServiceService.save(emergencyService);
+    public EmergencyServiceIdObject add(@RequestBody EmergencyService emergencyService){
+        try{
+            return new EmergencyServiceIdObject(emergencyServiceService.save(emergencyService).getEmergencyService_id());
+        }catch (EmergencyServiceSaveException e){
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error guardando servicio de emergencia");
+        }
     }
 
     @GetMapping("findAll/{countryName}")
