@@ -10,9 +10,6 @@ public interface IPatientService {
     List<Patient> findAll(String countryName);
     Optional<Patient> findId(String id);
     Optional<Patient> findIdentificationDocument(Integer identificationDocument, String countryName);
-//    List<Patient> findName1(String name1, String cityName, String departmentName, String countryName);
-//    List<Patient> findSurname1(String surname1, String cityName, String departmentName, String countryName);
-//    List<Patient> findName1Surname1(String name1, String surname1, String cityName, String departmentName, String countryName);
     List<Patient> findName1Like(String name1, String cityName, String departmentName, String countryName);
     List<Patient> findSurname1Like(String surname1, String cityName, String departmentName, String countryName);
     List<Patient> findName1Surname1Likes(String name1, String surname1, String cityName, String departmentName, String countryName);

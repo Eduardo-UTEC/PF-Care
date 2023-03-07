@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface IFormalCaregiverService {
-    void save(FormalCaregiver formalCaregiver);
+    FormalCaregiver save(FormalCaregiver formalCaregiver);
     List<FormalCaregiver> findAll(String countryName);
     Optional<FormalCaregiver> findId(String id);
     List<FormalCaregiver> findByDepartment(String departmentName, String countryName);

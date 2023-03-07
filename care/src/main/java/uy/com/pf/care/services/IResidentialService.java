@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface IResidentialService {
-    void save(Residential residential);
+    Residential save(Residential residential);
     Optional<Residential> findId(String id);
     List<Residential> findByCountry(String countryName);
     List<Residential> findByDepartment(String departmentName, String countryName);

@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface IZoneService {
-    void save(Zone zone);
+    Zone save(Zone zone);
     List<Zone> findByCountry(String countryName);
     Optional<Zone> findId(String id);
 

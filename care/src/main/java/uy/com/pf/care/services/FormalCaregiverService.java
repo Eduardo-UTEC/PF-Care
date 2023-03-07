@@ -21,10 +21,11 @@ public class FormalCaregiverService implements IFormalCaregiverService {
     //private static final Logger log = LoggerFactory.getLogger(CuidadosApplication.class);
 
     @Override
-    public void save(FormalCaregiver formalCaregiver) {
+    public FormalCaregiver save(FormalCaregiver formalCaregiver) {
         try{
-            formalCaregiverRepo.save(formalCaregiver);
+            FormalCaregiver newformalCaregiver = formalCaregiverRepo.save(formalCaregiver);
             log.info("*** Cuidador Formal guardado con exito: " + LocalDateTime.now());
+            return newformalCaregiver;
 
         }catch(Exception e){
             log.warning("*** ERROR GUARDANDO CUIDADOR FORMAL: " + e);

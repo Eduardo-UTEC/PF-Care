@@ -32,7 +32,8 @@ public class PatientController {
         try{
             return patientService.findAll(countryName);
         }catch(Exception e) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error buscando pacientes");
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
+                    "Error buscando todos los pacientes de " + countryName);
         }
     }
 
@@ -41,7 +42,8 @@ public class PatientController {
         try{
             return patientService.findId(id);
         }catch(Exception e) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error buscando paciente");
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
+                    "Error buscando paciente con id " + id);
         }
     }
 
@@ -50,7 +52,8 @@ public class PatientController {
         try{
             return  patientService.findIdentificationDocument(document, countryName);
         }catch(Exception e) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error buscando paciente");
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
+                    "Error buscando paciente con documento de identificación " + document + " (" + countryName + ")");
         }
     }
 
@@ -62,7 +65,9 @@ public class PatientController {
         try{
             return patientService.findName1Like(name1, cityName, departmentName,countryName);
         }catch(Exception e) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error buscando pacientes");
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
+                    "Error buscando pacientes de " + cityName + " cuyo 1er nombre contenga " +
+                            name1 + " (" + departmentName + ", " + countryName + ")");
         }
     }
 
@@ -74,7 +79,9 @@ public class PatientController {
         try{
             return patientService.findSurname1Like(surname1, cityName, departmentName,countryName);
         }catch(Exception e) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error buscando pacientes");
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
+                    "Error buscando pacientes de " + cityName + " cuyo 1er apellido contenga " +
+                            surname1 + " (" + departmentName + ", " + countryName + ")");
         }
     }
 
@@ -87,7 +94,10 @@ public class PatientController {
         try{
             return patientService.findName1Surname1Likes(name1, surname1, cityName, departmentName,countryName);
         }catch(Exception e) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error buscando pacientes");
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
+                    "Error buscando pacientes de " + cityName + " cuyo 1er nombre y 1er apellido contengan " +
+                            name1 + " " + surname1 +
+                            " (" + departmentName + ", " + countryName + ")");
         }
     }
 
@@ -98,7 +108,9 @@ public class PatientController {
         try{
             return patientService.findByCity(cityName, departmentName,countryName);
         }catch(Exception e) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error buscando pacientes");
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
+                    "Error buscando pacientes en ciudad/localidad: " +
+                            cityName + " (" + departmentName + ", " + countryName + ")");
         }
     }
 
@@ -108,7 +120,9 @@ public class PatientController {
         try{
             return patientService.findByDepartment(departmentName,countryName);
         }catch(Exception e) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error buscando pacientes");
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
+                    "Error buscando pacientes en departamento/provincia: " +
+                            departmentName + " (" + countryName + ")");
         }
     }
 
@@ -117,7 +131,8 @@ public class PatientController {
         try{
             return patientService.logicalDelete(id);
         }catch(Exception e) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "No se pudo realizar el borrado lógico del paciente");
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
+                    "No se pudo realizar el borrado lógico del paciente con id " + id);
         }
     }
 

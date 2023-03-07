@@ -30,24 +30,46 @@ public class EmergencyServiceController {
 
     @GetMapping("findAll/{countryName}")
     public List<EmergencyService> findAll(@PathVariable String countryName){
-        return emergencyServiceService.findAll(countryName);
+        try{
+            return emergencyServiceService.findAll(countryName);
+        }catch(Exception e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
+                    "Error buscando todos los servicios de emergencia de " + countryName);
+        }
     }
 
     @GetMapping("findId/{id}")
     public Optional<EmergencyService> findId( @PathVariable String id) {
-        return emergencyServiceService.findId(id);
+        try{
+            return emergencyServiceService.findId(id);
+        }catch(Exception e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
+                    "Error buscando servicio de emergencia con id " + id);
+    }
     }
 
     @GetMapping("findByCity/{cityName}/{departmentName}/{countryName}")
     public List<EmergencyService> findByCity(@PathVariable String cityName,
                                              @PathVariable String departmentName,
                                              @PathVariable String countryName){
-        return emergencyServiceService.findByCity(cityName, departmentName, countryName);
+        try{
+            return emergencyServiceService.findByCity(cityName, departmentName, countryName);
+        }catch(Exception e){
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
+                    "Error buscando servicios de emergencia en ciudad/localidad: " +
+                            cityName + " (" + departmentName + ", " + countryName + ")");
+        }
     }
 
     @GetMapping("findByDepartment/{departmentName}/{countryName}")
     public List<EmergencyService> findByDepartment(@PathVariable String departmentName,
                                                    @PathVariable String countryName){
-        return emergencyServiceService.findByDepartment(departmentName, countryName);
+        try{
+            return emergencyServiceService.findByDepartment(departmentName, countryName);
+        }catch(Exception e){
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
+                    "Error buscando servicios de emergencia en departamento/provincia: " +
+                            departmentName + " (" + countryName + ")");
+        }
     }
 }
