@@ -2,6 +2,8 @@ package uy.com.pf.care.infra.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import uy.com.pf.care.exceptions.FormalCaregiverSaveException;
@@ -21,19 +23,22 @@ public class FormalCaregiverController {
     private IFormalCaregiverService formalCaregiverService;
 
     @PostMapping("/add")
-    public FormalCaregiverIdObject add(@RequestBody FormalCaregiver formalCaregiver){
+    public ResponseEntity<FormalCaregiverIdObject> add(@RequestBody FormalCaregiver formalCaregiver){
         try{
-            return new FormalCaregiverIdObject(formalCaregiverService.save(formalCaregiver).getFormalCaregiver_id());
+            return new ResponseEntity<>(
+                    new FormalCaregiverIdObject(formalCaregiverService.save(formalCaregiver).getFormalCaregiver_id()),
+                    HttpStatus.OK);
+
         }catch (FormalCaregiverSaveException e){
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error guardando cuidador formal");
+        }
     }
 
-}
-
     @GetMapping("findAll/{countryName}")
-    public List<FormalCaregiver> findAll(@PathVariable String countryName){
+    public ResponseEntity<List<FormalCaregiver>> findAll(@PathVariable String countryName){
         try{
-            return formalCaregiverService.findAll(countryName);
+            return new ResponseEntity<>(formalCaregiverService.findAll(countryName), HttpStatus.OK);
+
         }catch(Exception e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
                     "Error buscando todos los cuidadores formales de " + countryName);
@@ -41,9 +46,10 @@ public class FormalCaregiverController {
     }
 
     @GetMapping("findId/{id}")
-    public Optional<FormalCaregiver> findId( @PathVariable String id) {
+    public ResponseEntity<Optional<FormalCaregiver>> findId(@PathVariable String id) {
         try{
-            return formalCaregiverService.findId(id);
+            return new ResponseEntity<>(formalCaregiverService.findId(id), HttpStatus.OK);
+
         }catch(Exception e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
                     "Error buscando cuidador formal con id " + id);
@@ -51,14 +57,18 @@ public class FormalCaregiverController {
     }
 
     @GetMapping("findByDepartment/{departmentName}/{countryName}")
-    public List<FormalCaregiver> findByDepartment(@PathVariable String departmentName,
-                                                  @PathVariable String countryName){
+    public ResponseEntity<List<FormalCaregiver>> findByDepartment(@PathVariable String departmentName,
+                                                                  @PathVariable String countryName){
         try{
-            return formalCaregiverService.findByDepartment(departmentName, countryName);
+            return new ResponseEntity<>(
+                    formalCaregiverService.findByDepartment(departmentName, countryName),
+                    HttpStatus.OK);
+
         }catch(Exception e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
                     "Error buscando cuidadores formales en departamento/provincia de " +
                             departmentName + " (" + countryName + ")");
         }
     }
+
 }

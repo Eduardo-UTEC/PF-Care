@@ -2,6 +2,7 @@ package uy.com.pf.care.infra.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import uy.com.pf.care.exceptions.PatientSaveException;
@@ -19,18 +20,22 @@ public class PatientController {
     private IPatientService patientService;
 
     @PostMapping("/add")
-    public PatientIdObject add(@RequestBody Patient patient){
+    public ResponseEntity<PatientIdObject> add(@RequestBody Patient patient){
         try{
-            return new PatientIdObject(patientService.save(patient).getPatient_id());
+            return new ResponseEntity<>(
+                    new PatientIdObject(patientService.save(patient).getPatient_id()),
+                    HttpStatus.OK);
+
         }catch (PatientSaveException e){
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error guardando paciente");
         }
     }
 
     @GetMapping("findAll/{countryName}")
-    public List<Patient> findAll(@PathVariable String countryName){
+    public ResponseEntity<List<Patient>> findAll(@PathVariable String countryName){
         try{
-            return patientService.findAll(countryName);
+            return new ResponseEntity<>(patientService.findAll(countryName), HttpStatus.OK);
+
         }catch(Exception e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
                     "Error buscando todos los pacientes de " + countryName);
@@ -38,9 +43,10 @@ public class PatientController {
     }
 
     @GetMapping("findId/{id}")
-    public Optional<Patient> findId( @PathVariable String id) {
+    public ResponseEntity<Optional<Patient>> findId( @PathVariable String id) {
         try{
-            return patientService.findId(id);
+            return new ResponseEntity<>(patientService.findId(id), HttpStatus.OK)
+                    ;
         }catch(Exception e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
                     "Error buscando paciente con id " + id);
@@ -48,9 +54,11 @@ public class PatientController {
     }
 
     @GetMapping("findIdentificationDocument/{document}/{countryName}")
-    public Optional<Patient> findIdentificationDocument( @PathVariable Integer document, @PathVariable String countryName) {
+    public ResponseEntity<Optional<Patient>> findIdentificationDocument( @PathVariable Integer document,
+                                                                         @PathVariable String countryName) {
         try{
-            return  patientService.findIdentificationDocument(document, countryName);
+            return new ResponseEntity<>(patientService.findIdentificationDocument(document, countryName), HttpStatus.OK);
+
         }catch(Exception e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
                     "Error buscando paciente con documento de identificación " + document + " (" + countryName + ")");
@@ -58,12 +66,15 @@ public class PatientController {
     }
 
     @GetMapping("findName1Like/{name1}/{cityName}/{departmentName}/{countryName}")
-    public List<Patient> findName1Like( @PathVariable String name1,
-                                        @PathVariable String cityName,
-                                        @PathVariable String departmentName,
-                                        @PathVariable String countryName) {
+    public ResponseEntity<List<Patient>> findName1Like( @PathVariable String name1,
+                                                        @PathVariable String cityName,
+                                                        @PathVariable String departmentName,
+                                                        @PathVariable String countryName) {
         try{
-            return patientService.findName1Like(name1, cityName, departmentName,countryName);
+            return new ResponseEntity<>(
+                    patientService.findName1Like(name1, cityName, departmentName,countryName),
+                    HttpStatus.OK);
+
         }catch(Exception e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
                     "Error buscando pacientes de " + cityName + " cuyo 1er nombre contenga " +
@@ -72,12 +83,15 @@ public class PatientController {
     }
 
     @GetMapping("findSurname1Like/{surname1}/{cityName}/{departmentName}/{countryName}")
-    public List<Patient> findSurname1Like( @PathVariable String surname1,
-                                           @PathVariable String cityName,
-                                           @PathVariable String departmentName,
-                                           @PathVariable String countryName) {
+    public ResponseEntity<List<Patient>> findSurname1Like( @PathVariable String surname1,
+                                                           @PathVariable String cityName,
+                                                           @PathVariable String departmentName,
+                                                           @PathVariable String countryName) {
         try{
-            return patientService.findSurname1Like(surname1, cityName, departmentName,countryName);
+            return new ResponseEntity<>(
+                    patientService.findSurname1Like(surname1, cityName, departmentName,countryName),
+                    HttpStatus.OK);
+
         }catch(Exception e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
                     "Error buscando pacientes de " + cityName + " cuyo 1er apellido contenga " +
@@ -86,13 +100,16 @@ public class PatientController {
     }
 
     @GetMapping("findName1Surname1Likes/{name1}/{surname1}/{cityName}/{departmentName}/{countryName}")
-        public List<Patient> findName1Surname1Likes(@PathVariable String name1,
-                                                    @PathVariable String surname1,
-                                                    @PathVariable String cityName,
-                                                    @PathVariable String departmentName,
-                                                    @PathVariable String countryName) {
+        public ResponseEntity<List<Patient>> findName1Surname1Likes(@PathVariable String name1,
+                                                                    @PathVariable String surname1,
+                                                                    @PathVariable String cityName,
+                                                                    @PathVariable String departmentName,
+                                                                    @PathVariable String countryName) {
         try{
-            return patientService.findName1Surname1Likes(name1, surname1, cityName, departmentName,countryName);
+            return new ResponseEntity<>(
+                    patientService.findName1Surname1Likes(name1, surname1, cityName, departmentName,countryName),
+                    HttpStatus.OK);
+
         }catch(Exception e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
                     "Error buscando pacientes de " + cityName + " cuyo 1er nombre y 1er apellido contengan " +
@@ -102,11 +119,14 @@ public class PatientController {
     }
 
     @GetMapping("findByCity/{cityName}/{departmentName}/{countryName}")
-    public List<Patient> findByCity(@PathVariable String cityName,
-                                        @PathVariable String departmentName,
-                                        @PathVariable String countryName) {
+    public ResponseEntity<List<Patient>> findByCity(@PathVariable String cityName,
+                                                    @PathVariable String departmentName,
+                                                    @PathVariable String countryName) {
         try{
-            return patientService.findByCity(cityName, departmentName,countryName);
+            return new ResponseEntity<>(
+                    patientService.findByCity(cityName, departmentName,countryName),
+                    HttpStatus.OK);
+
         }catch(Exception e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
                     "Error buscando pacientes en ciudad/localidad: " +
@@ -115,10 +135,13 @@ public class PatientController {
     }
 
     @GetMapping("findByDepartment/{departmentName}/{countryName}")
-    public List<Patient> findByDepartment(@PathVariable String departmentName,
-                                        @PathVariable String countryName) {
+    public ResponseEntity<List<Patient>> findByDepartment(@PathVariable String departmentName,
+                                                          @PathVariable String countryName) {
         try{
-            return patientService.findByDepartment(departmentName,countryName);
+            return new ResponseEntity<>(
+                    patientService.findByDepartment(departmentName,countryName),
+                    HttpStatus.OK);
+
         }catch(Exception e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
                     "Error buscando pacientes en departamento/provincia: " +
@@ -126,10 +149,12 @@ public class PatientController {
         }
     }
 
+    // Devuelve true si la operación fue exitosa
     @PatchMapping("logicalDelete/{id}")
-    public boolean logicalDelete(@PathVariable String id) {
+    public ResponseEntity<Boolean> logicalDelete(@PathVariable String id) {
         try{
-            return patientService.logicalDelete(id);
+            return new ResponseEntity<>(patientService.logicalDelete(id), HttpStatus.OK);
+
         }catch(Exception e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
                     "No se pudo realizar el borrado lógico del paciente con id " + id);

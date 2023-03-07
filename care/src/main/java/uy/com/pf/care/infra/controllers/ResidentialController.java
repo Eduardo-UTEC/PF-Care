@@ -2,6 +2,7 @@ package uy.com.pf.care.infra.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import uy.com.pf.care.exceptions.PatientSaveException;
@@ -22,10 +23,11 @@ public class ResidentialController {
     private IResidentialService residentialService;
 
     @PostMapping("/add")
-    public ResidentialIdObject add(@RequestBody Residential residential){
-
+    public ResponseEntity<ResidentialIdObject> add(@RequestBody Residential residential){
         try{
-            return new ResidentialIdObject(residentialService.save(residential).getResidential_id());
+            return new ResponseEntity<>(
+                    new ResidentialIdObject(residentialService.save(residential).getResidential_id()),
+                    HttpStatus.OK);
 
         }catch (ResidentialSaveException e){
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error guardando residencial");
@@ -33,9 +35,9 @@ public class ResidentialController {
     }
 
     @GetMapping("findAll/{countryName}")
-    public List<Residential> findAll(@PathVariable String countryName){
+    public ResponseEntity<List<Residential>> findAll(@PathVariable String countryName){
         try{
-            return residentialService.findByCountry(countryName);
+            return new ResponseEntity<>(residentialService.findByCountry(countryName), HttpStatus.OK);
 
         }catch(Exception e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
@@ -44,9 +46,9 @@ public class ResidentialController {
     }
 
     @GetMapping("findId/{id}")
-    public Optional<Residential> findId(@PathVariable String id) {
+    public ResponseEntity<Optional<Residential>> findId(@PathVariable String id) {
         try{
-            return residentialService.findId(id);
+            return new ResponseEntity<>(residentialService.findId(id), HttpStatus.OK);
 
         }catch(Exception e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
@@ -55,9 +57,10 @@ public class ResidentialController {
     }
 
     @GetMapping("findByDepartment/{departmentName}/{countryName}")
-    public List<Residential> findByDepartment(@PathVariable String departmentName, @PathVariable String countryName){
+    public ResponseEntity<List<Residential>> findByDepartment(@PathVariable String departmentName,
+                                                              @PathVariable String countryName){
         try{
-            return residentialService.findByDepartment(departmentName, countryName);
+            return new ResponseEntity<>(residentialService.findByDepartment(departmentName, countryName), HttpStatus.OK);
 
         }catch(Exception e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
@@ -65,12 +68,15 @@ public class ResidentialController {
                             departmentName + " (" + countryName + ")");
         }
     }
+
     @GetMapping("findByCity/{cityName}/{departmentName}/{countryName}")
-    public List<Residential> findByCity(@PathVariable String cityName,
-                                        @PathVariable String departmentName,
-                                        @PathVariable String countryName){
+    public ResponseEntity<List<Residential>> findByCity(@PathVariable String cityName,
+                                                        @PathVariable String departmentName,
+                                                        @PathVariable String countryName){
         try{
-            return residentialService.findByCity(cityName, departmentName, countryName);
+            return new ResponseEntity<>(
+                    residentialService.findByCity(cityName, departmentName, countryName),
+                    HttpStatus.OK);
 
         }catch(Exception e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,

@@ -2,13 +2,12 @@ package uy.com.pf.care.infra.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
-import uy.com.pf.care.exceptions.PatientSaveException;
 import uy.com.pf.care.exceptions.ZoneSaveException;
 import uy.com.pf.care.model.documents.Zone;
 import uy.com.pf.care.model.objects.NeighborhoodObject;
-import uy.com.pf.care.model.objects.PatientIdObject;
 import uy.com.pf.care.model.objects.ZoneIdObject;
 import uy.com.pf.care.services.IZoneService;
 
@@ -23,9 +22,11 @@ public class ZoneController {
     private IZoneService zoneService;
 
     @PostMapping("/add")
-    public ZoneIdObject add(@RequestBody uy.com.pf.care.model.documents.Zone zone){
+    public ResponseEntity<ZoneIdObject> add(@RequestBody Zone zone){
         try{
-            return new ZoneIdObject(zoneService.save(zone).getZone_id());
+            return new ResponseEntity<>(
+                    new ZoneIdObject(zoneService.save(zone).getZone_id()),
+                    HttpStatus.OK);
 
         }catch (ZoneSaveException e){
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error guardando zona");
@@ -33,9 +34,9 @@ public class ZoneController {
     }
 
     @GetMapping("findAll/{countryName}")
-    public List<Zone> findAll(@PathVariable String countryName){
+    public ResponseEntity<List<Zone>> findAll(@PathVariable String countryName){
         try{
-            return zoneService.findByCountry(countryName);
+            return new ResponseEntity<>(zoneService.findByCountry(countryName), HttpStatus.OK);
 
         }catch(Exception e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
@@ -44,9 +45,9 @@ public class ZoneController {
     }
 
     @GetMapping("findId/{id}")
-    public Optional<uy.com.pf.care.model.documents.Zone> findId(@PathVariable String id) {
+    public ResponseEntity<Optional<Zone>> findId(@PathVariable String id) {
         try{
-            return zoneService.findId(id);
+            return new ResponseEntity<>(zoneService.findId(id), HttpStatus.OK);
 
         }catch(Exception e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
@@ -55,11 +56,13 @@ public class ZoneController {
     }
 
     @GetMapping("findAllNeighborhoods/{cityName}/{departmentName}/{countryName}")
-    public List<NeighborhoodObject> findAllNeighborhood(@PathVariable String cityName,
-                                            @PathVariable String departmentName,
-                                            @PathVariable String countryName){
+    public ResponseEntity<List<NeighborhoodObject>> findAllNeighborhood(@PathVariable String cityName,
+                                                                        @PathVariable String departmentName,
+                                                                        @PathVariable String countryName){
         try{
-            return zoneService.findAllNeighborhoods(cityName, departmentName, countryName);
+            return new ResponseEntity<>(
+                    zoneService.findAllNeighborhoods(cityName, departmentName, countryName),
+                    HttpStatus.OK);
 
         }catch(Exception e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
@@ -68,21 +71,21 @@ public class ZoneController {
     }
 
     @GetMapping("findAllCities/{departmentName}/{countryName}")
-    public List<String> findAllCities(@PathVariable String departmentName, @PathVariable String countryName){
+    public ResponseEntity<List<String>> findAllCities(@PathVariable String departmentName,
+                                                      @PathVariable String countryName){
         try{
-            return zoneService.findAllCities(departmentName, countryName);
+            return new ResponseEntity<>(zoneService.findAllCities(departmentName, countryName), HttpStatus.OK);
 
         }catch(Exception e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
                     "Error buscando las cuidades/localidades de " + departmentName + " (" + countryName + ")");
         }
-
     }
 
     @GetMapping("findAllDepartments/{countryName}")
-    public List<String> findAllDepartment(@PathVariable String countryName){
+    public ResponseEntity<List<String>> findAllDepartment(@PathVariable String countryName){
         try{
-            return zoneService.findAllDepartments(countryName);
+            return new ResponseEntity<>(zoneService.findAllDepartments(countryName), HttpStatus.OK);
 
         }catch(Exception e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
@@ -91,14 +94,13 @@ public class ZoneController {
     }
 
     @GetMapping("findAllCountries")
-    public List<String> findAllCountries(){
+    public ResponseEntity<List<String>> findAllCountries(){
         try{
-            return zoneService.findAllCountries();
+            return new ResponseEntity<>(zoneService.findAllCountries(), HttpStatus.OK);
 
         }catch(Exception e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error buscando países");
         }
-
     }
 
 }
