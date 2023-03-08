@@ -36,7 +36,7 @@ public class EmergencyServiceService implements IEmergencyServiceService{
 
     @Override
     public List<EmergencyService> findAll(String countryName) {
-        return emergencyServiceRepo.findByCountryName(countryName);
+        return emergencyServiceRepo.findByCountryNameAndDeletedFalse(countryName);
     }
 
     @Override
@@ -46,12 +46,20 @@ public class EmergencyServiceService implements IEmergencyServiceService{
 
     @Override
     public List<EmergencyService> findByCity(String cityName, String departmentName, String countryName) {
-        return emergencyServiceRepo.findByCityNameAndDepartmentNameAndCountryName(cityName, departmentName, countryName);
+        return emergencyServiceRepo.findByCityNameAndDepartmentNameAndCountryNameAndDeletedFalse(cityName, departmentName, countryName);
     }
 
     @Override
     public List<EmergencyService> findByDepartment(String departmentName, String countryName) {
-        return emergencyServiceRepo.findByDepartmentNameAndCountryName(departmentName, countryName);
+        return emergencyServiceRepo.findByDepartmentNameAndCountryNameAndDeletedFalse(departmentName, countryName);
     }
 
+    @Override
+    public EmergencyService findByName(String name, String cityName, String departmentName, String countryName) {
+        return emergencyServiceRepo.findByNameAndCityNameAndDepartmentNameAndCountryNameAndDeletedFalse(
+                name,
+                cityName,
+                departmentName,
+                countryName);
+    }
 }

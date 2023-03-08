@@ -23,5 +23,5 @@ public class Zone extends ZoneObject {
     private List<String> volunteerPersonsId = new ArrayList<>(); // Personas Voluntarias registradas en esta zona
     // Borrado lógico.
     // Nota: un borrado fisico puede ejecutarse si patientsId y volunteerPersonsId están vacias.
-    private boolean deleted;
+    private Boolean deleted;
 }

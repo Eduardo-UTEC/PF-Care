@@ -14,20 +14,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Document("Patients")
-@CompoundIndexes(
-        {
-                @CompoundIndex(
-                    def = "{'identificationDocument':1, 'zone.countryName':1}",
-                    name = "identificationDocument_country",
-                    unique = true
-                ),
-                @CompoundIndex(
-                        def = "{'mail':1}",
-                        name = "mail",
-                        unique = true
-                )
-        }
-)
+@CompoundIndexes({
+    @CompoundIndex(
+        def = "{'identificationDocument':1, 'zone.countryName':1}",
+        name = "identificationDocument_country",
+        unique = true
+    ),
+    @CompoundIndex(
+            def = "{'mail':1}",
+            name = "mail",
+            unique = true
+    )
+    })
 @Data
 @EqualsAndHashCode(callSuper=false)
 @AllArgsConstructor

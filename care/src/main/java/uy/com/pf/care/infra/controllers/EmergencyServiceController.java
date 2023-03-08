@@ -85,4 +85,22 @@ public class EmergencyServiceController {
         }
     }
 
+    @GetMapping("findByName/{name}/{cityName}/{departmentName}/{countryName}")
+    public ResponseEntity<EmergencyService> findByName(@PathVariable String name,
+                                                       @PathVariable String cityName,
+                                                       @PathVariable String departmentName,
+                                                       @PathVariable String countryName){
+        try{
+            return new ResponseEntity<>(
+                    emergencyServiceService.findByName(name, cityName, departmentName, countryName),
+                    HttpStatus.OK);
+
+        }catch(Exception e){
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
+                    "Error buscando el servicio de emergencia " + name + " en ciudad/localidad: " +
+                            cityName + " (" + departmentName + ", " + countryName + ")");
+        }
+    }
+
+
 }

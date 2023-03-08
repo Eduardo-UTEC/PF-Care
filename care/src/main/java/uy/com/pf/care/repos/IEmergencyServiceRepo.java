@@ -8,7 +8,15 @@ import java.util.List;
 
 @Repository
 public interface IEmergencyServiceRepo extends MongoRepository<EmergencyService, String> {
-    List<EmergencyService> findByCityNameAndDepartmentNameAndCountryName(String cityName, String departmentName, String countryName);
-    List<EmergencyService> findByDepartmentNameAndCountryName(String departmentName, String countryName);
-    List<EmergencyService> findByCountryName(String countryName);
+    List<EmergencyService> findByCityNameAndDepartmentNameAndCountryNameAndDeletedFalse(String cityName,
+                                                                                        String departmentName,
+                                                                                        String countryName);
+    List<EmergencyService> findByDepartmentNameAndCountryNameAndDeletedFalse(String departmentName,
+                                                                             String countryName);
+    List<EmergencyService> findByCountryNameAndDeletedFalse(String countryName);
+    EmergencyService findByNameAndCityNameAndDepartmentNameAndCountryNameAndDeletedFalse(String name,
+                                                                                         String cityName,
+                                                                                         String departmentName,
+                                                                                         String countryName);
+
 }

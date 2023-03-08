@@ -35,7 +35,7 @@ public class FormalCaregiverService implements IFormalCaregiverService {
 
     @Override
     public List<FormalCaregiver> findAll(String countryName) {
-        return formalCaregiverRepo.findByCountryName(countryName);
+        return formalCaregiverRepo.findByCountryNameAndDeletedFalse(countryName);
     }
 
     @Override
@@ -45,7 +45,12 @@ public class FormalCaregiverService implements IFormalCaregiverService {
 
     @Override
     public List<FormalCaregiver> findByDepartment(String departmentName, String countryName) {
-        return formalCaregiverRepo.findByDepartmentNameAndCountryName(departmentName, countryName);
+        return formalCaregiverRepo.findByDepartmentNameAndCountryNameAndDeletedFalse(departmentName, countryName);
+    }
+
+    @Override
+    public FormalCaregiver findByMail(String mail) {
+        return formalCaregiverRepo.findByMail(mail);
     }
 
 

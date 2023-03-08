@@ -71,4 +71,15 @@ public class FormalCaregiverController {
         }
     }
 
+    @GetMapping("findByMail/{mail}")
+    public ResponseEntity<FormalCaregiver> findByMail(@PathVariable String mail) {
+        try{
+            return new ResponseEntity<>(formalCaregiverService.findByMail(mail), HttpStatus.OK);
+
+        }catch(Exception e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
+                    "Error buscando por mail del cuidador formal (" + mail + ")");
+        }
+    }
+
 }

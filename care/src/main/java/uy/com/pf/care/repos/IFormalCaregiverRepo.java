@@ -8,6 +8,7 @@ import java.util.List;
 
 @Repository
 public interface IFormalCaregiverRepo extends MongoRepository<FormalCaregiver, String> {
-    List<FormalCaregiver> findByDepartmentNameAndCountryName(String departmentName, String countryName);
-    List<FormalCaregiver> findByCountryName(String countryName);
+    List<FormalCaregiver> findByDepartmentNameAndCountryNameAndDeletedFalse(String departmentName, String countryName);
+    List<FormalCaregiver> findByCountryNameAndDeletedFalse(String countryName);
+    FormalCaregiver findByMail(String mail);
 }

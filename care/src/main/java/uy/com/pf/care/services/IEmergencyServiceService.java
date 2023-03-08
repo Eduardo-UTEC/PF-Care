@@ -10,4 +10,5 @@ public interface IEmergencyServiceService {
     Optional<EmergencyService> findId(String id);
     List<EmergencyService> findByCity(String cityName, String departmentName, String countryName);
     List<EmergencyService> findByDepartment(String departmentName, String countryName);
+    EmergencyService findByName(String name, String cityName, String departmentName, String countryName);
 }

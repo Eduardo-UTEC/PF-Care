@@ -10,4 +10,5 @@ public interface IFormalCaregiverService {
     List<FormalCaregiver> findAll(String countryName);
     Optional<FormalCaregiver> findId(String id);
     List<FormalCaregiver> findByDepartment(String departmentName, String countryName);
+    FormalCaregiver findByMail(String mail);
 }
