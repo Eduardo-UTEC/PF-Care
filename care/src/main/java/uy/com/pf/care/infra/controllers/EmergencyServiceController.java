@@ -32,10 +32,13 @@ public class EmergencyServiceController {
         }
     }
 
-    @GetMapping("findAll/{countryName}")
-    public ResponseEntity<List<EmergencyService>> findAll(@PathVariable String countryName){
+    @GetMapping("findAll/{includeDeleted}/{countryName}")
+    public ResponseEntity<List<EmergencyService>> findAll(
+            @PathVariable Boolean includeDeleted,
+            @PathVariable String countryName){
+
         try{
-            return new ResponseEntity<>(emergencyServiceService.findAll(countryName), HttpStatus.OK);
+            return new ResponseEntity<>(emergencyServiceService.findAll(includeDeleted, countryName), HttpStatus.OK);
 
         }catch(Exception e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
@@ -54,13 +57,16 @@ public class EmergencyServiceController {
     }
     }
 
-    @GetMapping("findByCity/{cityName}/{departmentName}/{countryName}")
-    public ResponseEntity<List<EmergencyService>> findByCity(@PathVariable String cityName,
-                                                             @PathVariable String departmentName,
-                                                             @PathVariable String countryName){
+    @GetMapping("findByCity/{includeDeleted}/{cityName}/{departmentName}/{countryName}")
+    public ResponseEntity<List<EmergencyService>> findByCity(
+            @PathVariable Boolean includeDeleted,
+            @PathVariable String cityName,
+            @PathVariable String departmentName,
+            @PathVariable String countryName){
+
         try{
             return new ResponseEntity<>(
-                    emergencyServiceService.findByCity(cityName, departmentName, countryName),
+                    emergencyServiceService.findByCity(includeDeleted, cityName, departmentName, countryName),
                     HttpStatus.OK);
 
         }catch(Exception e){
@@ -70,12 +76,15 @@ public class EmergencyServiceController {
         }
     }
 
-    @GetMapping("findByDepartment/{departmentName}/{countryName}")
-    public ResponseEntity<List<EmergencyService>> findByDepartment(@PathVariable String departmentName,
-                                                                   @PathVariable String countryName){
+    @GetMapping("findByDepartment/{includeDeleted}/{departmentName}/{countryName}")
+    public ResponseEntity<List<EmergencyService>> findByDepartment(
+            @PathVariable Boolean includeDeleted,
+            @PathVariable String departmentName,
+            @PathVariable String countryName){
+
         try{
             return new ResponseEntity<>(
-                    emergencyServiceService.findByDepartment(departmentName, countryName),
+                    emergencyServiceService.findByDepartment(includeDeleted, departmentName, countryName),
                     HttpStatus.OK);
 
         }catch(Exception e){
@@ -85,20 +94,33 @@ public class EmergencyServiceController {
         }
     }
 
-    @GetMapping("findByName/{name}/{cityName}/{departmentName}/{countryName}")
-    public ResponseEntity<EmergencyService> findByName(@PathVariable String name,
+    @GetMapping("findByName/{includeDeleted}/{name}/{cityName}/{departmentName}/{countryName}")
+    public ResponseEntity<EmergencyService> findByName(@PathVariable Boolean includeDeleted,
+                                                       @PathVariable String name,
                                                        @PathVariable String cityName,
                                                        @PathVariable String departmentName,
                                                        @PathVariable String countryName){
         try{
             return new ResponseEntity<>(
-                    emergencyServiceService.findByName(name, cityName, departmentName, countryName),
+                    emergencyServiceService.findByName(includeDeleted, name, cityName, departmentName, countryName),
                     HttpStatus.OK);
 
         }catch(Exception e){
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
                     "Error buscando el servicio de emergencia " + name + " en ciudad/localidad: " +
                             cityName + " (" + departmentName + ", " + countryName + ")");
+        }
+    }
+
+    // Devuelve true si la operación fue exitosa
+    @PatchMapping("logicalDelete/{id}")
+    public ResponseEntity<Boolean> logicalDelete(@PathVariable String id) {
+        try{
+            return new ResponseEntity<>(emergencyServiceService.logicalDelete(id), HttpStatus.OK);
+
+        }catch(Exception e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
+                    "No se pudo realizar el borrado lógico del servicio de emergencia con id " + id);
         }
     }
 

@@ -7,8 +7,17 @@ import java.util.Optional;
 
 public interface IFormalCaregiverService {
     FormalCaregiver save(FormalCaregiver formalCaregiver);
-    List<FormalCaregiver> findAll(String countryName);
+    Boolean setAvailability(String id, Boolean isAvailable);
+    Boolean setDeletion(String id, Boolean isDeleted);
+    List<FormalCaregiver> findAll(Boolean includeDeleted, String countryName);
     Optional<FormalCaregiver> findId(String id);
-    List<FormalCaregiver> findByDepartment(String departmentName, String countryName);
-    FormalCaregiver findByMail(String mail);
+    FormalCaregiver findWithIndex_Mail(String mail);
+    FormalCaregiver findByName(
+            Boolean includeDeleted, String name, String telephone, String departmentName, String countryName);
+    List<FormalCaregiver> findByNameLike(
+            Boolean includeDeleted, String name, String departmentName, String countryName);
+    List<FormalCaregiver> findByDepartment(Boolean includeDeleted, String departmentName, String countryName);
+    List<FormalCaregiver> findByAvailable(String departmentName, String countryName);
+
+
 }

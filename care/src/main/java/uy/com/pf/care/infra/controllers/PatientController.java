@@ -31,10 +31,10 @@ public class PatientController {
         }
     }
 
-    @GetMapping("findAll/{countryName}")
-    public ResponseEntity<List<Patient>> findAll(@PathVariable String countryName){
+    @GetMapping("findAll/{includeDeleted}/{countryName}")
+    public ResponseEntity<List<Patient>> findAll(@PathVariable Boolean includeDeleted, @PathVariable String countryName){
         try{
-            return new ResponseEntity<>(patientService.findAll(countryName), HttpStatus.OK);
+            return new ResponseEntity<>(patientService.findAll(includeDeleted, countryName), HttpStatus.OK);
 
         }catch(Exception e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
@@ -43,7 +43,7 @@ public class PatientController {
     }
 
     @GetMapping("findId/{id}")
-    public ResponseEntity<Optional<Patient>> findId( @PathVariable String id) {
+    public ResponseEntity<Optional<Patient>> findId(@PathVariable String id) {
         try{
             return new ResponseEntity<>(patientService.findId(id), HttpStatus.OK)
                     ;
@@ -54,18 +54,104 @@ public class PatientController {
     }
 
     @GetMapping("findIdentificationDocument/{document}/{countryName}")
-    public ResponseEntity<Optional<Patient>> findIdentificationDocument( @PathVariable Integer document,
-                                                                         @PathVariable String countryName) {
+    public ResponseEntity<Optional<Patient>> findIdentificationDocument(
+            @PathVariable Integer document,
+            @PathVariable String countryName) {
         try{
-            return new ResponseEntity<>(patientService.findIdentificationDocument(document, countryName), HttpStatus.OK);
+            return new ResponseEntity<>(patientService.findWithIndex_IdentificationDocument(
+                    document, countryName), HttpStatus.OK);
 
         }catch(Exception e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
                     "Error buscando paciente con documento de identificación " + document + " (" + countryName + ")");
+
         }
     }
 
-    @GetMapping("findName1Like/{name1}/{cityName}/{departmentName}/{countryName}")
+    @GetMapping(value = {
+            "findWithIndex_Name1/{name1}/{cityName}/{departmentName}/{countryName}",
+            "findWithIndex_Name1/{name1}/{cityName}/{departmentName}/{countryName}/{neighborhoodName}"
+    })
+    public ResponseEntity<List<Patient>> findWithIndex_Name1(@PathVariable String name1,
+                                                             @PathVariable String cityName,
+                                                             @PathVariable String departmentName,
+                                                             @PathVariable String countryName,
+                                                             @PathVariable(required = false) String neighborhoodName) {
+        try{
+            return new ResponseEntity<>(
+                    patientService.findWithIndex_Name1(name1, cityName, departmentName, countryName, neighborhoodName),
+                    HttpStatus.OK);
+
+        }catch(Exception e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
+                    "Error buscando los pacientes de " + cityName +
+                    " cuyo 1er nombre sea " + name1 +
+                    " (" + (neighborhoodName != null ? neighborhoodName + ", " : "") +
+                    departmentName + ", " +
+                    countryName + ")"
+            );
+        }
+    }
+
+    @GetMapping("findByCity/{includeDeleted}/{cityName}/{departmentName}/{countryName}")
+    public ResponseEntity<List<Patient>> findByCity(@PathVariable Boolean includeDeleted,
+                                                    @PathVariable String cityName,
+                                                    @PathVariable String departmentName,
+                                                    @PathVariable String countryName) {
+        try{
+            return new ResponseEntity<>(
+                    patientService.findByCity(includeDeleted, cityName, departmentName,countryName),
+                    HttpStatus.OK);
+
+        }catch(Exception e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
+                    "Error buscando pacientes en ciudad/localidad: " +
+                            cityName + " (" + departmentName + ", " + countryName + ")");
+        }
+    }
+
+    @GetMapping("findByDepartment/{includeDeleted}/{departmentName}/{countryName}")
+    public ResponseEntity<List<Patient>> findByDepartment(@PathVariable Boolean includeDeleted,
+                                                          @PathVariable String departmentName,
+                                                          @PathVariable String countryName) {
+        try{
+            return new ResponseEntity<>(
+                    patientService.findByDepartment(includeDeleted, departmentName,countryName),
+                    HttpStatus.OK);
+
+        }catch(Exception e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
+                    "Error buscando pacientes en departamento/provincia: " +
+                            departmentName + " (" + countryName + ")");
+        }
+    }
+
+    @GetMapping("findWithIndex_mail/{mail}")
+    public ResponseEntity<Optional<Patient>> findWithIndex_Mail(@PathVariable String mail) {
+        try{
+            return new ResponseEntity<>(
+                    patientService.findWithIndex_Mail(mail), HttpStatus.OK);
+
+        }catch(Exception e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
+                    "Error buscando por indice el paciente con mail: " + mail);
+        }
+    }
+
+    // Devuelve true si la operación fue exitosa
+    @PatchMapping("logicalDelete/{id}")
+    public ResponseEntity<Boolean> logicalDelete(@PathVariable String id) {
+        try{
+            return new ResponseEntity<>(patientService.logicalDelete(id), HttpStatus.OK);
+
+        }catch(Exception e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
+                    "No se pudo realizar el borrado lógico del paciente con id " + id);
+        }
+    }
+
+
+    /*@GetMapping("findName1Like/{name1}/{cityName}/{departmentName}/{countryName}")
     public ResponseEntity<List<Patient>> findName1Like( @PathVariable String name1,
                                                         @PathVariable String cityName,
                                                         @PathVariable String departmentName,
@@ -116,74 +202,6 @@ public class PatientController {
                             name1 + " " + surname1 +
                             " (" + departmentName + ", " + countryName + ")");
         }
-    }
-
-    @GetMapping("findByCity/{cityName}/{departmentName}/{countryName}")
-    public ResponseEntity<List<Patient>> findByCity(@PathVariable String cityName,
-                                                    @PathVariable String departmentName,
-                                                    @PathVariable String countryName) {
-        try{
-            return new ResponseEntity<>(
-                    patientService.findByCity(cityName, departmentName,countryName),
-                    HttpStatus.OK);
-
-        }catch(Exception e) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
-                    "Error buscando pacientes en ciudad/localidad: " +
-                            cityName + " (" + departmentName + ", " + countryName + ")");
-        }
-    }
-
-    @GetMapping("findByDepartment/{departmentName}/{countryName}")
-    public ResponseEntity<List<Patient>> findByDepartment(@PathVariable String departmentName,
-                                                          @PathVariable String countryName) {
-        try{
-            return new ResponseEntity<>(
-                    patientService.findByDepartment(departmentName,countryName),
-                    HttpStatus.OK);
-
-        }catch(Exception e) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
-                    "Error buscando pacientes en departamento/provincia: " +
-                            departmentName + " (" + countryName + ")");
-        }
-    }
-
-    // Devuelve true si la operación fue exitosa
-    @PatchMapping("logicalDelete/{id}")
-    public ResponseEntity<Boolean> logicalDelete(@PathVariable String id) {
-        try{
-            return new ResponseEntity<>(patientService.logicalDelete(id), HttpStatus.OK);
-
-        }catch(Exception e) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
-                    "No se pudo realizar el borrado lógico del paciente con id " + id);
-        }
-    }
-
-    /*@GetMapping("findName1/{name1}/{cityName}/{departmentName}/{countryName}")
-    public List<Patient> findName1( @PathVariable String name1,
-                                    @PathVariable String cityName,
-                                    @PathVariable String departmentName,
-                                    @PathVariable String countryName) {
-        return patientService.findName1(name1, cityName, departmentName,countryName);
-    }*/
-
-    /*@GetMapping("findSurname1/{surname1}/{cityName}/{departmentName}/{countryName}")
-    public List<Patient> findSurname1( @PathVariable String surname1,
-                                    @PathVariable String cityName,
-                                    @PathVariable String departmentName,
-                                    @PathVariable String countryName) {
-        return patientService.findSurname1(surname1, cityName, departmentName,countryName);
-    }*/
-
-    /*@GetMapping("findName1Surname1/{name1}/{surname1}/{cityName}/{departmentName}/{countryName}")
-    public List<Patient> findName1Surname1( @PathVariable String name1,
-                                    @PathVariable String surname1,
-                                    @PathVariable String cityName,
-                                    @PathVariable String departmentName,
-                                    @PathVariable String countryName) {
-        return patientService.findName1Surname1(name1, surname1, cityName, departmentName,countryName);
     }*/
 
 }

@@ -9,6 +9,6 @@ import uy.com.pf.care.model.enums.RelationshipEnum;
 @NoArgsConstructor
 @ToString
 public class InformalCaregiverObject extends CarerObject{
-    private TelephoneObject telephone;
+    private String telephone;
     private RelationshipEnum relationship;
 }

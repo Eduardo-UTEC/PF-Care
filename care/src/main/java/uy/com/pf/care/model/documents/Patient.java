@@ -15,17 +15,25 @@ import java.util.List;
 
 @Document("Patients")
 @CompoundIndexes({
-    @CompoundIndex(
-        def = "{'identificationDocument':1, 'zone.countryName':1}",
-        name = "identificationDocument_country",
-        unique = true
-    ),
-    @CompoundIndex(
-            def = "{'mail':1}",
-            name = "mail",
+        @CompoundIndex(
+            def = "{'identificationDocument':1, 'zone.countryName':1}",
+            name = "identificationDocument_country",
             unique = true
-    )
-    })
+        ),
+        @CompoundIndex(
+                def = "{'name1':1, " +
+                        "'zone.cityName':1, " +
+                        "'zone.departmentName':1, " +
+                        "'zone.countryName':1, " +
+                        "'zone.neighborhoodName':1}",
+                name = "name1_city_department_country_neighborhood"
+        ),
+        @CompoundIndex(
+                def = "{'mail':1}",
+                name = "mail",
+                unique = true
+        )
+})
 @Data
 @EqualsAndHashCode(callSuper=false)
 @AllArgsConstructor

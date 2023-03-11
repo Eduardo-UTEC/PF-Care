@@ -17,8 +17,7 @@ public class PersonObject {
     private String surname2;
     private PersonGenderEnum gender;
     private AddressObject address;
-    private TelephoneObject telephone1;
-    private TelephoneObject telephone2;
+    private String  telephone;
     private String mail;
     private Integer identificationDocument;
     private LocalDate dateBirth;

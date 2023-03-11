@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import uy.com.pf.care.exceptions.EmergencyServiceSaveException;
 import uy.com.pf.care.model.documents.EmergencyService;
+import uy.com.pf.care.model.documents.Patient;
 import uy.com.pf.care.repos.IEmergencyServiceRepo;
 
 import java.time.LocalDateTime;
@@ -35,8 +36,11 @@ public class EmergencyServiceService implements IEmergencyServiceService{
     }
 
     @Override
-    public List<EmergencyService> findAll(String countryName) {
-        return emergencyServiceRepo.findByCountryNameAndDeletedFalse(countryName);
+    public List<EmergencyService> findAll(Boolean includeDeleted, String countryName) {
+        if (includeDeleted)
+            return emergencyServiceRepo.findByCountryName(countryName);
+        else
+            return emergencyServiceRepo.findByCountryNameAndDeletedFalse(countryName);
     }
 
     @Override
@@ -45,21 +49,48 @@ public class EmergencyServiceService implements IEmergencyServiceService{
     }
 
     @Override
-    public List<EmergencyService> findByCity(String cityName, String departmentName, String countryName) {
-        return emergencyServiceRepo.findByCityNameAndDepartmentNameAndCountryNameAndDeletedFalse(cityName, departmentName, countryName);
+    public List<EmergencyService> findByCity(
+            Boolean includeDeleted, String cityName, String departmentName, String countryName) {
+
+        if (includeDeleted)
+            return emergencyServiceRepo.findByCityNameAndDepartmentNameAndCountryName(
+                    cityName, departmentName, countryName);
+        else
+            return emergencyServiceRepo.findByCityNameAndDepartmentNameAndCountryNameAndDeletedFalse(
+                    cityName, departmentName, countryName);
     }
 
     @Override
-    public List<EmergencyService> findByDepartment(String departmentName, String countryName) {
-        return emergencyServiceRepo.findByDepartmentNameAndCountryNameAndDeletedFalse(departmentName, countryName);
+    public List<EmergencyService> findByDepartment(Boolean includeDeleted, String departmentName, String countryName) {
+        if (includeDeleted)
+            return emergencyServiceRepo.findByDepartmentNameAndCountryName(departmentName, countryName);
+        else
+            return emergencyServiceRepo.findByDepartmentNameAndCountryNameAndDeletedFalse(departmentName, countryName);
     }
 
     @Override
-    public EmergencyService findByName(String name, String cityName, String departmentName, String countryName) {
-        return emergencyServiceRepo.findByNameAndCityNameAndDepartmentNameAndCountryNameAndDeletedFalse(
-                name,
-                cityName,
-                departmentName,
-                countryName);
+    public EmergencyService findByName(
+            Boolean includeDeleted, String name, String cityName, String departmentName, String countryName) {
+
+        if (includeDeleted)
+            return emergencyServiceRepo.findByNameAndCityNameAndDepartmentNameAndCountryName(
+                    name, cityName, departmentName, countryName);
+        else
+            return emergencyServiceRepo.findByNameAndCityNameAndDepartmentNameAndCountryNameAndDeletedFalse(
+                    name,
+                    cityName,
+                    departmentName,
+                    countryName);
+    }
+
+    @Override
+    public boolean logicalDelete(String id) {
+        Optional<EmergencyService> emergencyService = this.findId(id);
+        if (emergencyService.isPresent()) {
+            emergencyService.get().setDeleted(true);
+            this.save(emergencyService.get());
+            return true;
+        }
+        return false;
     }
 }

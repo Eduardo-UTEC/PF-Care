@@ -9,7 +9,6 @@ import org.springframework.data.mongodb.core.index.CompoundIndex;
 import org.springframework.data.mongodb.core.index.CompoundIndexes;
 import org.springframework.data.mongodb.core.mapping.Document;
 import uy.com.pf.care.model.objects.FormalCaregiverObject;
-import uy.com.pf.care.model.objects.TelephoneObject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,7 +33,7 @@ import java.util.List;
 public class FormalCaregiver extends FormalCaregiverObject {
     @Id
     private String formalCaregiver_id;
-    private TelephoneObject telephone;
+    private String telephone;
     private String mail;
     private Boolean available;  // Si es False, implica que sus servicios no estan disponibles momentáneamente
     private String comments;
@@ -43,10 +42,9 @@ public class FormalCaregiver extends FormalCaregiverObject {
     // Si interestZones=[], implica que llega a todas las zonas del Departamento/Provincia
     List<String> interestZones = new ArrayList<>();
 
+    private Boolean deleted;
+
     private String departmentName;
     private String countryName;
-
-    //private boolean used;       // Si está siendo utilizado, no se puede eliminar físicamente
-    private Boolean deleted;
 
 }
