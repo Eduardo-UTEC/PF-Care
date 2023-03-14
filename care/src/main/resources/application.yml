@@ -9,5 +9,15 @@ server:
   error:
     include-message: always
 
+#
+#pruebas de parametrizaciones
+#
+
+cadena1: Esta es una cadena
+logica1: true
+varNum: 25
+lista: 1, 2, 3
+
+
 
 
