@@ -18,6 +18,5 @@ public interface IFormalCaregiverService {
             Boolean includeDeleted, String name, String departmentName, String countryName);
     List<FormalCaregiver> findByDepartment(Boolean includeDeleted, String departmentName, String countryName);
     List<FormalCaregiver> findByAvailable(String departmentName, String countryName);
-
-
+    //List<FormalCaregiver> find
 }

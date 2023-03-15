@@ -30,4 +30,9 @@ public interface IFormalCaregiverRepo extends MongoRepository<FormalCaregiver, S
     List<FormalCaregiver> findByAvailableTrueAndDepartmentNameAndCountryNameAndDeletedFalse(
             String departmentName, String countryName);
 
+    //TODO: busquedas por zonas de interes:
+    //  * por ciudad + departamento (de interes, no el de residencia),
+    //  * por barrio + ciudad + departamento
+
+
 }

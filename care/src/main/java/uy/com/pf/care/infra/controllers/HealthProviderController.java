@@ -6,7 +6,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import uy.com.pf.care.exceptions.HealthProviderSaveException;
-import uy.com.pf.care.exceptions.PatientSaveException;
 import uy.com.pf.care.model.documents.HealthProvider;
 import uy.com.pf.care.model.objects.HealthProviderIdObject;
 import uy.com.pf.care.services.IHealthProviderService;

@@ -5,7 +5,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import uy.com.pf.care.exceptions.EmergencyServiceSaveException;
 import uy.com.pf.care.model.documents.EmergencyService;
-import uy.com.pf.care.model.documents.Patient;
 import uy.com.pf.care.repos.IEmergencyServiceRepo;
 
 import java.time.LocalDateTime;

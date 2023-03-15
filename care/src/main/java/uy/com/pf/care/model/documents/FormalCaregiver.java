@@ -9,6 +9,7 @@ import org.springframework.data.mongodb.core.index.CompoundIndex;
 import org.springframework.data.mongodb.core.index.CompoundIndexes;
 import org.springframework.data.mongodb.core.mapping.Document;
 import uy.com.pf.care.model.objects.FormalCaregiverObject;
+import uy.com.pf.care.model.objects.InterestZonesObject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,13 +38,19 @@ public class FormalCaregiver extends FormalCaregiverObject {
     private String mail;
     private Boolean available;  // Si es False, implica que sus servicios no estan disponibles momentáneamente
     private String comments;
-
-    // Ciudades/Localidades o Barrios de interés del Cuidador Formal.
-    // Si interestZones=[], implica que llega a todas las zonas del Departamento/Provincia
-    List<String> interestZones = new ArrayList<>();
-
     private Boolean deleted;
 
+    /* Zonas de interés del Cuidador Formal:
+         -Si interestZones=[], implica que llega a todos los Departamentos/Provincias del pais.
+         -Si interestZones[n] tiene un departmentName registrado, implica llega al departamento entero.
+         -Si interestZones[n] tiene un departmentName y una cityName registrados, implica que llega a toda
+         la ciudad/localidad de dicho departamento.
+         -Si interestZones[n] tiene un departmentName, una cityName y barrios registrados, implica que llega solo a esos
+         barrios de la ciudad.
+    */
+    List<InterestZonesObject> interestZones = new ArrayList<>();
+
+    // Lugar de residencia del Cuidador Formal
     private String departmentName;
     private String countryName;
 
