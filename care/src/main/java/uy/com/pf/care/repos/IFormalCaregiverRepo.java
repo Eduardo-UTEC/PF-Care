@@ -30,9 +30,28 @@ public interface IFormalCaregiverRepo extends MongoRepository<FormalCaregiver, S
     List<FormalCaregiver> findByAvailableTrueAndDepartmentNameAndCountryNameAndDeletedFalse(
             String departmentName, String countryName);
 
-    //TODO: busquedas por zonas de interes:
-    //  * por ciudad + departamento (de interes, no el de residencia),
-    //  * por barrio + ciudad + departamento
+    // Zonas de interes: Departamento de interes + Pais de residencia
+    List<FormalCaregiver> findByInterestZones_DepartmentNameAndCountryName(
+            String interestDepartmentName, String countryName);
 
+    List<FormalCaregiver> findByInterestZones_DepartmentNameAndCountryNameAndDeletedFalse(
+            String interestDepartmentName, String countryName);
+
+    //TODO: modificar consultas para que si busca, por ej, por barrio Prieto, ademas busque los que tengan marcado
+    // todos los barrios (neighborhoodNames=[])
+
+    // Zonas de interes: Ciudad de interes + Departamento de interes + Pais de residencia
+    List<FormalCaregiver> findByInterestZones_cities_CityNameAndInterestZones_DepartmentNameAndCountryName(
+            String interestCityName, String interestDepartmentName, String countryName);
+
+    List<FormalCaregiver> findByInterestZones_cities_CityNameAndInterestZones_DepartmentNameAndCountryNameAndDeletedFalse(
+            String interestCityName, String interestDepartmentName, String countryName);
+
+    // Zonas de interes: Barrio de interes + Ciudad de interes + Departamento de interes + Pais de residencia
+    List<FormalCaregiver> findByInterestZones_cities_neighborhoodNamesAndInterestZones_cities_CityNameAndInterestZones_DepartmentNameAndCountryName(
+            String interestNeighborhoodName, String interestCityName, String interestDepartmentName, String countryName);
+
+    List<FormalCaregiver> findByInterestZones_cities_neighborhoodNamesAndInterestZones_cities_CityNameAndInterestZones_DepartmentNameAndCountryNameAndDeletedFalse(
+            String interestNeighborhoodName, String interestCityName, String interestDepartmentName, String countryName);
 
 }

@@ -20,8 +20,6 @@ public class FormalCaregiverController {
 
     @Autowired
     private IFormalCaregiverService formalCaregiverService;
-    @Autowired
-    private IFormalCaregiverRepo iFormalCaregiverRepo;
 
     @PostMapping("/add")
     public ResponseEntity<FormalCaregiverIdObject> add(@RequestBody FormalCaregiver formalCaregiver){
@@ -161,6 +159,71 @@ public class FormalCaregiverController {
         }catch(Exception e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
                     "No se pudo setear el borrado lógico del cuidador formal con id " + id);
+        }
+    }
+
+    @GetMapping(
+            "findByInterestZones_Neighborhood/" +
+            "{includeDeleted}/" +
+            "{interestNeighborhoodName}/" +
+            "{interestCityName}/" +
+            "{interestDepartmentName}/" +
+            "{countryName}")
+    public ResponseEntity<List<FormalCaregiver>> findByInterestZones_Neighborhood(
+            @PathVariable Boolean includeDeleted,
+            @PathVariable String interestNeighborhoodName,
+            @PathVariable String interestCityName,
+            @PathVariable String interestDepartmentName,
+            @PathVariable String countryName){
+        try{
+            return new ResponseEntity<>(
+                    formalCaregiverService.findByInterestZones_Neighborhood(
+                            includeDeleted,
+                            interestNeighborhoodName,
+                            interestCityName,
+                            interestDepartmentName,
+                            countryName),
+                    HttpStatus.OK);
+
+        }catch(Exception e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
+                    "Error buscando cuidadores formales por zona de interés en barrio " + interestNeighborhoodName +
+                            " (" + interestCityName+ ", " + interestDepartmentName + ", " + countryName + ")");
+        }
+    }
+    @GetMapping("findByInterestZones_City/{includeDeleted}/{interestCityName}/{interestDepartmentName}/{countryName}")
+    public ResponseEntity<List<FormalCaregiver>> findByInterestZones_City(
+            @PathVariable Boolean includeDeleted,
+            @PathVariable String interestCityName,
+            @PathVariable String interestDepartmentName,
+            @PathVariable String countryName){
+        try{
+            return new ResponseEntity<>(
+                    formalCaregiverService.findByInterestZones_City(
+                            includeDeleted, interestCityName, interestDepartmentName, countryName),
+                    HttpStatus.OK);
+
+        }catch(Exception e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
+                    "Error buscando cuidadores formales por zona de interés en ciudad " + interestCityName + " (" +
+                            interestDepartmentName + ", " + countryName + ")");
+        }
+    }
+    @GetMapping("findByInterestZones_Department/{includeDeleted}/{interestDepartmentName}/{countryName}")
+    public ResponseEntity<List<FormalCaregiver>> findByInterestZones_Department(
+            @PathVariable Boolean includeDeleted,
+            @PathVariable String interestDepartmentName,
+            @PathVariable String countryName){
+        try{
+            return new ResponseEntity<>(
+                    formalCaregiverService.findByInterestZones_Department(
+                            includeDeleted, interestDepartmentName, countryName),
+                    HttpStatus.OK);
+
+        }catch(Exception e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
+                    "Error buscando cuidadores formales por zona de interés en departamento/provincia de " +
+                            interestDepartmentName + " (" + countryName + ")");
         }
     }
 

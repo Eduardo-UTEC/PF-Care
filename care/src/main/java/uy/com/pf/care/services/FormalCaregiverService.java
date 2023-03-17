@@ -122,5 +122,46 @@ public class FormalCaregiverService implements IFormalCaregiverService {
                 departmentName, countryName);
     }
 
+    @Override
+    public List<FormalCaregiver> findByInterestZones_Neighborhood(
+            Boolean includeDeleted,
+            String interestNeighborhoodName,
+            String interestCityName,
+            String interestDepartmentName,
+            String countryName) {
+
+        if (includeDeleted)
+            return formalCaregiverRepo.
+                    findByInterestZones_cities_neighborhoodNamesAndInterestZones_cities_CityNameAndInterestZones_DepartmentNameAndCountryName(
+                            interestNeighborhoodName, interestCityName, interestDepartmentName, countryName);
+        else
+            return formalCaregiverRepo.
+                    findByInterestZones_cities_neighborhoodNamesAndInterestZones_cities_CityNameAndInterestZones_DepartmentNameAndCountryNameAndDeletedFalse(
+                        interestNeighborhoodName, interestCityName, interestDepartmentName, countryName);
+    }
+
+    @Override
+    public List<FormalCaregiver> findByInterestZones_City(
+            Boolean includeDeleted, String interestCityName, String interestDepartmentName, String countryName) {
+
+        if (includeDeleted)
+            return formalCaregiverRepo.findByInterestZones_cities_CityNameAndInterestZones_DepartmentNameAndCountryName(
+                    interestCityName, interestDepartmentName, countryName);
+        else
+            return formalCaregiverRepo.findByInterestZones_cities_CityNameAndInterestZones_DepartmentNameAndCountryNameAndDeletedFalse(
+                    interestCityName, interestDepartmentName, countryName);
+    }
+
+    @Override
+    public List<FormalCaregiver> findByInterestZones_Department(
+            Boolean includeDeleted, String interestDepartmentName, String countryName) {
+
+        if (includeDeleted)
+            return formalCaregiverRepo.findByInterestZones_DepartmentNameAndCountryName(
+                    interestDepartmentName, countryName);
+        else
+            return formalCaregiverRepo.findByInterestZones_DepartmentNameAndCountryNameAndDeletedFalse(
+                interestDepartmentName, countryName);
+    }
 
 }
