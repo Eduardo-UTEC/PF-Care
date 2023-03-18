@@ -30,10 +30,12 @@ public class ReadConfigController {
 
     private String readConfig() {
         return "[{" +
-                "\"cadena\": \"" + paramConfig.getCadena() + "\"," +
-                "\"entero\": " + paramConfig.getEntero() + "," +
-                "\"logica\": " + paramConfig.getLogica() + "," +
-                "\"lista\": " + paramConfig.getLista() +
+                "\"protocol\": \"" + paramConfig.getProtocol() + "\"," +
+                "\"socket\": \"" + paramConfig.getSocket() + "\"" +
+//                "\"cadena\": \"" + paramConfig.getCadena() + "\"," +
+//                "\"entero\": " + paramConfig.getEntero() + "," +
+//                "\"logica\": " + paramConfig.getLogica() + "," +
+//                "\"lista\": " + paramConfig.getLista() +
                 "}]";
     }
 

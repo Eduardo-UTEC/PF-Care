@@ -3,13 +3,18 @@ package uy.com.pf.care.services;
 import lombok.extern.java.Log;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 import uy.com.pf.care.exceptions.FormalCaregiverSaveException;
+import uy.com.pf.care.infra.config.ParamConfig;
 import uy.com.pf.care.model.documents.FormalCaregiver;
 import uy.com.pf.care.repos.IFormalCaregiverRepo;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+
+import static uy.com.pf.care.infra.tools.Strings.containEqual;
 
 @Service
 @Log
@@ -17,6 +22,8 @@ public class FormalCaregiverService implements IFormalCaregiverService {
 
     @Autowired
     private IFormalCaregiverRepo formalCaregiverRepo;
+    @Autowired
+    private ParamConfig paramConfig;
 
     //private static final Logger log = LoggerFactory.getLogger(CuidadosApplication.class);
 
@@ -156,12 +163,42 @@ public class FormalCaregiverService implements IFormalCaregiverService {
     public List<FormalCaregiver> findByInterestZones_Department(
             Boolean includeDeleted, String interestDepartmentName, String countryName) {
 
-        if (includeDeleted)
-            return formalCaregiverRepo.findByInterestZones_DepartmentNameAndCountryName(
-                    interestDepartmentName, countryName);
+        if (includeDeleted){
+
+            RestTemplate restTemplate = new RestTemplate();
+            String departments = restTemplate.getForEntity(getUrlDepartment(countryName), String.class).getBody();
+
+            List<FormalCaregiver> listReturn = new ArrayList<>();
+            if (departments != null && containEqual(departments, interestDepartmentName)){
+            listReturn = this.findAll(includeDeleted, countryName).stream().filter(
+                        formalCaregiver -> {
+                            boolean accept = formalCaregiver.getInterestZones().isEmpty();
+                            if (!accept)
+                                accept = ! formalCaregiver.getInterestZones().stream().filter(interestZonesObject ->
+                                                interestZonesObject.getDepartmentName().equals(interestDepartmentName)
+                                        ).toList().isEmpty();
+                            return accept;
+                        }
+                ).toList();
+            }
+            return listReturn;
+        }
+
+        //TODO: falta resolver este else
         else
             return formalCaregiverRepo.findByInterestZones_DepartmentNameAndCountryNameAndDeletedFalse(
                 interestDepartmentName, countryName);
+
+    }
+
+    private String getStartUrl(){
+        return paramConfig.getProtocol() + "://" + paramConfig.getSocket() + "/";
+    }
+
+    private String getUrlDepartment(String countryName){
+        return  getStartUrl() +
+               "zones/findAllDepartments/" +
+                countryName;
     }
 
 }

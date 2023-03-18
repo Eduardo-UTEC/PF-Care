@@ -42,7 +42,7 @@ public class FormalCaregiver extends FormalCaregiverObject {
 
     /* Zonas de interés del Cuidador Formal:
          -Si interestZones=[], implica que llega a todos los Departamentos/Provincias del pais.
-         -Si interestZones[n] tiene un departmentName registrado, con cities=[], implica que llega al departamento
+         -Si interestZones[n] (es un departmentName registrado), con cities=[], implica que llega al departamento
             entero.
          -Si interestZones[n] tiene un departmentName con una cityName registrados, con neighborhoodNames=[], implica
             que llega a toda la ciudad/localidad de dicho departamento.

@@ -9,6 +9,9 @@ server:
   error:
     include-message: always
 
+protocol: http
+socket: localhost:8080
+
 #
 #pruebas de parametrizaciones
 #
