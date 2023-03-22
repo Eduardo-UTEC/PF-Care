@@ -151,53 +151,82 @@ public class FormalCaregiverService implements IFormalCaregiverService {
     public List<FormalCaregiver> findByInterestZones_City(
             Boolean includeDeleted, String interestCityName, String interestDepartmentName, String countryName) {
 
-        if (includeDeleted)
+        /*if (includeDeleted)
             return formalCaregiverRepo.findByInterestZones_cities_CityNameAndInterestZones_DepartmentNameAndCountryName(
                     interestCityName, interestDepartmentName, countryName);
         else
             return formalCaregiverRepo.findByInterestZones_cities_CityNameAndInterestZones_DepartmentNameAndCountryNameAndDeletedFalse(
-                    interestCityName, interestDepartmentName, countryName);
+                    interestCityName, interestDepartmentName, countryName);*/
+
+        RestTemplate restTemplate = new RestTemplate();
+        String departments = restTemplate.getForEntity(getUrlAllDepartments(countryName), String.class).getBody();
+
+        List<FormalCaregiver> listReturn = new ArrayList<>();
+
+        // Verifico que el departamento exista y no esté eliminado
+        //TODO: falta verificar que la interestCity exista
+        if (departments != null && containEqual(departments, interestDepartmentName)){
+            listReturn = this.findAll(includeDeleted, countryName).stream().filter(formalCaregiver -> {
+                        boolean accept = formalCaregiver.getInterestZones().isEmpty();
+                        if (!accept)
+                            accept = ! formalCaregiver.getInterestZones().stream().filter(interestZonesObject ->
+                                    {
+                                        if (interestZonesObject.getDepartmentName().equals(interestDepartmentName))
+                                            if (interestZonesObject.getCities().isEmpty())
+                                                return true;
+                                            else
+                                                return ! interestZonesObject.getCities().stream().filter(cityObject ->
+                                                   cityObject.getCityName().equals(interestCityName)
+                                                ).toList().isEmpty();
+                                        else
+                                            return false;
+                                    }
+                            ).toList().isEmpty();
+                        return accept;
+                    }
+            ).toList();
+        }
+        return listReturn;
+
     }
 
     @Override
     public List<FormalCaregiver> findByInterestZones_Department(
             Boolean includeDeleted, String interestDepartmentName, String countryName) {
 
-        if (includeDeleted){
+        RestTemplate restTemplate = new RestTemplate();
+        String departments = restTemplate.getForEntity(getUrlAllDepartments(countryName), String.class).getBody();
 
-            RestTemplate restTemplate = new RestTemplate();
-            String departments = restTemplate.getForEntity(getUrlDepartment(countryName), String.class).getBody();
+        List<FormalCaregiver> listReturn = new ArrayList<>();
 
-            List<FormalCaregiver> listReturn = new ArrayList<>();
-            if (departments != null && containEqual(departments, interestDepartmentName)){
-            listReturn = this.findAll(includeDeleted, countryName).stream().filter(
-                        formalCaregiver -> {
-                            boolean accept = formalCaregiver.getInterestZones().isEmpty();
-                            if (!accept)
-                                accept = ! formalCaregiver.getInterestZones().stream().filter(interestZonesObject ->
-                                                interestZonesObject.getDepartmentName().equals(interestDepartmentName)
-                                        ).toList().isEmpty();
-                            return accept;
-                        }
-                ).toList();
-            }
-            return listReturn;
+        // Verifico que el departamento exista y no esté eliminado
+        if (departments != null && containEqual(departments, interestDepartmentName)){
+            listReturn = this.findAll(includeDeleted, countryName).stream().filter(formalCaregiver -> {
+                        boolean accept = formalCaregiver.getInterestZones().isEmpty();
+                        if (!accept)
+                            accept = ! formalCaregiver.getInterestZones().stream().filter(interestZonesObject ->
+                                            interestZonesObject.getDepartmentName().equals(interestDepartmentName)
+                                    ).toList().isEmpty();
+                        return accept;
+                    }
+            ).toList();
         }
-
-        //TODO: falta resolver este else
-        else
-            return formalCaregiverRepo.findByInterestZones_DepartmentNameAndCountryNameAndDeletedFalse(
-                interestDepartmentName, countryName);
-
+        return listReturn;
     }
 
     private String getStartUrl(){
         return paramConfig.getProtocol() + "://" + paramConfig.getSocket() + "/";
     }
 
-    private String getUrlDepartment(String countryName){
+    /*private String getUrlAllCities(String departmentName, String countryName){
         return  getStartUrl() +
-               "zones/findAllDepartments/" +
+                "zones/findAllCities/false/" + // Se incluyen ciudades que no estén eliminadas
+                departmentName + "/" +
+                countryName;
+    }*/
+    private String getUrlAllDepartments(String countryName){
+        return  getStartUrl() +
+               "zones/findAllDepartments/false/" + // Se incluyen departamentos que no estén eliminados
                 countryName;
     }
 

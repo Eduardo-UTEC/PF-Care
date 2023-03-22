@@ -36,21 +36,18 @@ public interface IFormalCaregiverRepo extends MongoRepository<FormalCaregiver, S
     // Zonas de interes: Departamento de interes + Pais de residencia
     List<FormalCaregiver> findByInterestZones_DepartmentNameAndCountryName(
             String interestDepartmentName, String countryName);
-
     List<FormalCaregiver> findByInterestZones_DepartmentNameAndCountryNameAndDeletedFalse(
             String interestDepartmentName, String countryName);
 
     // Zonas de interes: Ciudad de interes + Departamento de interes + Pais de residencia
     List<FormalCaregiver> findByInterestZones_cities_CityNameAndInterestZones_DepartmentNameAndCountryName(
             String interestCityName, String interestDepartmentName, String countryName);
-
     List<FormalCaregiver> findByInterestZones_cities_CityNameAndInterestZones_DepartmentNameAndCountryNameAndDeletedFalse(
             String interestCityName, String interestDepartmentName, String countryName);
 
     // Zonas de interes: Barrio de interes + Ciudad de interes + Departamento de interes + Pais de residencia
     List<FormalCaregiver> findByInterestZones_cities_neighborhoodNamesAndInterestZones_cities_CityNameAndInterestZones_DepartmentNameAndCountryName(
             String interestNeighborhoodName, String interestCityName, String interestDepartmentName, String countryName);
-
     List<FormalCaregiver> findByInterestZones_cities_neighborhoodNamesAndInterestZones_cities_CityNameAndInterestZones_DepartmentNameAndCountryNameAndDeletedFalse(
             String interestNeighborhoodName, String interestCityName, String interestDepartmentName, String countryName);
 

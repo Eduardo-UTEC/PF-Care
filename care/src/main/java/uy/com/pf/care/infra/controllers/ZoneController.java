@@ -33,10 +33,11 @@ public class ZoneController {
         }
     }
 
-    @GetMapping("findAll/{countryName}")
-    public ResponseEntity<List<Zone>> findAll(@PathVariable String countryName){
+    @GetMapping("findAllZones/{includeDeleted}/{countryName}")
+    public ResponseEntity<List<Zone>> findAllZones(@PathVariable Boolean includeDeleted,
+                                                @PathVariable String countryName){
         try{
-            return new ResponseEntity<>(zoneService.findByCountry(countryName), HttpStatus.OK);
+            return new ResponseEntity<>(zoneService.findAllZones(includeDeleted, countryName), HttpStatus.OK);
 
         }catch(Exception e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
@@ -55,13 +56,14 @@ public class ZoneController {
         }
     }
 
-    @GetMapping("findAllNeighborhoods/{cityName}/{departmentName}/{countryName}")
-    public ResponseEntity<List<NeighborhoodObject>> findAllNeighborhood(@PathVariable String cityName,
+    @GetMapping("findAllNeighborhoods/{includeDeleted}/{cityName}/{departmentName}/{countryName}")
+    public ResponseEntity<List<NeighborhoodObject>> findAllNeighborhood(@PathVariable Boolean includeDeleted,
+                                                                        @PathVariable String cityName,
                                                                         @PathVariable String departmentName,
                                                                         @PathVariable String countryName){
         try{
             return new ResponseEntity<>(
-                    zoneService.findAllNeighborhoods(cityName, departmentName, countryName),
+                    zoneService.findAllNeighborhoods(includeDeleted, cityName, departmentName, countryName),
                     HttpStatus.OK);
 
         }catch(Exception e) {
@@ -70,11 +72,14 @@ public class ZoneController {
         }
     }
 
-    @GetMapping("findAllCities/{departmentName}/{countryName}")
-    public ResponseEntity<List<String>> findAllCities(@PathVariable String departmentName,
+    @GetMapping("findAllCities/{includeDeleted}/{departmentName}/{countryName}")
+    public ResponseEntity<List<String>> findAllCities(@PathVariable Boolean includeDeleted,
+                                                      @PathVariable String departmentName,
                                                       @PathVariable String countryName){
         try{
-            return new ResponseEntity<>(zoneService.findAllCities(departmentName, countryName), HttpStatus.OK);
+            return new ResponseEntity<>(
+                    zoneService.findAllCities(includeDeleted, departmentName, countryName),
+                    HttpStatus.OK);
 
         }catch(Exception e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
@@ -82,10 +87,11 @@ public class ZoneController {
         }
     }
 
-    @GetMapping("findAllDepartments/{countryName}")
-    public ResponseEntity<List<String>> findAllDepartment(@PathVariable String countryName){
+    @GetMapping("findAllDepartments/{includeDeleted}/{countryName}")
+    public ResponseEntity<List<String>> findAllDepartment(@PathVariable Boolean includeDeleted,
+                                                          @PathVariable String countryName){
         try{
-            return new ResponseEntity<>(zoneService.findAllDepartments(countryName), HttpStatus.OK);
+            return new ResponseEntity<>(zoneService.findAllDepartments(includeDeleted, countryName), HttpStatus.OK);
 
         }catch(Exception e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
@@ -93,10 +99,10 @@ public class ZoneController {
         }
     }
 
-    @GetMapping("findAllCountries")
-    public ResponseEntity<List<String>> findAllCountries(){
+    @GetMapping("findAllCountries/{includeDeleted}")
+    public ResponseEntity<List<String>> findAllCountries(@PathVariable Boolean includeDeleted){
         try{
-            return new ResponseEntity<>(zoneService.findAllCountries(), HttpStatus.OK);
+            return new ResponseEntity<>(zoneService.findAllCountries(includeDeleted), HttpStatus.OK);
 
         }catch(Exception e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error buscando países");

@@ -9,4 +9,5 @@ import java.util.List;
 @Repository
 public interface IZoneRepo extends MongoRepository<Zone, String> {
     List<Zone> findByCountryName(String countryName);
+    List<Zone> findByCountryNameAndDeletedFalse(String countryName);
 }
