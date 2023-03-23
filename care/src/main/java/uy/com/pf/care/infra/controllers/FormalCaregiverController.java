@@ -200,7 +200,7 @@ public class FormalCaregiverController {
         try{
             return new ResponseEntity<>(
                     formalCaregiverService.findByInterestZones_City(
-                            includeDeleted, interestCityName, interestDepartmentName, countryName),
+                            true, includeDeleted, interestCityName, interestDepartmentName, countryName),
                     HttpStatus.OK);
 
         }catch(Exception e) {
@@ -217,7 +217,7 @@ public class FormalCaregiverController {
         try{
             return new ResponseEntity<>(
                     formalCaregiverService.findByInterestZones_Department(
-                            includeDeleted, interestDepartmentName, countryName),
+                            true, includeDeleted, interestDepartmentName, countryName),
                     HttpStatus.OK);
 
         }catch(Exception e) {

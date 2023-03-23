@@ -24,9 +24,15 @@ public interface IFormalCaregiverService {
             String interestCityName,
             String interestDepartmentName,
             String countryName);
+
     List<FormalCaregiver> findByInterestZones_City(
-            Boolean includeDeleted, String interestCityName, String interestDepartmentName, String countryName);
+            Boolean validateCity,
+            Boolean includeDeleted,
+            String interestCityName,
+            String interestDepartmentName,
+            String countryName);
+
     List<FormalCaregiver> findByInterestZones_Department(
-            Boolean includeDeleted, String interestDepartmentName, String countryName);
+            Boolean validateInterestDepartment, Boolean includeDeleted, String interestDepartmentName, String countryName);
 
 }
