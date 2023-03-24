@@ -209,16 +209,23 @@ public class FormalCaregiverService implements IFormalCaregiverService {
             Boolean validateInterestDepartment, Boolean includeDeleted, String interestDepartmentName, String countryName) {
 
         RestTemplate restTemplate = new RestTemplate();
-        String departments = null;
-
-        if (validateInterestDepartment)
-            departments = restTemplate.getForEntity(getUrlAllDepartments(countryName), String.class).getBody();
-
+        //String departments = null;
+        String[] departments = null;
         List<FormalCaregiver> listReturn = new ArrayList<>();
+
+        if (validateInterestDepartment){
+            //departments = restTemplate.getForEntity(getUrlAllDepartments(countryName), String.class).getBody();
+            ResponseEntity<String[]> departmentsResponse = restTemplate.getForEntity(
+                    getUrlAllDepartments(countryName), String[].class);
+            departments = departmentsResponse.getBody();
+        }
 
         // Si se desea validar el Departamento de Interes, verifico que el departamento exista y no esté eliminado
         if (!validateInterestDepartment ||
-            (departments != null && !departments.equals("[]") && containEqual(departments, interestDepartmentName))){
+            //(departments != null && !departments.equals("[]") && containEqual(departments, interestDepartmentName))){
+            (departments != null &&
+                departments.length > 0 &&
+                    Arrays.asList(departments).contains(interestDepartmentName))){
 
             //TODO: posible cuello de botella en findAll.
             // Carga todos los cuidadores formales del pais para luego hacer el filtro.

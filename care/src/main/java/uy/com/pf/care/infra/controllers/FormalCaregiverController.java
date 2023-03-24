@@ -24,9 +24,12 @@ public class FormalCaregiverController {
     @PostMapping("/add")
     public ResponseEntity<FormalCaregiverIdObject> add(@RequestBody FormalCaregiver formalCaregiver){
         try{
-            return new ResponseEntity<>(
+            /*return new ResponseEntity<>(
                     new FormalCaregiverIdObject(formalCaregiverService.save(formalCaregiver).getFormalCaregiver_id()),
                     HttpStatus.OK);
+*/
+            return ResponseEntity.ok(
+                    new FormalCaregiverIdObject(formalCaregiverService.save(formalCaregiver).getFormalCaregiver_id()));
 
         }catch (FormalCaregiverSaveException e){
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error guardando cuidador formal");
@@ -39,7 +42,8 @@ public class FormalCaregiverController {
             @PathVariable String countryName){
 
         try{
-            return new ResponseEntity<>(formalCaregiverService.findAll(includeDeleted, countryName), HttpStatus.OK);
+            //return new ResponseEntity<>(formalCaregiverService.findAll(includeDeleted, countryName), HttpStatus.OK);
+            return ResponseEntity.ok(formalCaregiverService.findAll(includeDeleted, countryName));
 
         }catch(Exception e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
@@ -50,7 +54,8 @@ public class FormalCaregiverController {
     @GetMapping("findId/{id}")
     public ResponseEntity<Optional<FormalCaregiver>> findId(@PathVariable String id) {
         try{
-            return new ResponseEntity<>(formalCaregiverService.findId(id), HttpStatus.OK);
+            //return new ResponseEntity<>(formalCaregiverService.findId(id), HttpStatus.OK);
+            return ResponseEntity.ok(formalCaregiverService.findId(id));
 
         }catch(Exception e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
@@ -61,7 +66,8 @@ public class FormalCaregiverController {
     @GetMapping("findByMail/{mail}")
     public ResponseEntity<FormalCaregiver> findByMail(@PathVariable String mail) {
         try{
-            return new ResponseEntity<>(formalCaregiverService.findWithIndex_Mail(mail), HttpStatus.OK);
+            //return new ResponseEntity<>(formalCaregiverService.findWithIndex_Mail(mail), HttpStatus.OK);
+            return ResponseEntity.ok(formalCaregiverService.findWithIndex_Mail(mail));
 
         }catch(Exception e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
@@ -77,9 +83,12 @@ public class FormalCaregiverController {
             @PathVariable String departmentName,
             @PathVariable String countryName){
         try{
-            return new ResponseEntity<>(
+            /*return new ResponseEntity<>(
                     formalCaregiverService.findByName(includeDeleted, name, telephone, departmentName, countryName),
                     HttpStatus.OK);
+*/
+            return ResponseEntity.ok(
+                    formalCaregiverService.findByName(includeDeleted, name, telephone, departmentName, countryName));
 
         }catch(Exception e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
@@ -95,9 +104,12 @@ public class FormalCaregiverController {
             @PathVariable String departmentName,
             @PathVariable String countryName){
         try{
-            return new ResponseEntity<>(
+            /*return new ResponseEntity<>(
                     formalCaregiverService.findByNameLike(includeDeleted, name, departmentName, countryName),
                     HttpStatus.OK);
+*/
+            return ResponseEntity.ok(
+                    formalCaregiverService.findByNameLike(includeDeleted, name, departmentName, countryName));
 
         }catch(Exception e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
@@ -111,9 +123,11 @@ public class FormalCaregiverController {
             @PathVariable String departmentName,
             @PathVariable String countryName){
         try{
-            return new ResponseEntity<>(
+            /*return new ResponseEntity<>(
                     formalCaregiverService.findByAvailable(departmentName, countryName),
                     HttpStatus.OK);
+*/
+            return ResponseEntity.ok(formalCaregiverService.findByAvailable(departmentName, countryName));
 
         }catch(Exception e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
@@ -127,9 +141,12 @@ public class FormalCaregiverController {
             @PathVariable String departmentName,
             @PathVariable String countryName){
         try{
-            return new ResponseEntity<>(
+            /*return new ResponseEntity<>(
                     formalCaregiverService.findByDepartment(includeDeleted, departmentName, countryName),
                     HttpStatus.OK);
+*/
+            return ResponseEntity.ok(
+                    formalCaregiverService.findByDepartment(includeDeleted, departmentName, countryName));
 
         }catch(Exception e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
@@ -142,7 +159,8 @@ public class FormalCaregiverController {
     @PatchMapping("setAvailability/{id}/{isAvailable}")
     public ResponseEntity<Boolean> setAvailability(@PathVariable String id, @PathVariable Boolean isAvailable) {
         try{
-            return new ResponseEntity<>(formalCaregiverService.setAvailability(id, isAvailable), HttpStatus.OK);
+            //return new ResponseEntity<>(formalCaregiverService.setAvailability(id, isAvailable), HttpStatus.OK);
+            return ResponseEntity.ok(formalCaregiverService.setAvailability(id, isAvailable));
 
         }catch(Exception e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
@@ -154,7 +172,8 @@ public class FormalCaregiverController {
     @PatchMapping("setDeletion/{id}/{isDeleted}")
     public ResponseEntity<Boolean> setDeletion(@PathVariable String id, @PathVariable Boolean isDeleted) {
         try{
-            return new ResponseEntity<>(formalCaregiverService.setDeletion(id, isDeleted), HttpStatus.OK);
+            //return new ResponseEntity<>(formalCaregiverService.setDeletion(id, isDeleted), HttpStatus.OK);
+            return ResponseEntity.ok(formalCaregiverService.setDeletion(id, isDeleted));
 
         }catch(Exception e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
@@ -176,14 +195,21 @@ public class FormalCaregiverController {
             @PathVariable String interestDepartmentName,
             @PathVariable String countryName){
         try{
-            return new ResponseEntity<>(
+            /*return new ResponseEntity<>(
                     formalCaregiverService.findByInterestZones_Neighborhood(
                             includeDeleted,
                             interestNeighborhoodName,
                             interestCityName,
                             interestDepartmentName,
                             countryName),
-                    HttpStatus.OK);
+                    HttpStatus.OK);*/
+            return ResponseEntity.ok(
+                    formalCaregiverService.findByInterestZones_Neighborhood(
+                            includeDeleted,
+                            interestNeighborhoodName,
+                            interestCityName,
+                            interestDepartmentName,
+                            countryName));
 
         }catch(Exception e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
@@ -198,10 +224,13 @@ public class FormalCaregiverController {
             @PathVariable String interestDepartmentName,
             @PathVariable String countryName){
         try{
-            return new ResponseEntity<>(
+            return ResponseEntity.ok(formalCaregiverService.findByInterestZones_City(
+                    true, includeDeleted, interestCityName, interestDepartmentName, countryName));
+
+            /*return new ResponseEntity<>(
                     formalCaregiverService.findByInterestZones_City(
                             true, includeDeleted, interestCityName, interestDepartmentName, countryName),
-                    HttpStatus.OK);
+                    HttpStatus.OK);*/
 
         }catch(Exception e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
@@ -215,11 +244,13 @@ public class FormalCaregiverController {
             @PathVariable String interestDepartmentName,
             @PathVariable String countryName){
         try{
-            return new ResponseEntity<>(
+            /*return new ResponseEntity<>(
                     formalCaregiverService.findByInterestZones_Department(
                             true, includeDeleted, interestDepartmentName, countryName),
                     HttpStatus.OK);
-
+            */
+            return ResponseEntity.ok(formalCaregiverService.findByInterestZones_Department(
+                    true, includeDeleted, interestDepartmentName, countryName));
         }catch(Exception e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
                     "Error buscando cuidadores formales por zona de interés en departamento/provincia de " +
