@@ -22,8 +22,13 @@ import java.util.List;
             unique = true
     ),
     @CompoundIndex(
-            def = "{'name':1, 'telephone':1, 'departmentName':1, 'countryName':1}",
-            name = "name_telephone_department_country",
+            def = "{'countryName':1, 'deleted':1}",
+            name = "country_deleted",
+            unique = false
+    ),
+    @CompoundIndex(
+            def = "{'name':1, 'countryName':1, 'deleted':1, 'telephone':1}",
+            name = "name_country_deleted_telephone",
             unique = true
     )
 })
@@ -50,9 +55,6 @@ public class FormalCaregiver extends FormalCaregiverObject {
          barrios de la ciudad.
     */
     List<InterestZonesObject> interestZones = new ArrayList<>();
-
-    // Lugar de residencia del Cuidador Formal
-    private String departmentName;
-    private String countryName;
+    private String countryName; // Pais de residencia del Cuidador Formal
 
 }

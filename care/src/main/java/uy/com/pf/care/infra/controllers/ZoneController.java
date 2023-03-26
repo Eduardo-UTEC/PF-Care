@@ -109,4 +109,17 @@ public class ZoneController {
         }
     }
 
+    // Devuelve true si la operación fue exitosa
+    @PatchMapping("setDeletion/{id}/{isDeleted}")
+    public ResponseEntity<Boolean> setDeletion(@PathVariable String id, @PathVariable Boolean isDeleted) {
+        try{
+            //return new ResponseEntity<>(formalCaregiverService.setDeletion(id, isDeleted), HttpStatus.OK);
+            return ResponseEntity.ok(zoneService.setDeletion(id, isDeleted));
+
+        }catch(Exception e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
+                    "No se pudo setear el borrado lógico de la zona con id " + id);
+        }
+    }
+
 }

@@ -24,4 +24,6 @@ public interface IZoneService {
     // Paises
     List<String> findAllCountries(Boolean includeDeleted);
 
+    Boolean setDeletion(String id, Boolean isDeleted);
+
 }

@@ -8,6 +8,7 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 import uy.com.pf.care.exceptions.ZoneSaveException;
+import uy.com.pf.care.model.documents.FormalCaregiver;
 import uy.com.pf.care.model.documents.Zone;
 import uy.com.pf.care.model.objects.NeighborhoodObject;
 import uy.com.pf.care.repos.IZoneRepo;
@@ -122,6 +123,17 @@ public class ZoneService implements IZoneService{
                 .as(String.class)
                 .all()
                 .stream().sorted().toList();
+    }
+
+    @Override
+    public Boolean setDeletion(String id, Boolean isDeleted) {
+        Optional<Zone> zone = this.findId(id);
+        if (zone.isPresent()) {
+            zone.get().setDeleted(isDeleted);
+            this.save(zone.get());
+            return true;
+        }
+        return false;
     }
 
 }
