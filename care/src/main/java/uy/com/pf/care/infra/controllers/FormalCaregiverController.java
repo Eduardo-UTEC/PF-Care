@@ -72,7 +72,7 @@ public class FormalCaregiverController {
     }
 
     @GetMapping("findByName/{includeDeleted}/{name}/{countryName}")
-    public ResponseEntity<FormalCaregiver> findByName(
+    public ResponseEntity<List<FormalCaregiver>> findByName(
             @PathVariable Boolean includeDeleted,
             @PathVariable String name,
             @PathVariable String countryName){
@@ -185,5 +185,30 @@ public class FormalCaregiverController {
                             interestDepartmentName + " (" + countryName + ")");
         }
     }
+
+    @GetMapping(
+            "findByPriceRange/" +
+                    "{maxPrice}/" +
+                    "{interestNeighborhoodName}/" +
+                    "{interestCityName}/" +
+                    "{interestDepartmentName}/" +
+                    "{countryName}")
+    public ResponseEntity<List<FormalCaregiver>> findByPriceRange(
+            @PathVariable Integer maxPrice,
+            @PathVariable String interestNeighborhoodName,
+            @PathVariable String interestCityName,
+            @PathVariable String interestDepartmentName,
+            @PathVariable String countryName){
+
+        try{
+            return ResponseEntity.ok(formalCaregiverService.findByPriceRange(
+                    maxPrice, interestNeighborhoodName, interestCityName, interestDepartmentName, countryName));
+
+        }catch(Exception e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
+                    "Error buscando cuidadores formales por rango de precios");
+        }
+    }
+
 
 }

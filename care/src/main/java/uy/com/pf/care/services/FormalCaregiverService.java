@@ -78,9 +78,9 @@ public class FormalCaregiverService implements IFormalCaregiverService {
     @Override
     public List<FormalCaregiver> findAll(Boolean includeDeleted, String countryName) {
         if (includeDeleted)
-            return formalCaregiverRepo.findByCountryName(countryName);
+            return formalCaregiverRepo.findByCountryNameOrderByInterestZones_DepartmentName(countryName);
 
-        return formalCaregiverRepo.findByCountryNameAndDeletedFalse(countryName);
+        return formalCaregiverRepo.findByCountryNameAndDeletedFalseOrderByInterestZones_DepartmentName(countryName);
     }
 
     @Override
@@ -94,7 +94,7 @@ public class FormalCaregiverService implements IFormalCaregiverService {
     }
 
     @Override
-    public FormalCaregiver findWithIndex_Name(
+    public List<FormalCaregiver> findWithIndex_Name(
             Boolean includeDeleted, String name, String countryName) {
 
         if (includeDeleted)
@@ -107,9 +107,9 @@ public class FormalCaregiverService implements IFormalCaregiverService {
     public List<FormalCaregiver> findByNameLike(Boolean includeDeleted, String name, String countryName) {
 
         if (includeDeleted)
-            return formalCaregiverRepo.findByNameLikeAndCountryName(name, countryName);
+            return formalCaregiverRepo.findByNameLikeAndCountryNameOrderByName(name, countryName);
 
-        return formalCaregiverRepo.findByNameLikeAndCountryNameAndDeletedFalse(name, countryName);
+        return formalCaregiverRepo.findByNameLikeAndCountryNameAndDeletedFalseOrderByName(name, countryName);
     }
 
     @Override
@@ -214,8 +214,6 @@ public class FormalCaregiverService implements IFormalCaregiverService {
                     departments.length > 0 &&
                     Arrays.asList(departments).contains(interestDepartmentName))){
 
-            //TODO: posible cuello de botella en findAll.
-            // Carga todos los cuidadores formales del pais para luego filtar por departamento.
             listReturn = this.findAll(includeDeleted, countryName).stream().filter(formalCaregiver -> {
                 boolean accept = formalCaregiver.getInterestZones().isEmpty();
                 if (!accept)
@@ -226,6 +224,19 @@ public class FormalCaregiverService implements IFormalCaregiverService {
             }).toList();
         }
         return listReturn;
+    }
+
+    @Override
+    public List<FormalCaregiver> findByPriceRange(
+            Integer maxPrice,
+            String interestNeighborhoodName,
+            String interestCityName,
+            String interestDepartmentName,
+            String countryName) {
+
+        return this.findByInterestZones_Neighborhood(
+                false, interestNeighborhoodName, interestCityName, interestDepartmentName, countryName)
+                .stream().filter(formalCaregiver -> formalCaregiver.getPriceHour() <= maxPrice).toList();
     }
 
     private String getStartUrl(){

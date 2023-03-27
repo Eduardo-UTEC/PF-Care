@@ -9,10 +9,10 @@ public interface IFormalCaregiverService {
     FormalCaregiver save(FormalCaregiver formalCaregiver);
     Boolean setAvailability(String id, Boolean isAvailable);
     Boolean setDeletion(String id, Boolean isDeleted);
-    List<FormalCaregiver> findAll(Boolean includeDeleted, String countryName);
     Optional<FormalCaregiver> findId(String id);
+    List<FormalCaregiver> findAll(Boolean includeDeleted, String countryName);
     FormalCaregiver findWithIndex_Mail(String mail);
-    FormalCaregiver findWithIndex_Name(Boolean includeDeleted, String name, String countryName);
+    List<FormalCaregiver> findWithIndex_Name(Boolean includeDeleted, String name, String countryName);
     List<FormalCaregiver> findByNameLike(Boolean includeDeleted, String name, String countryName);
     List<FormalCaregiver> findByInterestZones_Neighborhood(
             Boolean includeDeleted,
@@ -27,6 +27,15 @@ public interface IFormalCaregiverService {
             String interestDepartmentName,
             String countryName);
     List<FormalCaregiver> findByInterestZones_Department(
-            Boolean validateInterestDepartment, Boolean includeDeleted, String interestDepartmentName, String countryName);
+            Boolean validateInterestDepartment,
+            Boolean includeDeleted,
+            String interestDepartmentName,
+            String countryName);
+    List<FormalCaregiver> findByPriceRange(
+            Integer maxPrice,
+            String interestNeighborhoodName,
+            String interestCityName,
+            String interestDepartmentName,
+            String countryName);
 
 }
