@@ -37,9 +37,9 @@ public class EmergencyServiceService implements IEmergencyServiceService{
     @Override
     public List<EmergencyService> findAll(Boolean includeDeleted, String countryName) {
         if (includeDeleted)
-            return emergencyServiceRepo.findByCountryName(countryName);
+            return emergencyServiceRepo.findByCountryNameOrderByName(countryName);
         else
-            return emergencyServiceRepo.findByCountryNameAndDeletedFalse(countryName);
+            return emergencyServiceRepo.findByCountryNameAndDeletedFalseOrderByName(countryName);
     }
 
     @Override
@@ -52,19 +52,19 @@ public class EmergencyServiceService implements IEmergencyServiceService{
             Boolean includeDeleted, String cityName, String departmentName, String countryName) {
 
         if (includeDeleted)
-            return emergencyServiceRepo.findByCityNameAndDepartmentNameAndCountryName(
-                    cityName, departmentName, countryName);
+            return emergencyServiceRepo.findByCountryNameAndDepartmentNameAndCityNameOrderByName(
+                    countryName, departmentName, cityName);
         else
-            return emergencyServiceRepo.findByCityNameAndDepartmentNameAndCountryNameAndDeletedFalse(
-                    cityName, departmentName, countryName);
+            return emergencyServiceRepo.findByCountryNameAndDepartmentNameAndCityNameAndDeletedFalseOrderByName(
+                    countryName, departmentName, cityName);
     }
 
     @Override
     public List<EmergencyService> findByDepartment(Boolean includeDeleted, String departmentName, String countryName) {
         if (includeDeleted)
-            return emergencyServiceRepo.findByDepartmentNameAndCountryName(departmentName, countryName);
+            return emergencyServiceRepo.findByCountryNameAndDepartmentNameOrderByName(countryName, departmentName);
         else
-            return emergencyServiceRepo.findByDepartmentNameAndCountryNameAndDeletedFalse(departmentName, countryName);
+            return emergencyServiceRepo.findByCountryNameAndDepartmentNameAndDeletedFalseOrderByName(countryName, departmentName);
     }
 
     @Override
@@ -72,21 +72,18 @@ public class EmergencyServiceService implements IEmergencyServiceService{
             Boolean includeDeleted, String name, String cityName, String departmentName, String countryName) {
 
         if (includeDeleted)
-            return emergencyServiceRepo.findByNameAndCityNameAndDepartmentNameAndCountryName(
-                    name, cityName, departmentName, countryName);
+            return emergencyServiceRepo.findByCountryNameAndDepartmentNameAndCityNameAndName(
+                    countryName, departmentName, cityName, name);
         else
-            return emergencyServiceRepo.findByNameAndCityNameAndDepartmentNameAndCountryNameAndDeletedFalse(
-                    name,
-                    cityName,
-                    departmentName,
-                    countryName);
+            return emergencyServiceRepo.findByCountryNameAndDepartmentNameAndCityNameAndNameAndDeletedFalse(
+                    countryName, departmentName, cityName, name);
     }
 
     @Override
-    public boolean logicalDelete(String id) {
+    public boolean setDeletion(String id, Boolean isDeleted) {
         Optional<EmergencyService> emergencyService = this.findId(id);
         if (emergencyService.isPresent()) {
-            emergencyService.get().setDeleted(true);
+            emergencyService.get().setDeleted(isDeleted);
             this.save(emergencyService.get());
             return true;
         }

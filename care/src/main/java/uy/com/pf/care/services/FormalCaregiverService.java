@@ -98,18 +98,18 @@ public class FormalCaregiverService implements IFormalCaregiverService {
             Boolean includeDeleted, String name, String countryName) {
 
         if (includeDeleted)
-            return formalCaregiverRepo.findByNameAndCountryName(name, countryName);
+            return formalCaregiverRepo.findByNameAndCountryNameOrderByInterestZones_DepartmentName(name, countryName);
 
-        return formalCaregiverRepo.findByNameAndCountryNameAndDeletedFalse(name, countryName);
+        return formalCaregiverRepo.findByNameAndCountryNameAndDeletedFalseOrderByInterestZones_DepartmentName(name, countryName);
     }
 
     @Override
     public List<FormalCaregiver> findByNameLike(Boolean includeDeleted, String name, String countryName) {
 
         if (includeDeleted)
-            return formalCaregiverRepo.findByNameLikeAndCountryNameOrderByName(name, countryName);
+            return formalCaregiverRepo.findByNameLikeAndCountryNameOrderByInterestZones_DepartmentName(name, countryName);
 
-        return formalCaregiverRepo.findByNameLikeAndCountryNameAndDeletedFalseOrderByName(name, countryName);
+        return formalCaregiverRepo.findByNameLikeAndCountryNameAndDeletedFalseOrderByInterestZones_DepartmentName(name, countryName);
     }
 
     @Override

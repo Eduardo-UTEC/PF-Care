@@ -8,6 +8,7 @@ import org.springframework.web.server.ResponseStatusException;
 import uy.com.pf.care.exceptions.EmergencyServiceSaveException;
 import uy.com.pf.care.model.documents.EmergencyService;
 import uy.com.pf.care.model.objects.EmergencyServiceIdObject;
+import uy.com.pf.care.repos.IEmergencyServiceRepo;
 import uy.com.pf.care.services.IEmergencyServiceService;
 
 import java.util.List;
@@ -19,13 +20,15 @@ public class EmergencyServiceController {
 
     @Autowired
     private IEmergencyServiceService emergencyServiceService;
+    @Autowired
+    private IEmergencyServiceRepo iEmergencyServiceRepo;
 
     @PostMapping("/add")
     public ResponseEntity<EmergencyServiceIdObject> add(@RequestBody EmergencyService emergencyService){
         try{
-            return new ResponseEntity<>(
-                    new EmergencyServiceIdObject(emergencyServiceService.save(emergencyService).getEmergencyService_id()),
-                    HttpStatus.OK);
+            return ResponseEntity.ok(
+                    new EmergencyServiceIdObject(
+                            emergencyServiceService.save(emergencyService).getEmergencyService_id()));
 
         }catch (EmergencyServiceSaveException e){
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error guardando servicio de emergencia");
@@ -38,7 +41,7 @@ public class EmergencyServiceController {
             @PathVariable String countryName){
 
         try{
-            return new ResponseEntity<>(emergencyServiceService.findAll(includeDeleted, countryName), HttpStatus.OK);
+            return ResponseEntity.ok(emergencyServiceService.findAll(includeDeleted, countryName));
 
         }catch(Exception e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
@@ -49,12 +52,12 @@ public class EmergencyServiceController {
     @GetMapping("findId/{id}")
     public ResponseEntity<Optional<EmergencyService>> findId( @PathVariable String id) {
         try{
-            return new ResponseEntity<>(emergencyServiceService.findId(id), HttpStatus.OK);
+            return ResponseEntity.ok(emergencyServiceService.findId(id));
 
         }catch(Exception e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
                     "Error buscando servicio de emergencia con id " + id);
-    }
+        }
     }
 
     @GetMapping("findByCity/{includeDeleted}/{cityName}/{departmentName}/{countryName}")
@@ -65,9 +68,8 @@ public class EmergencyServiceController {
             @PathVariable String countryName){
 
         try{
-            return new ResponseEntity<>(
-                    emergencyServiceService.findByCity(includeDeleted, cityName, departmentName, countryName),
-                    HttpStatus.OK);
+            return ResponseEntity.ok(
+                    emergencyServiceService.findByCity(includeDeleted, cityName, departmentName, countryName));
 
         }catch(Exception e){
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
@@ -83,9 +85,8 @@ public class EmergencyServiceController {
             @PathVariable String countryName){
 
         try{
-            return new ResponseEntity<>(
-                    emergencyServiceService.findByDepartment(includeDeleted, departmentName, countryName),
-                    HttpStatus.OK);
+            return ResponseEntity.ok(
+                    emergencyServiceService.findByDepartment(includeDeleted, departmentName, countryName));
 
         }catch(Exception e){
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
@@ -101,9 +102,8 @@ public class EmergencyServiceController {
                                                        @PathVariable String departmentName,
                                                        @PathVariable String countryName){
         try{
-            return new ResponseEntity<>(
-                    emergencyServiceService.findByName(includeDeleted, name, cityName, departmentName, countryName),
-                    HttpStatus.OK);
+            return ResponseEntity.ok(
+                    emergencyServiceService.findByName(includeDeleted, name, cityName, departmentName, countryName));
 
         }catch(Exception e){
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
@@ -113,14 +113,14 @@ public class EmergencyServiceController {
     }
 
     // Devuelve true si la operación fue exitosa
-    @PatchMapping("logicalDelete/{id}")
-    public ResponseEntity<Boolean> logicalDelete(@PathVariable String id) {
+    @PatchMapping("setDeletion/{id}/{isDeleted}")
+    public ResponseEntity<Boolean> setDeletion(@PathVariable String id, @PathVariable Boolean isDeleted) {
         try{
-            return new ResponseEntity<>(emergencyServiceService.logicalDelete(id), HttpStatus.OK);
+            return ResponseEntity.ok(emergencyServiceService.setDeletion(id, isDeleted));
 
         }catch(Exception e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
-                    "No se pudo realizar el borrado lógico del servicio de emergencia con id " + id);
+                    "No se pudo setear el borrado lógico del servicio de emergencia con id " + id);
         }
     }
 

@@ -23,10 +23,6 @@ public class FormalCaregiverController {
     @PostMapping("/add")
     public ResponseEntity<FormalCaregiverIdObject> add(@RequestBody FormalCaregiver formalCaregiver){
         try{
-            /*return new ResponseEntity<>(
-                    new FormalCaregiverIdObject(formalCaregiverService.save(formalCaregiver).getFormalCaregiver_id()),
-                    HttpStatus.OK);
-*/
             return ResponseEntity.ok(
                     new FormalCaregiverIdObject(formalCaregiverService.save(formalCaregiver).getFormalCaregiver_id()));
 

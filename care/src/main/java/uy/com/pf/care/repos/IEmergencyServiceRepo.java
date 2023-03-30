@@ -10,26 +10,31 @@ import java.util.List;
 public interface IEmergencyServiceRepo extends MongoRepository<EmergencyService, String> {
 
     //**** Busquedas por indice ****
-    EmergencyService findByNameAndCityNameAndDepartmentNameAndCountryName(String name,
-                                                                          String cityName,
-                                                                          String departmentName,
-                                                                          String countryName);
+    EmergencyService findByCountryNameAndDepartmentNameAndCityNameAndName(
+            String countryName,
+            String departmentName,
+            String cityName,
+            String name);
+    List<EmergencyService> findByCountryNameAndDepartmentNameAndCityNameOrderByName(
+            String countryName,
+            String departmentName,
+            String cityName);
+    List<EmergencyService> findByCountryNameAndDepartmentNameOrderByName(String countryName, String departmentName);
+    List<EmergencyService> findByCountryNameOrderByName(String countryName);
 
     //**** Busquedas sin indice ****
 
-    EmergencyService findByNameAndCityNameAndDepartmentNameAndCountryNameAndDeletedFalse(String name,
-                                                                                         String cityName,
-                                                                                         String departmentName,
-                                                                                         String countryName);
-    List<EmergencyService> findByCityNameAndDepartmentNameAndCountryName(String cityName,
-                                                                         String departmentName,
-                                                                         String countryName);
-    List<EmergencyService> findByCityNameAndDepartmentNameAndCountryNameAndDeletedFalse(String cityName,
-                                                                                        String departmentName,
-                                                                                        String countryName);
-    List<EmergencyService> findByDepartmentNameAndCountryName(String departmentName, String countryName);
-    List<EmergencyService> findByDepartmentNameAndCountryNameAndDeletedFalse(String departmentName, String countryName);
-    List<EmergencyService> findByCountryName(String countryName);
-    List<EmergencyService> findByCountryNameAndDeletedFalse(String countryName);
+    EmergencyService findByCountryNameAndDepartmentNameAndCityNameAndNameAndDeletedFalse(
+            String countryName,
+            String departmentName,
+            String cityName,
+            String name);
+    List<EmergencyService> findByCountryNameAndDepartmentNameAndCityNameAndDeletedFalseOrderByName(
+            String countryName,
+            String departmentName,
+            String cityName);
+    List<EmergencyService> findByCountryNameAndDepartmentNameAndDeletedFalseOrderByName(
+            String countryName, String departmentName);
+    List<EmergencyService> findByCountryNameAndDeletedFalseOrderByName(String countryName);
 
 }

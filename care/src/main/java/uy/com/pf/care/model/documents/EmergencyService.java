@@ -12,8 +12,8 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Document("EmergencyServices")
 @CompoundIndexes({
     @CompoundIndex(
-        def = "{'name':1, 'cityName':1, 'departmentName':1, 'countryName':1}",
-        name = "name_city_department_country",
+        def = "{'countryName':1, 'departmentName':1, 'cityName':1, 'name':1}",
+        name = "country_department_city_name",
         unique = true
     )
 })
