@@ -1,6 +1,7 @@
 package uy.com.pf.care.services;
 
 import uy.com.pf.care.model.documents.FormalCaregiver;
+import uy.com.pf.care.model.objects.DayTimeRangeObject;
 
 import java.util.List;
 import java.util.Optional;
@@ -33,6 +34,12 @@ public interface IFormalCaregiverService {
             String countryName);
     List<FormalCaregiver> findByPriceRange(
             Integer maxPrice,
+            String interestNeighborhoodName,
+            String interestCityName,
+            String interestDepartmentName,
+            String countryName);
+    List<FormalCaregiver> findByDateTimeRange(
+            List<DayTimeRangeObject> dayTimeRange,
             String interestNeighborhoodName,
             String interestCityName,
             String interestDepartmentName,

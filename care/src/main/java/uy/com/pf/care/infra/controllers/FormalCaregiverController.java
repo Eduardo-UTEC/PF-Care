@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import uy.com.pf.care.exceptions.FormalCaregiverSaveException;
 import uy.com.pf.care.model.documents.FormalCaregiver;
+import uy.com.pf.care.model.objects.DayTimeRangeObject;
 import uy.com.pf.care.model.objects.FormalCaregiverIdObject;
 import uy.com.pf.care.services.IFormalCaregiverService;
 
@@ -203,6 +204,30 @@ public class FormalCaregiverController {
         }catch(Exception e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
                     "Error buscando cuidadores formales por rango de precios");
+        }
+    }
+
+    @GetMapping(
+            "findByDateTimeRange/" +
+                    "{dayTimeRange}/" +
+                    "{interestNeighborhoodName}/" +
+                    "{interestCityName}/" +
+                    "{interestDepartmentName}/" +
+                    "{countryName}")
+    public ResponseEntity<List<FormalCaregiver>> findByDateTimeRange(
+            @PathVariable List<DayTimeRangeObject> dayTimeRange, //TODO: ver como pasar el argmuento en el body
+            @PathVariable String interestNeighborhoodName,
+            @PathVariable String interestCityName,
+            @PathVariable String interestDepartmentName,
+            @PathVariable String countryName){
+
+        try{
+            return ResponseEntity.ok(formalCaregiverService.findByDateTimeRange(
+                    dayTimeRange, interestNeighborhoodName, interestCityName, interestDepartmentName, countryName));
+
+        }catch(Exception e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
+                    "Error buscando cuidadores formales por rango de dias/horas");
         }
     }
 

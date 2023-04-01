@@ -11,8 +11,7 @@ import uy.com.pf.care.model.enums.FormalCaregiversEnum;
 @AllArgsConstructor
 @NoArgsConstructor
 public class FormalCaregiverObject extends CarerObject{
-    private FormalCaregiversEnum type;  //Ej: servicio de acompañantes    / enfermero
-    private Integer priceHour;          // Precio por hora en moneda nacional
-
+    private FormalCaregiversEnum type;
+    private Integer priceHour;
 
 }

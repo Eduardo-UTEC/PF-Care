@@ -8,6 +8,7 @@ import org.springframework.web.client.RestTemplate;
 import uy.com.pf.care.exceptions.FormalCaregiverSaveException;
 import uy.com.pf.care.infra.config.ParamConfig;
 import uy.com.pf.care.model.documents.FormalCaregiver;
+import uy.com.pf.care.model.objects.DayTimeRangeObject;
 import uy.com.pf.care.model.objects.NeighborhoodObject;
 import uy.com.pf.care.repos.IFormalCaregiverRepo;
 
@@ -16,6 +17,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 @Service
 @Log
@@ -238,6 +240,48 @@ public class FormalCaregiverService implements IFormalCaregiverService {
                 false, interestNeighborhoodName, interestCityName, interestDepartmentName, countryName)
                 .stream().filter(formalCaregiver -> formalCaregiver.getPriceHour() <= maxPrice).toList();
     }
+
+    @Override
+    public List<FormalCaregiver> findByDateTimeRange(
+            List<DayTimeRangeObject> dayTimeRange,
+            String interestNeighborhoodName, // Si se omite, se asumen todos los barrios.
+            String interestCityName,
+            String interestDepartmentName,
+            String countryName){
+
+        List<FormalCaregiver> formalCaregiversList = new ArrayList<>();
+
+        if (interestNeighborhoodName.isEmpty())
+             formalCaregiversList = this.findByInterestZones_City(
+                    true, false, interestCityName, interestDepartmentName, countryName);
+        else
+            formalCaregiversList = this.findByInterestZones_Neighborhood(
+                    false, interestNeighborhoodName, interestCityName, interestDepartmentName, countryName);
+
+        if (dayTimeRange.isEmpty()) // Todos los dias y horarios
+            return formalCaregiversList;
+
+        return formalCaregiversList.stream().filter(formalCaregiver -> {
+            if (formalCaregiver.getDayTimeRange().isEmpty())
+                return true;
+            return formalCaregiver.getDayTimeRange().stream().anyMatch(formalCaregiverRange -> {
+                return dayTimeRange.stream().anyMatch(searchRange -> {
+                    if (formalCaregiverRange.getDay().equals(searchRange.getDay())){
+                        if (formalCaregiverRange.getTimeRange().isEmpty())
+                            return true;
+                        return formalCaregiverRange.getTimeRange().stream().anyMatch(formalCaregiverSubRange -> {
+                            return searchRange.getTimeRange().stream().anyMatch(searchSubRange ->
+                                     formalCaregiverSubRange.getStartTime().isAfter(searchSubRange.getStartTime()) &&
+                                     formalCaregiverSubRange.getEndTime().isBefore(searchSubRange.getEndTime())
+                                     //formalCaregiverSubRange.getEndTime().toSecondOfDay() > 0
+                            );
+                        });
+                    }
+                    return false;
+                });
+            });
+        }).toList();
+    };
 
     private String getStartUrl(){
         return paramConfig.getProtocol() + "://" + paramConfig.getSocket() + "/";
