@@ -209,17 +209,16 @@ public class FormalCaregiverController {
 
     @GetMapping(
             "findByDateTimeRange/" +
-                    "{dayTimeRange}/" +
                     "{interestNeighborhoodName}/" +
                     "{interestCityName}/" +
                     "{interestDepartmentName}/" +
                     "{countryName}")
     public ResponseEntity<List<FormalCaregiver>> findByDateTimeRange(
-            @PathVariable List<DayTimeRangeObject> dayTimeRange, //TODO: ver como pasar el argmuento en el body
             @PathVariable String interestNeighborhoodName,
             @PathVariable String interestCityName,
             @PathVariable String interestDepartmentName,
-            @PathVariable String countryName){
+            @PathVariable String countryName,
+            @RequestBody List<DayTimeRangeObject> dayTimeRange){
 
         try{
             return ResponseEntity.ok(formalCaregiverService.findByDateTimeRange(

@@ -266,14 +266,16 @@ public class FormalCaregiverService implements IFormalCaregiverService {
                 return true;
             return formalCaregiver.getDayTimeRange().stream().anyMatch(formalCaregiverRange -> {
                 return dayTimeRange.stream().anyMatch(searchRange -> {
-                    if (formalCaregiverRange.getDay().equals(searchRange.getDay())){
+                    if (formalCaregiverRange.getDay().ordinal() ==  searchRange.getDay().ordinal()){
                         if (formalCaregiverRange.getTimeRange().isEmpty())
                             return true;
                         return formalCaregiverRange.getTimeRange().stream().anyMatch(formalCaregiverSubRange -> {
                             return searchRange.getTimeRange().stream().anyMatch(searchSubRange ->
-                                     formalCaregiverSubRange.getStartTime().isAfter(searchSubRange.getStartTime()) &&
-                                     formalCaregiverSubRange.getEndTime().isBefore(searchSubRange.getEndTime())
-                                     //formalCaregiverSubRange.getEndTime().toSecondOfDay() > 0
+                                (formalCaregiverSubRange.getStartTime().compareTo(searchSubRange.getStartTime()) < 0 ||
+                                formalCaregiverSubRange.getStartTime().compareTo(searchSubRange.getStartTime()) == 0)
+                                &&
+                                (formalCaregiverSubRange.getEndTime().compareTo(searchSubRange.getEndTime()) > 0 ||
+                                formalCaregiverSubRange.getEndTime().compareTo(searchSubRange.getEndTime()) == 0)
                             );
                         });
                     }
