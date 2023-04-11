@@ -16,7 +16,6 @@ public class HealthProvider {
     @Id
     private String healthProvider_id;
     private String name;
-    //private boolean used;       // Si está siendo utilizado, no se puede eliminar físicamente
     private Boolean deleted;
 
     private String cityName;

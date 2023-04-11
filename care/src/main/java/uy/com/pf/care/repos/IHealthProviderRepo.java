@@ -14,6 +14,7 @@ public interface IHealthProviderRepo extends MongoRepository<HealthProvider, Str
     List<HealthProvider> findByDepartmentNameAndCountryName(String departmentName, String countryName);
 
     // Proveedores de Salud de una Ciudad+Departamento+Pais
-    List<HealthProvider> findByCityNameAndDepartmentNameAndCountryName(String cityName, String departmentName, String countryName);
+    List<HealthProvider> findByCityNameAndDepartmentNameAndCountryName(
+            String cityName, String departmentName, String countryName);
 
 }

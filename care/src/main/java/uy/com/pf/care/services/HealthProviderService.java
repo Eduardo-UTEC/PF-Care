@@ -4,6 +4,7 @@ import lombok.extern.java.Log;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import uy.com.pf.care.exceptions.HealthProviderSaveException;
+import uy.com.pf.care.model.documents.FormalCaregiver;
 import uy.com.pf.care.model.documents.HealthProvider;
 import uy.com.pf.care.repos.IHealthProviderRepo;
 
@@ -51,6 +52,17 @@ public class HealthProviderService implements IHealthProviderService {
     @Override
     public List<HealthProvider> findByDepartment(String departmentName, String countryName) {
         return healthProviderRepo.findByDepartmentNameAndCountryName(departmentName, countryName);
+    }
+
+    @Override
+    public Boolean setDeletion(String id, Boolean isDeleted) {
+        Optional<HealthProvider> healthProvider = this.findId(id);
+        if (healthProvider.isPresent()) {
+            healthProvider.get().setDeleted(isDeleted);
+            this.save(healthProvider.get());
+            return true;
+        }
+        return false;
     }
 
 }

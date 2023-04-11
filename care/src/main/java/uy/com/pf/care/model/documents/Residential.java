@@ -19,9 +19,7 @@ public class Residential {
     private String name;
     private String telephone;
     private AddressObject address;
-
-    //private boolean used;       // Si está siendo utilizado, no se puede eliminar físicamente
-    private Boolean deleted;    // Borrado lógico
+    private Boolean deleted;
 
     private String cityName;
     private String departmentName;

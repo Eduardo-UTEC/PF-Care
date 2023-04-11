@@ -7,7 +7,7 @@ import java.util.Optional;
 
 public interface IPatientService {
     Patient save(Patient patient);
-    Boolean logicalDelete(String id);
+    Boolean setDeletion(String id, Boolean isDeleted);
 
     //**** Busquedas con indice ****
     // Nota: los metodos que comienzan con "findWithIndex_" implica que buscan por los campos del indice, y no

@@ -16,7 +16,6 @@ public class VolunteerActivity {
     @Id
     private String VolunteerActivity_id;
     private String name;
-    //private boolean used;       // Si está siendo utilizado, no se puede eliminar físicamente
-    private Boolean deleted;    // Borrado lógico
+    private Boolean deleted;
 
 }

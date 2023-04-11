@@ -79,4 +79,16 @@ public class ResidentialController {
         }
     }
 
+    // Devuelve true si la operación fue exitosa
+    @PatchMapping("setDeletion/{id}/{isDeleted}")
+    public ResponseEntity<Boolean> setDeletion(@PathVariable String id, @PathVariable Boolean isDeleted) {
+        try{
+            return ResponseEntity.ok(residentialService.setDeletion(id, isDeleted));
+
+        }catch(Exception e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
+                    "No se pudo setear el borrado lógico del residencial con id " + id);
+        }
+    }
+
 }

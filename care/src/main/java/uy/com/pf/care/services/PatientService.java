@@ -4,6 +4,7 @@ import lombok.extern.java.Log;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import uy.com.pf.care.exceptions.PatientSaveException;
+import uy.com.pf.care.model.documents.HealthProvider;
 import uy.com.pf.care.model.documents.Patient;
 import uy.com.pf.care.repos.IPatientRepo;
 
@@ -31,6 +32,17 @@ public class PatientService implements IPatientService{
             log.warning("*** ERROR GUARDANDO PACIENTE: " + e);
             throw new PatientSaveException(patient);
         }
+    }
+
+    @Override
+    public Boolean setDeletion(String id, Boolean isDeleted) {
+        Optional<Patient> patient = this.findId(id);
+        if (patient.isPresent()) {
+            patient.get().setDeleted(isDeleted);
+            this.save(patient.get());
+            return true;
+        }
+        return false;
     }
 
     @Override
@@ -86,16 +98,6 @@ public class PatientService implements IPatientService{
             return patientRepo.findByZone_DepartmentNameAndZone_CountryNameAndDeletedFalse(departmentName, countryName);
     }
 
-    @Override
-    public Boolean logicalDelete(String id) {
-        Optional<Patient> patient = this.findId(id);
-        if (patient.isPresent()) {
-            patient.get().setDeleted(true);
-            this.save(patient.get());
-            return true;
-        }
-        return false;
-    }
 
 
 /*

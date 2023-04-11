@@ -4,6 +4,7 @@ import lombok.extern.java.Log;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import uy.com.pf.care.exceptions.ResidentialSaveException;
+import uy.com.pf.care.model.documents.HealthProvider;
 import uy.com.pf.care.model.documents.Residential;
 import uy.com.pf.care.repos.IResidentialRepo;
 
@@ -24,13 +25,24 @@ public class ResidentialService implements IResidentialService{
     public Residential save(Residential residential) {
         try{
             Residential newResidential = residentialRepo.save(residential);
-            log.info("*** Resiencial guardada con exito: " + LocalDateTime.now());
+            log.info("*** Resiencial guardado con exito: " + LocalDateTime.now());
             return newResidential;
 
         }catch(Exception e){
             log.warning("*** ERROR GUARDANDO RESIDENCIAL: " + e);
             throw new ResidentialSaveException(residential);
         }
+    }
+
+    @Override
+    public Boolean setDeletion(String id, Boolean isDeleted) {
+        Optional<Residential> residential = this.findId(id);
+        if (residential.isPresent()) {
+            residential.get().setDeleted(isDeleted);
+            this.save(residential.get());
+            return true;
+        }
+        return false;
     }
 
     @Override

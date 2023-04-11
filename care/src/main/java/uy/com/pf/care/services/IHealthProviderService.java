@@ -11,5 +11,5 @@ public interface IHealthProviderService {
     List<HealthProvider> findAll(String countryName);
     List<HealthProvider> findByCity(String cityName, String departmentName, String countryName);
     List<HealthProvider> findByDepartment(String departmentName, String countryName);
-
+    Boolean setDeletion(String id, Boolean isDeleted);
 }

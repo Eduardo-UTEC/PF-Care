@@ -130,17 +130,16 @@ public class PatientController {
     }
 
     // Devuelve true si la operación fue exitosa
-    @PatchMapping("logicalDelete/{id}")
-    public ResponseEntity<Boolean> logicalDelete(@PathVariable String id) {
+    @PatchMapping("setDeletion/{id}/{isDeleted}")
+    public ResponseEntity<Boolean> setDeletion(@PathVariable String id, @PathVariable Boolean isDeleted) {
         try{
-            return ResponseEntity.ok(patientService.logicalDelete(id));
+            return ResponseEntity.ok(patientService.setDeletion(id, isDeleted));
 
         }catch(Exception e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
-                    "No se pudo realizar el borrado lógico del paciente con id " + id);
+                    "No se pudo setear el borrado lógico del paciente con id " + id);
         }
     }
-
 
     /*@GetMapping("findName1Like/{name1}/{cityName}/{departmentName}/{countryName}")
     public ResponseEntity<List<Patient>> findName1Like( @PathVariable String name1,
