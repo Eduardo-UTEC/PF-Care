@@ -23,9 +23,8 @@ public class HealthProviderController {
     @PostMapping("/add")
     public ResponseEntity<HealthProviderIdObject> add(@RequestBody HealthProvider healthProvider){
         try{
-            return new ResponseEntity<>(
-                    new HealthProviderIdObject(healthProviderService.save(healthProvider).getHealthProvider_id()),
-                    HttpStatus.OK);
+            return ResponseEntity.ok(
+                    new HealthProviderIdObject(healthProviderService.save(healthProvider).getHealthProvider_id()));
 
         }catch (HealthProviderSaveException e){
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error guardando proveedor de salud");
@@ -35,7 +34,7 @@ public class HealthProviderController {
     @GetMapping("findId/{id}")
     public ResponseEntity<Optional<HealthProvider>> findId(@PathVariable String id) {
         try{
-            return new ResponseEntity<>(healthProviderService.findId(id), HttpStatus.OK);
+            return ResponseEntity.ok(healthProviderService.findId(id));
 
         }catch(Exception e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
@@ -46,7 +45,7 @@ public class HealthProviderController {
     @GetMapping("findAll/{countryName}")
     public ResponseEntity<List<HealthProvider>> findAll(@PathVariable String countryName ){
         try{
-            return new ResponseEntity<>(healthProviderService.findAll(countryName), HttpStatus.OK);
+            return ResponseEntity.ok(healthProviderService.findAll(countryName));
 
         }catch(Exception e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
@@ -59,9 +58,7 @@ public class HealthProviderController {
                                                            @PathVariable String departmentName,
                                                            @PathVariable String countryName){
         try{
-            return new ResponseEntity<>(
-                    healthProviderService.findByCity(cityName, departmentName, countryName),
-                    HttpStatus.OK);
+            return ResponseEntity.ok(healthProviderService.findByCity(cityName, departmentName, countryName));
 
         }catch(Exception e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
@@ -74,9 +71,7 @@ public class HealthProviderController {
     public ResponseEntity<List<HealthProvider>> findByDepartment(@PathVariable String departmentName,
                                                                  @PathVariable String countryName){
         try{
-            return new ResponseEntity<>(
-                    healthProviderService.findByDepartment(departmentName, countryName),
-                    HttpStatus.OK);
+            return ResponseEntity.ok(healthProviderService.findByDepartment(departmentName, countryName));
 
         }catch(Exception e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,

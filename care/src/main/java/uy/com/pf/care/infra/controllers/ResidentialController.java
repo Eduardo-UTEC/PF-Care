@@ -23,9 +23,7 @@ public class ResidentialController {
     @PostMapping("/add")
     public ResponseEntity<ResidentialIdObject> add(@RequestBody Residential residential){
         try{
-            return new ResponseEntity<>(
-                    new ResidentialIdObject(residentialService.save(residential).getResidential_id()),
-                    HttpStatus.OK);
+            return ResponseEntity.ok(new ResidentialIdObject(residentialService.save(residential).getResidential_id()));
 
         }catch (ResidentialSaveException e){
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error guardando residencial");
@@ -35,7 +33,7 @@ public class ResidentialController {
     @GetMapping("findAll/{countryName}")
     public ResponseEntity<List<Residential>> findAll(@PathVariable String countryName){
         try{
-            return new ResponseEntity<>(residentialService.findByCountry(countryName), HttpStatus.OK);
+            return ResponseEntity.ok(residentialService.findByCountry(countryName));
 
         }catch(Exception e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
@@ -46,7 +44,7 @@ public class ResidentialController {
     @GetMapping("findId/{id}")
     public ResponseEntity<Optional<Residential>> findId(@PathVariable String id) {
         try{
-            return new ResponseEntity<>(residentialService.findId(id), HttpStatus.OK);
+            return ResponseEntity.ok(residentialService.findId(id));
 
         }catch(Exception e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
@@ -58,7 +56,7 @@ public class ResidentialController {
     public ResponseEntity<List<Residential>> findByDepartment(@PathVariable String departmentName,
                                                               @PathVariable String countryName){
         try{
-            return new ResponseEntity<>(residentialService.findByDepartment(departmentName, countryName), HttpStatus.OK);
+            return ResponseEntity.ok(residentialService.findByDepartment(departmentName, countryName));
 
         }catch(Exception e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
@@ -72,9 +70,7 @@ public class ResidentialController {
                                                         @PathVariable String departmentName,
                                                         @PathVariable String countryName){
         try{
-            return new ResponseEntity<>(
-                    residentialService.findByCity(cityName, departmentName, countryName),
-                    HttpStatus.OK);
+            return ResponseEntity.ok(residentialService.findByCity(cityName, departmentName, countryName));
 
         }catch(Exception e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,

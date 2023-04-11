@@ -22,9 +22,7 @@ public class PatientController {
     @PostMapping("/add")
     public ResponseEntity<PatientIdObject> add(@RequestBody Patient patient){
         try{
-            return new ResponseEntity<>(
-                    new PatientIdObject(patientService.save(patient).getPatient_id()),
-                    HttpStatus.OK);
+            return ResponseEntity.ok(new PatientIdObject(patientService.save(patient).getPatient_id()));
 
         }catch (PatientSaveException e){
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error guardando paciente");
@@ -34,7 +32,7 @@ public class PatientController {
     @GetMapping("findAll/{includeDeleted}/{countryName}")
     public ResponseEntity<List<Patient>> findAll(@PathVariable Boolean includeDeleted, @PathVariable String countryName){
         try{
-            return new ResponseEntity<>(patientService.findAll(includeDeleted, countryName), HttpStatus.OK);
+            return ResponseEntity.ok(patientService.findAll(includeDeleted, countryName));
 
         }catch(Exception e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
@@ -45,8 +43,8 @@ public class PatientController {
     @GetMapping("findId/{id}")
     public ResponseEntity<Optional<Patient>> findId(@PathVariable String id) {
         try{
-            return new ResponseEntity<>(patientService.findId(id), HttpStatus.OK)
-                    ;
+            return ResponseEntity.ok(patientService.findId(id));
+
         }catch(Exception e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
                     "Error buscando paciente con id " + id);
@@ -58,8 +56,7 @@ public class PatientController {
             @PathVariable Integer document,
             @PathVariable String countryName) {
         try{
-            return new ResponseEntity<>(patientService.findWithIndex_IdentificationDocument(
-                    document, countryName), HttpStatus.OK);
+            return ResponseEntity.ok(patientService.findWithIndex_IdentificationDocument(document, countryName));
 
         }catch(Exception e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
@@ -78,9 +75,8 @@ public class PatientController {
                                                              @PathVariable String countryName,
                                                              @PathVariable(required = false) String neighborhoodName) {
         try{
-            return new ResponseEntity<>(
-                    patientService.findWithIndex_Name1(name1, cityName, departmentName, countryName, neighborhoodName),
-                    HttpStatus.OK);
+            return ResponseEntity.ok(
+                    patientService.findWithIndex_Name1(name1, cityName, departmentName, countryName, neighborhoodName));
 
         }catch(Exception e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
@@ -99,9 +95,7 @@ public class PatientController {
                                                     @PathVariable String departmentName,
                                                     @PathVariable String countryName) {
         try{
-            return new ResponseEntity<>(
-                    patientService.findByCity(includeDeleted, cityName, departmentName,countryName),
-                    HttpStatus.OK);
+            return ResponseEntity.ok(patientService.findByCity(includeDeleted, cityName, departmentName,countryName));
 
         }catch(Exception e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
@@ -115,9 +109,7 @@ public class PatientController {
                                                           @PathVariable String departmentName,
                                                           @PathVariable String countryName) {
         try{
-            return new ResponseEntity<>(
-                    patientService.findByDepartment(includeDeleted, departmentName,countryName),
-                    HttpStatus.OK);
+            return ResponseEntity.ok(patientService.findByDepartment(includeDeleted, departmentName,countryName));
 
         }catch(Exception e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
@@ -129,8 +121,7 @@ public class PatientController {
     @GetMapping("findWithIndex_mail/{mail}")
     public ResponseEntity<Optional<Patient>> findWithIndex_Mail(@PathVariable String mail) {
         try{
-            return new ResponseEntity<>(
-                    patientService.findWithIndex_Mail(mail), HttpStatus.OK);
+            return ResponseEntity.ok(patientService.findWithIndex_Mail(mail));
 
         }catch(Exception e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
@@ -142,7 +133,7 @@ public class PatientController {
     @PatchMapping("logicalDelete/{id}")
     public ResponseEntity<Boolean> logicalDelete(@PathVariable String id) {
         try{
-            return new ResponseEntity<>(patientService.logicalDelete(id), HttpStatus.OK);
+            return ResponseEntity.ok(patientService.logicalDelete(id));
 
         }catch(Exception e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
@@ -157,9 +148,8 @@ public class PatientController {
                                                         @PathVariable String departmentName,
                                                         @PathVariable String countryName) {
         try{
-            return new ResponseEntity<>(
-                    patientService.findName1Like(name1, cityName, departmentName,countryName),
-                    HttpStatus.OK);
+            return ResponseEntity.ok(
+                    patientService.findName1Like(name1, cityName, departmentName,countryName));
 
         }catch(Exception e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
@@ -174,9 +164,8 @@ public class PatientController {
                                                            @PathVariable String departmentName,
                                                            @PathVariable String countryName) {
         try{
-            return new ResponseEntity<>(
-                    patientService.findSurname1Like(surname1, cityName, departmentName,countryName),
-                    HttpStatus.OK);
+            return ResponseEntity.ok(
+                    patientService.findSurname1Like(surname1, cityName, departmentName,countryName));
 
         }catch(Exception e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
@@ -192,9 +181,8 @@ public class PatientController {
                                                                     @PathVariable String departmentName,
                                                                     @PathVariable String countryName) {
         try{
-            return new ResponseEntity<>(
-                    patientService.findName1Surname1Likes(name1, surname1, cityName, departmentName,countryName),
-                    HttpStatus.OK);
+            return ResponseEntity.ok(
+                    patientService.findName1Surname1Likes(name1, surname1, cityName, departmentName,countryName));
 
         }catch(Exception e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,

@@ -20,7 +20,7 @@ public class ReadConfigController {
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<String> read() {
         try {
-            return new ResponseEntity<>(readConfig(), HttpStatus.OK);
+            return ResponseEntity.ok(readConfig());
 
         } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,

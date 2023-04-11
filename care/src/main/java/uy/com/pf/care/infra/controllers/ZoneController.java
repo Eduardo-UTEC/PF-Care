@@ -24,9 +24,7 @@ public class ZoneController {
     @PostMapping("/add")
     public ResponseEntity<ZoneIdObject> add(@RequestBody Zone zone){
         try{
-            return new ResponseEntity<>(
-                    new ZoneIdObject(zoneService.save(zone).getZone_id()),
-                    HttpStatus.OK);
+            return ResponseEntity.ok(new ZoneIdObject(zoneService.save(zone).getZone_id()));
 
         }catch (ZoneSaveException e){
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error guardando zona");
@@ -37,7 +35,7 @@ public class ZoneController {
     public ResponseEntity<List<Zone>> findAllZones(@PathVariable Boolean includeDeleted,
                                                 @PathVariable String countryName){
         try{
-            return new ResponseEntity<>(zoneService.findAllZones(includeDeleted, countryName), HttpStatus.OK);
+            return ResponseEntity.ok(zoneService.findAllZones(includeDeleted, countryName));
 
         }catch(Exception e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
@@ -48,7 +46,7 @@ public class ZoneController {
     @GetMapping("findId/{id}")
     public ResponseEntity<Optional<Zone>> findId(@PathVariable String id) {
         try{
-            return new ResponseEntity<>(zoneService.findId(id), HttpStatus.OK);
+            return ResponseEntity.ok(zoneService.findId(id));
 
         }catch(Exception e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
@@ -62,9 +60,8 @@ public class ZoneController {
                                                                         @PathVariable String departmentName,
                                                                         @PathVariable String countryName){
         try{
-            return new ResponseEntity<>(
-                    zoneService.findAllNeighborhoods(includeDeleted, cityName, departmentName, countryName),
-                    HttpStatus.OK);
+            return ResponseEntity.ok(
+                    zoneService.findAllNeighborhoods(includeDeleted, cityName, departmentName, countryName));
 
         }catch(Exception e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
@@ -77,9 +74,7 @@ public class ZoneController {
                                                       @PathVariable String departmentName,
                                                       @PathVariable String countryName){
         try{
-            return new ResponseEntity<>(
-                    zoneService.findAllCities(includeDeleted, departmentName, countryName),
-                    HttpStatus.OK);
+            return ResponseEntity.ok(zoneService.findAllCities(includeDeleted, departmentName, countryName));
 
         }catch(Exception e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
@@ -91,7 +86,7 @@ public class ZoneController {
     public ResponseEntity<List<String>> findAllDepartment(@PathVariable Boolean includeDeleted,
                                                           @PathVariable String countryName){
         try{
-            return new ResponseEntity<>(zoneService.findAllDepartments(includeDeleted, countryName), HttpStatus.OK);
+            return ResponseEntity.ok(zoneService.findAllDepartments(includeDeleted, countryName));
 
         }catch(Exception e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
@@ -102,7 +97,7 @@ public class ZoneController {
     @GetMapping("findAllCountries/{includeDeleted}")
     public ResponseEntity<List<String>> findAllCountries(@PathVariable Boolean includeDeleted){
         try{
-            return new ResponseEntity<>(zoneService.findAllCountries(includeDeleted), HttpStatus.OK);
+            return ResponseEntity.ok(zoneService.findAllCountries(includeDeleted));
 
         }catch(Exception e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error buscando países");
@@ -113,7 +108,6 @@ public class ZoneController {
     @PatchMapping("setDeletion/{id}/{isDeleted}")
     public ResponseEntity<Boolean> setDeletion(@PathVariable String id, @PathVariable Boolean isDeleted) {
         try{
-            //return new ResponseEntity<>(formalCaregiverService.setDeletion(id, isDeleted), HttpStatus.OK);
             return ResponseEntity.ok(zoneService.setDeletion(id, isDeleted));
 
         }catch(Exception e) {
