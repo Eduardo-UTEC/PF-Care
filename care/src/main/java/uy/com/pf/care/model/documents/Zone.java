@@ -1,6 +1,5 @@
 package uy.com.pf.care.model.documents;
 
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -9,7 +8,6 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import uy.com.pf.care.model.objects.ZoneObject;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 

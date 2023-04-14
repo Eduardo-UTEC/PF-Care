@@ -10,6 +10,7 @@ import org.springframework.data.mongodb.core.index.CompoundIndexes;
 import org.springframework.data.mongodb.core.mapping.Document;
 import uy.com.pf.care.model.objects.FormalCaregiverObject;
 import uy.com.pf.care.model.objects.InterestZonesObject;
+import uy.com.pf.care.model.objects.RatingObject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,6 +44,7 @@ public class FormalCaregiver extends FormalCaregiverObject {
     private String mail;
     private Boolean available;  // Si es False, implica que sus servicios no estan disponibles momentáneamente
     private String comments;
+    private List<RatingObject> ratings;
     private Boolean deleted;
 
     /* Zonas de interés del Cuidador Formal:

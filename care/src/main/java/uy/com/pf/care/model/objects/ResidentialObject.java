@@ -11,5 +11,6 @@ import lombok.ToString;
 @ToString
 public class ResidentialObject {
     private String name;
+    // Se guarda el Id para evitar duplicar datos de city+department+country
     private String residentialId;
 }
