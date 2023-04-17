@@ -57,10 +57,10 @@ public class FormalCaregiverController {
         }
     }
 
-    @GetMapping("findByMail/{mail}")
+    @GetMapping("findMail/{mail}")
     public ResponseEntity<FormalCaregiver> findByMail(@PathVariable String mail) {
         try{
-            return ResponseEntity.ok(formalCaregiverService.findWithIndex_Mail(mail));
+            return ResponseEntity.ok(formalCaregiverService.findMail(mail));
 
         }catch(Exception e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
@@ -68,14 +68,14 @@ public class FormalCaregiverController {
         }
     }
 
-    @GetMapping("findByName/{includeDeleted}/{name}/{countryName}")
-    public ResponseEntity<List<FormalCaregiver>> findByName(
+    @GetMapping("findName/{includeDeleted}/{name}/{countryName}")
+    public ResponseEntity<List<FormalCaregiver>> findName(
             @PathVariable Boolean includeDeleted,
             @PathVariable String name,
             @PathVariable String countryName){
 
         try{
-            return ResponseEntity.ok(formalCaregiverService.findWithIndex_Name(includeDeleted, name, countryName));
+            return ResponseEntity.ok(formalCaregiverService.findName(includeDeleted, countryName, name));
 
         }catch(Exception e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
@@ -83,14 +83,14 @@ public class FormalCaregiverController {
         }
     }
 
-    @GetMapping("findByNameLike/{includeDeleted}/{name}/{countryName}")
-    public ResponseEntity<List<FormalCaregiver>> findByNameLike(
+    @GetMapping("findNameLike/{includeDeleted}/{name}/{countryName}")
+    public ResponseEntity<List<FormalCaregiver>> findNameLike(
             @PathVariable Boolean includeDeleted,
             @PathVariable String name,
             @PathVariable String countryName){
 
         try{
-            return ResponseEntity.ok(formalCaregiverService.findByNameLike(includeDeleted, name, countryName));
+            return ResponseEntity.ok(formalCaregiverService.findNameLike(includeDeleted, countryName, name));
 
         }catch(Exception e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
@@ -123,13 +123,13 @@ public class FormalCaregiverController {
     }
 
     @GetMapping(
-            "findByInterestZones_Neighborhood/" +
+            "findInterestZones_Neighborhood/" +
             "{includeDeleted}/" +
             "{interestNeighborhoodName}/" +
             "{interestCityName}/" +
             "{interestDepartmentName}/" +
             "{countryName}")
-    public ResponseEntity<List<FormalCaregiver>> findByInterestZones_Neighborhood(
+    public ResponseEntity<List<FormalCaregiver>> findInterestZones_Neighborhood(
             @PathVariable Boolean includeDeleted,
             @PathVariable String interestNeighborhoodName,
             @PathVariable String interestCityName,
@@ -137,7 +137,7 @@ public class FormalCaregiverController {
             @PathVariable String countryName){
 
         try{
-            return ResponseEntity.ok(formalCaregiverService.findByInterestZones_Neighborhood(
+            return ResponseEntity.ok(formalCaregiverService.findInterestZones_Neighborhood(
                     includeDeleted,
                     interestNeighborhoodName,
                     interestCityName,
@@ -150,14 +150,14 @@ public class FormalCaregiverController {
                             " (" + interestCityName+ ", " + interestDepartmentName + ", " + countryName + ")");
         }
     }
-    @GetMapping("findByInterestZones_City/{includeDeleted}/{interestCityName}/{interestDepartmentName}/{countryName}")
-    public ResponseEntity<List<FormalCaregiver>> findByInterestZones_City(
+    @GetMapping("findInterestZones_City/{includeDeleted}/{interestCityName}/{interestDepartmentName}/{countryName}")
+    public ResponseEntity<List<FormalCaregiver>> findInterestZones_City(
             @PathVariable Boolean includeDeleted,
             @PathVariable String interestCityName,
             @PathVariable String interestDepartmentName,
             @PathVariable String countryName){
         try{
-            return ResponseEntity.ok(formalCaregiverService.findByInterestZones_City(
+            return ResponseEntity.ok(formalCaregiverService.findInterestZones_City(
                     true, includeDeleted, interestCityName, interestDepartmentName, countryName));
 
         }catch(Exception e) {
@@ -166,14 +166,14 @@ public class FormalCaregiverController {
                             interestDepartmentName + ", " + countryName + ")");
         }
     }
-    @GetMapping("findByInterestZones_Department/{includeDeleted}/{interestDepartmentName}/{countryName}")
-    public ResponseEntity<List<FormalCaregiver>> findByInterestZones_Department(
+    @GetMapping("findInterestZones_Department/{includeDeleted}/{interestDepartmentName}/{countryName}")
+    public ResponseEntity<List<FormalCaregiver>> findInterestZones_Department(
             @PathVariable Boolean includeDeleted,
             @PathVariable String interestDepartmentName,
             @PathVariable String countryName){
 
         try{
-            return ResponseEntity.ok(formalCaregiverService.findByInterestZones_Department(
+            return ResponseEntity.ok(formalCaregiverService.findInterestZones_Department(
                     true, includeDeleted, interestDepartmentName, countryName));
 
         }catch(Exception e) {
@@ -184,13 +184,13 @@ public class FormalCaregiverController {
     }
 
     @GetMapping(
-            "findByPriceRange/" +
+            "findPriceRange/" +
                     "{maxPrice}/" +
                     "{interestNeighborhoodName}/" +
                     "{interestCityName}/" +
                     "{interestDepartmentName}/" +
                     "{countryName}")
-    public ResponseEntity<List<FormalCaregiver>> findByPriceRange(
+    public ResponseEntity<List<FormalCaregiver>> findPriceRange(
             @PathVariable Integer maxPrice,
             @PathVariable String interestNeighborhoodName,
             @PathVariable String interestCityName,
@@ -198,7 +198,7 @@ public class FormalCaregiverController {
             @PathVariable String countryName){
 
         try{
-            return ResponseEntity.ok(formalCaregiverService.findByPriceRange(
+            return ResponseEntity.ok(formalCaregiverService.findPriceRange(
                     maxPrice, interestNeighborhoodName, interestCityName, interestDepartmentName, countryName));
 
         }catch(Exception e) {
@@ -208,12 +208,12 @@ public class FormalCaregiverController {
     }
 
     @GetMapping(
-            "findByDateTimeRange/" +
+            "findDateTimeRange/" +
                     "{interestNeighborhoodName}/" +
                     "{interestCityName}/" +
                     "{interestDepartmentName}/" +
                     "{countryName}")
-    public ResponseEntity<List<FormalCaregiver>> findByDateTimeRange(
+    public ResponseEntity<List<FormalCaregiver>> findDateTimeRange(
             @PathVariable String interestNeighborhoodName,
             @PathVariable String interestCityName,
             @PathVariable String interestDepartmentName,
@@ -221,7 +221,7 @@ public class FormalCaregiverController {
             @RequestBody List<DayTimeRangeObject> dayTimeRange){
 
         try{
-            return ResponseEntity.ok(formalCaregiverService.findByDateTimeRange(
+            return ResponseEntity.ok(formalCaregiverService.findDateTimeRange(
                     dayTimeRange, interestNeighborhoodName, interestCityName, interestDepartmentName, countryName));
 
         }catch(Exception e) {

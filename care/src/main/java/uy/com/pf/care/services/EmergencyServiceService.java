@@ -20,7 +20,6 @@ public class EmergencyServiceService implements IEmergencyServiceService{
 
     //private static final Logger log = LoggerFactory.getLogger(CuidadosApplication.class);
 
-
     @Override
     public EmergencyService save(EmergencyService emergencyService) {
         try{

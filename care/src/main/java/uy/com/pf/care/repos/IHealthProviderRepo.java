@@ -7,14 +7,18 @@ import java.util.List;
 
 public interface IHealthProviderRepo extends MongoRepository<HealthProvider, String> {
 
-    // Proveedores de Salud de un Pais
-    List<HealthProvider> findByCountryName(String countryName);
+    //*** Busquedas con indice ***
 
-    // Proveedores de Salud de un Departamento+Pais
-    List<HealthProvider> findByDepartmentNameAndCountryName(String departmentName, String countryName);
-
-    // Proveedores de Salud de una Ciudad+Departamento+Pais
-    List<HealthProvider> findByCityNameAndDepartmentNameAndCountryName(
-            String cityName, String departmentName, String countryName);
+    List<HealthProvider> findByCountryNameOrderByName(String countryName);
+    List<HealthProvider> findByCountryNameAndDeletedFalseOrderByName(String countryName);
+    List<HealthProvider> findByCountryNameAndDepartmentNameOrderByName(String countryName, String departmentName);
+    List<HealthProvider> findByCountryNameAndDepartmentNameAndDeletedFalseOrderByName(
+            String countryName, String departmentName);
+    List<HealthProvider> findByCountryNameAndDepartmentNameAndCityNameOrderByName(
+            String countryName, String departmentName, String cityName);
+    List<HealthProvider> findByCountryNameAndDepartmentNameAndCityNameAndDeletedFalseOrderByName(
+            String countryName, String departmentName, String cityName);
+    HealthProvider findByCountryNameAndDepartmentNameAndCityNameAndNameAndDeletedFalseOrderByName(
+            String countryName, String departmentName, String cityName, String name);
 
 }

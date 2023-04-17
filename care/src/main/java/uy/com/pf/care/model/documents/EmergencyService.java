@@ -10,6 +10,7 @@ import org.springframework.data.mongodb.core.index.CompoundIndexes;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document("EmergencyServices")
+
 @CompoundIndexes({
     @CompoundIndex(
         def = "{'countryName':1, 'departmentName':1, 'cityName':1, 'name':1}",
@@ -17,6 +18,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
         unique = true
     )
 })
+
 @EqualsAndHashCode(callSuper=false)
 @Data
 @AllArgsConstructor

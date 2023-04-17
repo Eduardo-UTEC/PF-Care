@@ -8,22 +8,14 @@ import java.util.Optional;
 
 public interface IZoneService {
     Zone save(Zone zone);
-    List<Zone> findAllZones(Boolean includeDeleted, String countryName);
+    List<Zone> findAll(Boolean includeDeleted, String countryName);
     Optional<Zone> findId(String id);
-
-    // Barrios de una ciudad+departamento+pais
-    List<NeighborhoodObject> findAllNeighborhoods(
+    List<NeighborhoodObject> findNeighborhoods(
             Boolean includeDeleted, String cityName, String departmentName, String countryName);
-
-    // Ciudades de un departamento+pais
-    List<String> findAllCities(Boolean includeDeleted, String departmentName, String countryName);
-
-    // Departamentos de un pais
-    List<String> findAllDepartments(Boolean includeDeleted, String countryName);
-
-    // Paises
-    List<String> findAllCountries(Boolean includeDeleted);
-
+    List<String> findCities(Boolean includeDeleted, String departmentName, String countryName);
+    List<String> findDepartments(Boolean includeDeleted, String countryName);
+    List<String> findCountries(Boolean includeDeleted);
     Boolean setDeletion(String id, Boolean isDeleted);
 
+    List<Zone> myFind(String countryName, String departmentName);
 }

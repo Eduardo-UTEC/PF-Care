@@ -4,7 +4,6 @@ import lombok.extern.java.Log;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import uy.com.pf.care.exceptions.HealthProviderSaveException;
-import uy.com.pf.care.model.documents.FormalCaregiver;
 import uy.com.pf.care.model.documents.HealthProvider;
 import uy.com.pf.care.repos.IHealthProviderRepo;
 
@@ -40,18 +39,38 @@ public class HealthProviderService implements IHealthProviderService {
     }
 
     @Override
-    public List<HealthProvider> findAll(String countryName) {
-        return healthProviderRepo.findByCountryName(countryName);
+    public List<HealthProvider> findAll(Boolean includeDeleted, String countryName) {
+        if (includeDeleted)
+            return healthProviderRepo.findByCountryNameOrderByName(countryName);
+        else
+            return healthProviderRepo.findByCountryNameAndDeletedFalseOrderByName(countryName);
     }
 
     @Override
-    public List<HealthProvider> findByCity(String cityName, String departmentName, String countryName) {
-        return healthProviderRepo.findByCityNameAndDepartmentNameAndCountryName(cityName, departmentName, countryName);
+    public HealthProvider findByName(String cityName, String departmentName, String countryName, String name) {
+        return healthProviderRepo.findByCountryNameAndDepartmentNameAndCityNameAndNameAndDeletedFalseOrderByName(
+                    countryName, departmentName, cityName, name);
     }
 
     @Override
-    public List<HealthProvider> findByDepartment(String departmentName, String countryName) {
-        return healthProviderRepo.findByDepartmentNameAndCountryName(departmentName, countryName);
+    public List<HealthProvider> findByCity(
+            Boolean includeDeleted, String cityName, String departmentName, String countryName) {
+
+        if (includeDeleted)
+            return healthProviderRepo.findByCountryNameAndDepartmentNameAndCityNameOrderByName(
+                countryName, departmentName, cityName);
+        else
+            return healthProviderRepo.findByCountryNameAndDepartmentNameAndCityNameAndDeletedFalseOrderByName(
+                    countryName, departmentName, cityName);
+    }
+
+    @Override
+    public List<HealthProvider> findByDepartment(Boolean includeDeleted, String departmentName, String countryName) {
+        if (includeDeleted)
+            return healthProviderRepo.findByCountryNameAndDepartmentNameOrderByName(countryName, departmentName);
+        else
+            return healthProviderRepo.findByCountryNameAndDepartmentNameAndDeletedFalseOrderByName(
+                    countryName, departmentName);
     }
 
     @Override

@@ -8,22 +8,14 @@ import java.util.Optional;
 public interface IPatientService {
     Patient save(Patient patient);
     Boolean setDeletion(String id, Boolean isDeleted);
-
-    //**** Busquedas con indice ****
-    // Nota: los metodos que comienzan con "findWithIndex_" implica que buscan por los campos del indice, y no
-    // contemplan otros campos como "deleted", por ej.
-
     Optional<Patient> findId(String id);
-    Optional<Patient> findWithIndex_IdentificationDocument(Integer identificationDocument, String countryName);
-    Optional<Patient> findWithIndex_Mail(String mail);
-    List<Patient> findWithIndex_Name1(
-            String name1, String cityName, String departmentName, String countryName, String neighborhoodName);
-
-    //**** Busquedas sin indice ****
-
+    Optional<Patient> findIdentificationDocument(Integer identificationDocument, String countryName);
+    Optional<Patient> findMail(String mail);
+    List<Patient> findName1(
+            String name1, String neighborhoodName, String cityName, String departmentName, String countryName);
+    List<Patient> findCity(Boolean includeDeleted, String cityName, String departmentName, String countryName);
+    List<Patient> findDepartment(Boolean includeDeleted, String departmentName, String countryName);
     List<Patient> findAll(Boolean includeDeleted, String countryName);
-    List<Patient> findByCity(Boolean includeDeleted, String cityName, String departmentName, String countryName);
-    List<Patient> findByDepartment(Boolean includeDeleted, String departmentName, String countryName);
 
 //    Optional<Patient> findIdentificationDocument(Integer identificationDocument, String countryName);
 //    List<Patient> findName1Like(String name1, String cityName, String departmentName, String countryName);

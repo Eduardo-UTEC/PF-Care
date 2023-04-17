@@ -8,8 +8,9 @@ import java.util.Optional;
 public interface IHealthProviderService {
     HealthProvider save(HealthProvider healthProvider);
     Optional<HealthProvider> findId(String id);
-    List<HealthProvider> findAll(String countryName);
-    List<HealthProvider> findByCity(String cityName, String departmentName, String countryName);
-    List<HealthProvider> findByDepartment(String departmentName, String countryName);
+    HealthProvider findByName(String cityName, String departmentName, String countryName, String name);
+    List<HealthProvider> findAll(Boolean includeDeleted, String countryName);
+    List<HealthProvider> findByCity(Boolean includeDeleted, String cityName, String departmentName, String countryName);
+    List<HealthProvider> findByDepartment(Boolean includeDeleted, String departmentName, String countryName);
     Boolean setDeletion(String id, Boolean isDeleted);
 }

@@ -4,7 +4,6 @@ import lombok.extern.java.Log;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import uy.com.pf.care.exceptions.PatientSaveException;
-import uy.com.pf.care.model.documents.HealthProvider;
 import uy.com.pf.care.model.documents.Patient;
 import uy.com.pf.care.repos.IPatientRepo;
 
@@ -48,9 +47,9 @@ public class PatientService implements IPatientService{
     @Override
     public List<Patient> findAll(Boolean includeDeleted, String countryName) {
         if (includeDeleted)
-            return patientRepo.findByZone_CountryName(countryName);
-        else
-            return patientRepo.findByZone_CountryNameAndDeletedFalse(countryName);
+            return patientRepo.findByZone_CountryNameOrderByName1(countryName);
+
+        return patientRepo.findByZone_CountryNameAndDeletedFalseOrderByName1(countryName);
     }
 
     @Override
@@ -59,46 +58,46 @@ public class PatientService implements IPatientService{
     }
 
     @Override
-    public Optional<Patient> findWithIndex_IdentificationDocument(Integer identificationDocument, String countryName) {
+    public Optional<Patient> findIdentificationDocument(Integer identificationDocument, String countryName) {
         return patientRepo.findByIdentificationDocumentAndZone_CountryName(identificationDocument, countryName);
     }
 
     @Override
-    public Optional<Patient> findWithIndex_Mail(String mail) {
+    public Optional<Patient> findMail(String mail) {
         return patientRepo.findByMail(mail);
     }
 
     @Override
-    public List<Patient> findWithIndex_Name1(
-            String name1, String cityName, String departmentName, String countryName, String neighborhoodName) {
+    public List<Patient> findName1(
+            String name1, String neighborhoodName, String cityName, String departmentName, String countryName) {
 
         if (neighborhoodName == null)
-            return patientRepo.findByName1AndZone_CityNameAndZone_DepartmentNameAndZone_CountryName(
-                    name1, cityName, departmentName, countryName);
-        else
-            return patientRepo.findByName1AndZone_CityNameAndZone_DepartmentNameAndZone_CountryNameAndZone_neighborhoodName(
-                    name1, cityName, departmentName, countryName, neighborhoodName);
+            return patientRepo.
+                    findByZone_CountryNameAndZone_DepartmentNameAndZone_CityNameAndName1AndDeletedFalseOrderByName1(
+                            countryName, departmentName, cityName, name1);
+        return patientRepo.
+                findByZone_CountryNameAndZone_DepartmentNameAndZone_CityNameAndZone_NeighborhoodNameAndName1AndDeletedFalseOrderByName1(
+                        countryName, departmentName, cityName, neighborhoodName, name1);
     }
 
     @Override
-    public List<Patient> findByCity(Boolean includeDeleted, String cityName, String departmentName, String countryName) {
+    public List<Patient> findCity(Boolean includeDeleted, String cityName, String departmentName, String countryName) {
         if (includeDeleted)
-            return patientRepo.findByZone_CityNameAndZone_DepartmentNameAndZone_CountryName(
-                    cityName, departmentName, countryName);
-        else
-            return patientRepo.findByZone_CityNameAndZone_DepartmentNameAndZone_CountryNameAndDeletedFalse(
-                    cityName, departmentName, countryName);
+            return patientRepo.findByZone_CountryNameAndZone_DepartmentNameAndZone_CityNameOrderByName1(
+                    countryName, departmentName, cityName);
+
+        return patientRepo.findByZone_CountryNameAndZone_DepartmentNameAndZone_CityNameAndDeletedFalseOrderByName1(
+                countryName, departmentName, cityName);
     }
 
     @Override
-    public List<Patient> findByDepartment(Boolean includeDeleted, String departmentName, String countryName) {
+    public List<Patient> findDepartment(Boolean includeDeleted, String departmentName, String countryName) {
         if (includeDeleted)
-            return patientRepo.findByZone_DepartmentNameAndZone_CountryName(departmentName, countryName);
-        else
-            return patientRepo.findByZone_DepartmentNameAndZone_CountryNameAndDeletedFalse(departmentName, countryName);
+            return patientRepo.findByZone_CountryNameAndZone_DepartmentNameOrderByName1(countryName, departmentName);
+
+        return patientRepo.findByZone_CountryNameAndZone_DepartmentNameAndDeletedFalseOrderByName1(
+                    countryName, departmentName);
     }
-
-
 
 /*
 

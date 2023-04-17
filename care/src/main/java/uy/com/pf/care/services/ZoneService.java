@@ -47,11 +47,11 @@ public class ZoneService implements IZoneService{
     }
 
     @Override
-    public List<Zone> findAllZones(Boolean includeDeleted, String countryName) {
+    public List<Zone> findAll(Boolean includeDeleted, String countryName) {
         if (includeDeleted)
             return zoneRepo.findByCountryName(countryName);
-        else
-            return zoneRepo.findByCountryNameAndDeletedFalse(countryName);
+
+        return zoneRepo.findByCountryNameAndDeletedFalse(countryName);
     }
 
     @Override
@@ -59,10 +59,9 @@ public class ZoneService implements IZoneService{
         return zoneRepo.findById(id);
     }
 
-    // En este caso devuelvo el id de zona por cada barrio en el objeto NeighborhoodObject.
-    // queda por determinar si se devuelve asi o solo un String con el nombre del barrio
+    // Se devuelve el id de zona por cada barrio en el objeto NeighborhoodObject.
     @Override
-    public List<NeighborhoodObject> findAllNeighborhoods(
+    public List<NeighborhoodObject> findNeighborhoods(
             Boolean includeDeleted, String cityName, String departmentName, String countryName) {
 
         List<NeighborhoodObject> list = new ArrayList<>();
@@ -84,7 +83,7 @@ public class ZoneService implements IZoneService{
     }
 
     @Override
-    public List<String> findAllCities(Boolean includeDeleted, String departmentName, String countryName) {
+    public List<String> findCities(Boolean includeDeleted, String departmentName, String countryName) {
         Query query = new Query();
         query.addCriteria(Criteria.where("departmentName").is(departmentName).and("countryName").is(countryName));
         if (! includeDeleted)
@@ -98,7 +97,7 @@ public class ZoneService implements IZoneService{
     }
 
     @Override
-    public List<String> findAllDepartments(Boolean includeDeleted, String countryName) {
+    public List<String> findDepartments(Boolean includeDeleted, String countryName) {
         Query query = new Query();
         query.addCriteria(Criteria.where("countryName").is(countryName));
         if (! includeDeleted)
@@ -112,7 +111,7 @@ public class ZoneService implements IZoneService{
     }
 
     @Override
-    public List<String> findAllCountries(Boolean includeDeleted) {
+    public List<String> findCountries(Boolean includeDeleted) {
         Query query = new Query();
         query.addCriteria(Criteria.where("countryName").not().isNullValue());
         if (! includeDeleted)
@@ -134,6 +133,11 @@ public class ZoneService implements IZoneService{
             return true;
         }
         return false;
+    }
+
+    @Override
+    public List<Zone> myFind(String countryName, String departmentName) {
+        return zoneRepo.myFind(countryName, departmentName);
     }
 
 }

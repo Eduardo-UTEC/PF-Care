@@ -11,11 +11,6 @@
         <module name="uy.com.pf.care.main" />
       </profile>
     </annotationProcessing>
-    <bytecodeTargetLevel>
-      <module name="care.care.main~1" target="17" />
-      <module name="care.care.test~1" target="17" />
-      <module name="uy.com.pf.cuidados.main" target="17" />
-      <module name="uy.com.pf.cuidados.test" target="17" />
-    </bytecodeTargetLevel>
+    <bytecodeTargetLevel target="18" />
   </component>
 </project>

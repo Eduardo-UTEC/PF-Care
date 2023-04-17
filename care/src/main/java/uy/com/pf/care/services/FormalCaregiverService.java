@@ -17,7 +17,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 @Service
 @Log
@@ -91,31 +90,33 @@ public class FormalCaregiverService implements IFormalCaregiverService {
     }
 
     @Override
-    public FormalCaregiver findWithIndex_Mail(String mail) {
+    public FormalCaregiver findMail(String mail) {
         return formalCaregiverRepo.findByMail(mail);
     }
 
     @Override
-    public List<FormalCaregiver> findWithIndex_Name(
-            Boolean includeDeleted, String name, String countryName) {
+    public List<FormalCaregiver> findName(Boolean includeDeleted, String countryName, String name) {
 
         if (includeDeleted)
-            return formalCaregiverRepo.findByNameAndCountryNameOrderByInterestZones_DepartmentName(name, countryName);
+            return formalCaregiverRepo.findByCountryNameAndNameOrderByInterestZones_DepartmentName(countryName, name);
 
-        return formalCaregiverRepo.findByNameAndCountryNameAndDeletedFalseOrderByInterestZones_DepartmentName(name, countryName);
+        return formalCaregiverRepo.findByCountryNameAndNameAndDeletedFalseOrderByInterestZones_DepartmentName(
+                countryName, name);
     }
 
     @Override
-    public List<FormalCaregiver> findByNameLike(Boolean includeDeleted, String name, String countryName) {
+    public List<FormalCaregiver> findNameLike(Boolean includeDeleted, String countryName, String name) {
 
         if (includeDeleted)
-            return formalCaregiverRepo.findByNameLikeAndCountryNameOrderByInterestZones_DepartmentName(name, countryName);
+            return formalCaregiverRepo.findByCountryNameAndNameLikeOrderByInterestZones_DepartmentName(
+                    countryName, name);
 
-        return formalCaregiverRepo.findByNameLikeAndCountryNameAndDeletedFalseOrderByInterestZones_DepartmentName(name, countryName);
+        return formalCaregiverRepo.findByCountryNameAndNameLikeAndDeletedFalseOrderByInterestZones_DepartmentName(
+                countryName, name);
     }
 
     @Override
-    public List<FormalCaregiver> findByInterestZones_Neighborhood(
+    public List<FormalCaregiver> findInterestZones_Neighborhood(
             Boolean includeDeleted,
             String interestNeighborhoodName,
             String interestCityName,
@@ -136,7 +137,7 @@ public class FormalCaregiverService implements IFormalCaregiverService {
             Arrays.stream(neighborhoods).anyMatch(neighborhoodObject ->
                         neighborhoodObject.getNeighborhoodName().equals(interestNeighborhoodName))){
 
-            List<FormalCaregiver> formalCaregiversByCity = this.findByInterestZones_City(
+            List<FormalCaregiver> formalCaregiversByCity = this.findInterestZones_City(
                     false, includeDeleted, interestCityName, interestDepartmentName, countryName);
 
             if (!formalCaregiversByCity.isEmpty())
@@ -158,7 +159,7 @@ public class FormalCaregiverService implements IFormalCaregiverService {
     }
 
     @Override
-    public List<FormalCaregiver> findByInterestZones_City(
+    public List<FormalCaregiver> findInterestZones_City(
             Boolean validateCity,
             Boolean includeDeleted,
             String interestCityName,
@@ -179,7 +180,7 @@ public class FormalCaregiverService implements IFormalCaregiverService {
         if (!validateCity ||
                 (cities != null && cities.length > 0 && Arrays.asList(cities).contains(interestCityName))){
 
-            List<FormalCaregiver> formalCaregiversByDepartment = this.findByInterestZones_Department(
+            List<FormalCaregiver> formalCaregiversByDepartment = this.findInterestZones_Department(
                     false, includeDeleted, interestDepartmentName, countryName);
 
             if (!formalCaregiversByDepartment.isEmpty())
@@ -197,7 +198,7 @@ public class FormalCaregiverService implements IFormalCaregiverService {
     }
 
     @Override
-    public List<FormalCaregiver> findByInterestZones_Department(
+    public List<FormalCaregiver> findInterestZones_Department(
             Boolean validateInterestDepartment, Boolean includeDeleted, String interestDepartmentName, String countryName) {
 
         RestTemplate restTemplate = new RestTemplate();
@@ -229,20 +230,20 @@ public class FormalCaregiverService implements IFormalCaregiverService {
     }
 
     @Override
-    public List<FormalCaregiver> findByPriceRange(
+    public List<FormalCaregiver> findPriceRange(
             Integer maxPrice,
             String interestNeighborhoodName,
             String interestCityName,
             String interestDepartmentName,
             String countryName) {
 
-        return this.findByInterestZones_Neighborhood(
+        return this.findInterestZones_Neighborhood(
                 false, interestNeighborhoodName, interestCityName, interestDepartmentName, countryName)
                 .stream().filter(formalCaregiver -> formalCaregiver.getPriceHour() <= maxPrice).toList();
     }
 
     @Override
-    public List<FormalCaregiver> findByDateTimeRange(
+    public List<FormalCaregiver> findDateTimeRange(
             List<DayTimeRangeObject> dayTimeRange,
             String interestNeighborhoodName, // Si se omite, se asumen todos los barrios.
             String interestCityName,
@@ -252,10 +253,10 @@ public class FormalCaregiverService implements IFormalCaregiverService {
         List<FormalCaregiver> formalCaregiversList = new ArrayList<>();
 
         if (interestNeighborhoodName.isEmpty())
-             formalCaregiversList = this.findByInterestZones_City(
+             formalCaregiversList = this.findInterestZones_City(
                     true, false, interestCityName, interestDepartmentName, countryName);
         else
-            formalCaregiversList = this.findByInterestZones_Neighborhood(
+            formalCaregiversList = this.findInterestZones_Neighborhood(
                     false, interestNeighborhoodName, interestCityName, interestDepartmentName, countryName);
 
         if (dayTimeRange.isEmpty()) // Todos los dias y horarios
@@ -283,7 +284,7 @@ public class FormalCaregiverService implements IFormalCaregiverService {
                 });
             });
         }).toList();
-    };
+    }
 
     private String getStartUrl(){
         return paramConfig.getProtocol() + "://" + paramConfig.getSocket() + "/";

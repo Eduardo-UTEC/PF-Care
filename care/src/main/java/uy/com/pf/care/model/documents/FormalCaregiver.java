@@ -23,13 +23,8 @@ import java.util.List;
             unique = true
     ),
     @CompoundIndex(
-            def = "{'countryName':1, 'deleted':1}",
-            name = "country_deleted",
-            unique = false
-    ),
-    @CompoundIndex(
-            def = "{'name':1, 'countryName':1, 'deleted':1, 'telephone':1}",
-            name = "name_country_deleted_telephone",
+            def = "{'countryName':1, 'name':1, 'telephone':1}",
+            name = "country_name_telephone",
             unique = true
     )
 })

@@ -5,13 +5,22 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.CompoundIndex;
+import org.springframework.data.mongodb.core.index.CompoundIndexes;
 import org.springframework.data.mongodb.core.mapping.Document;
 import uy.com.pf.care.model.objects.ZoneObject;
 
-import java.util.ArrayList;
-import java.util.List;
-
 @Document("Zones")
+@CompoundIndexes({
+        @CompoundIndex(
+                def = "{'countryName':1, " +
+                        "'departmentName':1, " +
+                        "'cityName':1, " +
+                        "'neighborhoodName':1}",
+                name = "country_department_city_neighborhood",
+                unique = true
+        )
+})
 @Data
 @EqualsAndHashCode(callSuper=false)
 @AllArgsConstructor
@@ -19,9 +28,5 @@ import java.util.List;
 public class Zone extends ZoneObject {
     @Id
     private String zone_id;
-    private List<String> patientsId = new ArrayList<>();         // Pacientes registrados en esta zona
-    private List<String> volunteerPersonsId = new ArrayList<>(); // Personas Voluntarias registradas en esta zona
-    // Borrado lógico.
-    // Nota: un borrado fisico puede ejecutarse si patientsId y volunteerPersonsId están vacias.
     private Boolean deleted;
 }

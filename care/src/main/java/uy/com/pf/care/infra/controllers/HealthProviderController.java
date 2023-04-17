@@ -42,10 +42,13 @@ public class HealthProviderController {
         }
     }
 
-    @GetMapping("findAll/{countryName}")
-    public ResponseEntity<List<HealthProvider>> findAll(@PathVariable String countryName ){
+    @GetMapping("findAll/{includeDeleted}/{countryName}")
+    public ResponseEntity<List<HealthProvider>> findAll(
+            @PathVariable Boolean includeDeleted,
+            @PathVariable String countryName ){
+
         try{
-            return ResponseEntity.ok(healthProviderService.findAll(countryName));
+            return ResponseEntity.ok(healthProviderService.findAll(includeDeleted, countryName));
 
         }catch(Exception e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
@@ -53,12 +56,32 @@ public class HealthProviderController {
         }
     }
 
-    @GetMapping("findByCity/{cityName}/{departmentName}/{countryName}")
-    public ResponseEntity<List<HealthProvider>> findByCity(@PathVariable String cityName,
-                                                           @PathVariable String departmentName,
-                                                           @PathVariable String countryName){
+    @GetMapping("findByName/{name}/{cityName}/{departmentName}/{countryName}")
+    public ResponseEntity<HealthProvider> findByName(
+            @PathVariable String name,
+            @PathVariable String cityName,
+            @PathVariable String departmentName,
+            @PathVariable String countryName ){
+
         try{
-            return ResponseEntity.ok(healthProviderService.findByCity(cityName, departmentName, countryName));
+            return ResponseEntity.ok(healthProviderService.findByName(cityName, departmentName, countryName, name));
+
+        }catch(Exception e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
+                    "Error buscando proveedor de salud de nombre: " + name);
+        }
+    }
+
+    @GetMapping("findByCity/{includeDeleted}/{cityName}/{departmentName}/{countryName}")
+    public ResponseEntity<List<HealthProvider>> findByCity(
+            @PathVariable Boolean includeDeleted,
+            @PathVariable String cityName,
+            @PathVariable String departmentName,
+            @PathVariable String countryName){
+
+        try{
+            return ResponseEntity.ok(healthProviderService.findByCity(
+                    includeDeleted, cityName, departmentName, countryName));
 
         }catch(Exception e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
@@ -67,11 +90,14 @@ public class HealthProviderController {
         }
     }
 
-    @GetMapping("findByDepartment/{departmentName}/{countryName}")
-    public ResponseEntity<List<HealthProvider>> findByDepartment(@PathVariable String departmentName,
-                                                                 @PathVariable String countryName){
+    @GetMapping("findByDepartment/{includeDeleted}/{departmentName}/{countryName}")
+    public ResponseEntity<List<HealthProvider>> findByDepartment(
+            @PathVariable Boolean includeDeleted,
+            @PathVariable String departmentName,
+            @PathVariable String countryName){
+
         try{
-            return ResponseEntity.ok(healthProviderService.findByDepartment(departmentName, countryName));
+            return ResponseEntity.ok(healthProviderService.findByDepartment(includeDeleted, departmentName, countryName));
 
         }catch(Exception e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,

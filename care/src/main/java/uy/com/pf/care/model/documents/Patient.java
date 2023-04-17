@@ -21,18 +21,18 @@ import java.util.List;
             unique = true
         ),
         @CompoundIndex(
-                def = "{'name1':1, " +
-                        "'zone.cityName':1, " +
-                        "'zone.departmentName':1, " +
-                        "'zone.countryName':1, " +
-                        "'zone.neighborhoodName':1}",
-                name = "name1_city_department_country_neighborhood",
-                unique = false
-        ),
-        @CompoundIndex(
                 def = "{'mail':1}",
                 name = "mail",
                 unique = true
+        ),
+        @CompoundIndex(
+                def = "{'zone.countryName':1, " +
+                        "'zone.departmentName':1, " +
+                        "'zone.cityName':1, " +
+                        "'zone.neighborhoodName':1, " +
+                        "'name1':1}",
+                name = "country_department_city_neighborhood_name1",
+                unique = false
         )
 })
 @Data

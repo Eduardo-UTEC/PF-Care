@@ -12,33 +12,33 @@ public interface IFormalCaregiverService {
     Boolean setDeletion(String id, Boolean isDeleted);
     Optional<FormalCaregiver> findId(String id);
     List<FormalCaregiver> findAll(Boolean includeDeleted, String countryName);
-    FormalCaregiver findWithIndex_Mail(String mail);
-    List<FormalCaregiver> findWithIndex_Name(Boolean includeDeleted, String name, String countryName);
-    List<FormalCaregiver> findByNameLike(Boolean includeDeleted, String name, String countryName);
-    List<FormalCaregiver> findByInterestZones_Neighborhood(
+    FormalCaregiver findMail(String mail);
+    List<FormalCaregiver> findName(Boolean includeDeleted, String countryName, String name);
+    List<FormalCaregiver> findNameLike(Boolean includeDeleted, String countryName, String name);
+    List<FormalCaregiver> findInterestZones_Neighborhood(
             Boolean includeDeleted,
             String interestNeighborhoodName,
             String interestCityName,
             String interestDepartmentName,
             String countryName);
-    List<FormalCaregiver> findByInterestZones_City(
+    List<FormalCaregiver> findInterestZones_City(
             Boolean validateCity,
             Boolean includeDeleted,
             String interestCityName,
             String interestDepartmentName,
             String countryName);
-    List<FormalCaregiver> findByInterestZones_Department(
+    List<FormalCaregiver> findInterestZones_Department(
             Boolean validateInterestDepartment,
             Boolean includeDeleted,
             String interestDepartmentName,
             String countryName);
-    List<FormalCaregiver> findByPriceRange(
+    List<FormalCaregiver> findPriceRange(
             Integer maxPrice,
             String interestNeighborhoodName,
             String interestCityName,
             String interestDepartmentName,
             String countryName);
-    List<FormalCaregiver> findByDateTimeRange(
+    List<FormalCaregiver> findDateTimeRange(
             List<DayTimeRangeObject> dayTimeRange,
             String interestNeighborhoodName,
             String interestCityName,

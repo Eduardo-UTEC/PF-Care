@@ -13,10 +13,6 @@ public interface IFormalCaregiverRepo extends MongoRepository<FormalCaregiver, S
         Busqueda por rangos... ejemplo:
           List<User> findByAgeBetween(Integer startAge, Integer endAge);
 
-        Ordenar:
-            List<User> findByNameOrderByName(String name);
-            List<User> findByNameOrderByNameDesc(String name);
-
         Contar:
              Long countByLastname(String lastname);
      */
@@ -27,16 +23,12 @@ public interface IFormalCaregiverRepo extends MongoRepository<FormalCaregiver, S
     FormalCaregiver findByMail(String mail);
     List<FormalCaregiver> findByCountryNameOrderByInterestZones_DepartmentName(String countryName);
     List<FormalCaregiver> findByCountryNameAndDeletedFalseOrderByInterestZones_DepartmentName(String countryName);
-    List<FormalCaregiver> findByNameAndCountryNameOrderByInterestZones_DepartmentName(
-            String name, String countryName);
-    List<FormalCaregiver> findByNameAndCountryNameAndDeletedFalseOrderByInterestZones_DepartmentName(
-            String name, String countryName);
-
-    //**** Busquedas sin indices ****
-
-    List<FormalCaregiver> findByNameLikeAndCountryNameOrderByInterestZones_DepartmentName(
-            String name, String countryName);
-    List<FormalCaregiver> findByNameLikeAndCountryNameAndDeletedFalseOrderByInterestZones_DepartmentName(
-            String name, String countryName);
+    List<FormalCaregiver> findByCountryNameAndNameOrderByInterestZones_DepartmentName(String countryName, String name);
+    List<FormalCaregiver> findByCountryNameAndNameAndDeletedFalseOrderByInterestZones_DepartmentName(
+        String countryName, String name);
+    List<FormalCaregiver> findByCountryNameAndNameLikeOrderByInterestZones_DepartmentName(
+            String countryName, String name);
+    List<FormalCaregiver> findByCountryNameAndNameLikeAndDeletedFalseOrderByInterestZones_DepartmentName(
+            String countryName, String name);
 
 }
