@@ -23,7 +23,7 @@ public class ResidentialController {
     @PostMapping("/add")
     public ResponseEntity<ResidentialIdObject> add(@RequestBody Residential residential){
         try{
-            return ResponseEntity.ok(new ResidentialIdObject(residentialService.save(residential).getResidential_id()));
+            return ResponseEntity.ok(new ResidentialIdObject(residentialService.save(residential).getResidentialId()));
 
         }catch (ResidentialSaveException e){
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error guardando residencial");

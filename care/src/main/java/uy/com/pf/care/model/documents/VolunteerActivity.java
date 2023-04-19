@@ -14,7 +14,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @NoArgsConstructor
 public class VolunteerActivity {
     @Id
-    private String VolunteerActivity_id;
+    private String volunteerActivityId;
     private String name;
     private Boolean deleted;
 

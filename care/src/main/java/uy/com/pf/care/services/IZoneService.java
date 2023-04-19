@@ -16,6 +16,4 @@ public interface IZoneService {
     List<String> findDepartments(Boolean includeDeleted, String countryName);
     List<String> findCountries(Boolean includeDeleted);
     Boolean setDeletion(String id, Boolean isDeleted);
-
-    List<Zone> myFind(String countryName, String departmentName);
 }

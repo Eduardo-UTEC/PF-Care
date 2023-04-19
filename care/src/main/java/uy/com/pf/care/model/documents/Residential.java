@@ -15,7 +15,7 @@ import uy.com.pf.care.model.objects.AddressObject;
 @NoArgsConstructor
 public class Residential {
     @Id
-    private String residential_id;
+    private String residentialId;
     private String name;
     private String telephone;
     private AddressObject address;

@@ -34,7 +34,7 @@ import java.util.List;
 @EqualsAndHashCode(callSuper=false)
 public class FormalCaregiver extends FormalCaregiverObject {
     @Id
-    private String formalCaregiver_id;
+    private String formalCaregiverId;
     private String telephone;
     private String mail;
     private Boolean available;  // Si es False, implica que sus servicios no estan disponibles momentáneamente

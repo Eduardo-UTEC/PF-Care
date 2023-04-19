@@ -24,7 +24,7 @@ public class HealthProviderController {
     public ResponseEntity<HealthProviderIdObject> add(@RequestBody HealthProvider healthProvider){
         try{
             return ResponseEntity.ok(
-                    new HealthProviderIdObject(healthProviderService.save(healthProvider).getHealthProvider_id()));
+                    new HealthProviderIdObject(healthProviderService.save(healthProvider).getHealthProviderId()));
 
         }catch (HealthProviderSaveException e){
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error guardando proveedor de salud");

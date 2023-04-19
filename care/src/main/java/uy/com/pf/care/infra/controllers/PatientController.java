@@ -22,7 +22,7 @@ public class PatientController {
     @PostMapping("/add")
     public ResponseEntity<PatientIdObject> add(@RequestBody Patient patient){
         try{
-            return ResponseEntity.ok(new PatientIdObject(patientService.save(patient).getPatient_id()));
+            return ResponseEntity.ok(new PatientIdObject(patientService.save(patient).getPatientId()));
 
         }catch (PatientSaveException e){
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error guardando paciente");

@@ -27,6 +27,6 @@ import uy.com.pf.care.model.objects.ZoneObject;
 @NoArgsConstructor
 public class Zone extends ZoneObject {
     @Id
-    private String zone_id;
+    private String zoneId;
     private Boolean deleted;
 }

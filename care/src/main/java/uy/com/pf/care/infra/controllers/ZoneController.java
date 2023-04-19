@@ -24,7 +24,7 @@ public class ZoneController {
     @PostMapping("/add")
     public ResponseEntity<ZoneIdObject> add(@RequestBody Zone zone){
         try{
-            return ResponseEntity.ok(new ZoneIdObject(zoneService.save(zone).getZone_id()));
+            return ResponseEntity.ok(new ZoneIdObject(zoneService.save(zone).getZoneId()));
 
         }catch (ZoneSaveException e){
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error guardando zona");
@@ -112,16 +112,6 @@ public class ZoneController {
         }catch(Exception e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
                     "No se pudo setear el borrado lógico de la zona con id " + id);
-        }
-    }
-
-    @GetMapping("myFind/{countryName}/{departmentName}")
-    public ResponseEntity<List<Zone>> myFind(@PathVariable String countryName, @PathVariable String departmentName){
-        try{
-            return ResponseEntity.ok(zoneService.myFind(countryName, departmentName));
-
-        }catch(Exception e) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error buscando países");
         }
     }
 

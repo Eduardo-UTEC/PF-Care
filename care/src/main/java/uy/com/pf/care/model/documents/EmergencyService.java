@@ -25,7 +25,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @NoArgsConstructor
 public class EmergencyService {
     @Id
-    private String emergencyService_id;
+    private String emergencyServiceId;
     private String name;
     private Boolean deleted;
 

@@ -23,7 +23,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @NoArgsConstructor
 public class HealthProvider {
     @Id
-    private String healthProvider_id;
+    private String healthProviderId;
     private String name;
     private Boolean deleted;
 

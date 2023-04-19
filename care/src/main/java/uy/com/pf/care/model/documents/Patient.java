@@ -41,7 +41,7 @@ import java.util.List;
 @NoArgsConstructor
 public class Patient extends PersonObject {
     @Id
-    private String patient_id;
+    private String patientId;
     private ZoneObject zone;
     private ReferenceCaregiverObject referenceCaregiver;
     private List<FormalCaregiverOthersObject> formalCaregivers = new ArrayList<>();

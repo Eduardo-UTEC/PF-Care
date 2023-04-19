@@ -12,6 +12,12 @@ server:
 protocol: http
 socket: localhost:8080
 
+logging:
+  level:
+    org:
+      #mongodb.driver: DEBUG
+      springframework.data.mongodb: DEBUG
+
 #
 #pruebas de parametrizaciones
 #

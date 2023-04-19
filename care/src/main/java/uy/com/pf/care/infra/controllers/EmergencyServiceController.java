@@ -28,7 +28,7 @@ public class EmergencyServiceController {
         try{
             return ResponseEntity.ok(
                     new EmergencyServiceIdObject(
-                            emergencyServiceService.save(emergencyService).getEmergencyService_id()));
+                            emergencyServiceService.save(emergencyService).getEmergencyServiceId()));
 
         }catch (EmergencyServiceSaveException e){
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error guardando servicio de emergencia");

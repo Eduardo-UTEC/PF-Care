@@ -2,7 +2,9 @@ package uy.com.pf.care.services;
 
 import lombok.extern.java.Log;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import uy.com.pf.care.exceptions.FormalCaregiverSaveException;
@@ -24,6 +26,8 @@ public class FormalCaregiverService implements IFormalCaregiverService {
 
     @Autowired
     private IFormalCaregiverRepo formalCaregiverRepo;
+    @Autowired
+    MongoTemplate mongoTemplate;
     @Autowired
     private ParamConfig paramConfig;
 
@@ -124,10 +128,9 @@ public class FormalCaregiverService implements IFormalCaregiverService {
             String countryName) {
 
         RestTemplate restTemplate = new RestTemplate();
-        ResponseEntity<NeighborhoodObject[]> neighborhoodsResponse = restTemplate.getForEntity(
+        NeighborhoodObject[] neighborhoods = restTemplate.getForEntity(
                 getUrlNeighborhoods(interestCityName, interestDepartmentName, countryName),
-                NeighborhoodObject[].class);
-        NeighborhoodObject[] neighborhoods = neighborhoodsResponse.getBody();
+                NeighborhoodObject[].class).getBody();
 
         List<FormalCaregiver> listReturn = new ArrayList<>();
 
@@ -170,11 +173,12 @@ public class FormalCaregiverService implements IFormalCaregiverService {
         RestTemplate restTemplate = new RestTemplate();
         String[] cities = null;
 
-        if (validateCity){
-            ResponseEntity<String[]> citiesResponse = restTemplate.getForEntity(
+        if (validateCity)
+            /*ResponseEntity<String[]> citiesResponse = restTemplate.getForEntity(
                     getUrlCities(interestDepartmentName, countryName), String[].class);
-            cities = citiesResponse.getBody();
-        }
+            cities = citiesResponse.getBody();*/
+            cities = restTemplate.getForEntity(getUrlCities(interestDepartmentName, countryName), String[].class)
+                    .getBody();
 
         // Si se desea validar la ciudad, verifico que la ciudad del departamento exista y no esté eliminada
         if (!validateCity ||
@@ -205,11 +209,8 @@ public class FormalCaregiverService implements IFormalCaregiverService {
         String[] departments = null;
         List<FormalCaregiver> listReturn = new ArrayList<>();
 
-        if (validateInterestDepartment){
-            ResponseEntity<String[]> departmentsResponse = restTemplate.getForEntity(
-                    getUrlDepartments(countryName), String[].class);
-            departments = departmentsResponse.getBody();
-        }
+        if (validateInterestDepartment)
+            departments = restTemplate.getForEntity(getUrlDepartments(countryName), String[].class).getBody();
 
         // Si se desea validar el Departamento de Interes, verifico que el departamento exista y no esté eliminado
         if (!validateInterestDepartment ||
