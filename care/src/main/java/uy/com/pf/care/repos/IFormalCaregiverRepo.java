@@ -18,8 +18,6 @@ public interface IFormalCaregiverRepo extends MongoRepository<FormalCaregiver, S
      */
 
 
-    //**** Busquedas por indices ****
-
     FormalCaregiver findByMail(String mail);
     List<FormalCaregiver> findByCountryNameOrderByInterestZones_DepartmentName(String countryName);
     List<FormalCaregiver> findByCountryNameAndDeletedFalseOrderByInterestZones_DepartmentName(String countryName);

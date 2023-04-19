@@ -125,7 +125,7 @@ public class FormalCaregiverService implements IFormalCaregiverService {
 
         RestTemplate restTemplate = new RestTemplate();
         ResponseEntity<NeighborhoodObject[]> neighborhoodsResponse = restTemplate.getForEntity(
-                getUrlAllNeighborhoods(interestCityName, interestDepartmentName, countryName),
+                getUrlNeighborhoods(interestCityName, interestDepartmentName, countryName),
                 NeighborhoodObject[].class);
         NeighborhoodObject[] neighborhoods = neighborhoodsResponse.getBody();
 
@@ -172,7 +172,7 @@ public class FormalCaregiverService implements IFormalCaregiverService {
 
         if (validateCity){
             ResponseEntity<String[]> citiesResponse = restTemplate.getForEntity(
-                    getUrlAllCities(interestDepartmentName, countryName), String[].class);
+                    getUrlCities(interestDepartmentName, countryName), String[].class);
             cities = citiesResponse.getBody();
         }
 
@@ -207,7 +207,7 @@ public class FormalCaregiverService implements IFormalCaregiverService {
 
         if (validateInterestDepartment){
             ResponseEntity<String[]> departmentsResponse = restTemplate.getForEntity(
-                    getUrlAllDepartments(countryName), String[].class);
+                    getUrlDepartments(countryName), String[].class);
             departments = departmentsResponse.getBody();
         }
 
@@ -290,24 +290,24 @@ public class FormalCaregiverService implements IFormalCaregiverService {
         return paramConfig.getProtocol() + "://" + paramConfig.getSocket() + "/";
     }
 
-    private String getUrlAllNeighborhoods(String cityName, String departmentName, String countryName) {
+    private String getUrlNeighborhoods(String cityName, String departmentName, String countryName) {
         return getStartUrl() +
-               "zones/findAllNeighborhoods/false/" + // Se incluyen barrios que no estén eliminados
+               "zones/findNeighborhoods/false/" + // Se incluyen barrios que no estén eliminados
                cityName + "/" +
                departmentName + "/" +
                countryName;
     }
 
-    private String getUrlAllCities(String departmentName, String countryName){
+    private String getUrlCities(String departmentName, String countryName){
         return  getStartUrl() +
-                "zones/findAllCities/false/" + // Se incluyen ciudades que no estén eliminadas
+                "zones/findCities/false/" + // Se incluyen ciudades que no estén eliminadas
                 departmentName + "/" +
                 countryName;
     }
 
-    private String getUrlAllDepartments(String countryName){
+    private String getUrlDepartments(String countryName){
         return  getStartUrl() +
-               "zones/findAllDepartments/false/" + // Se incluyen departamentos que no estén eliminados
+               "zones/findDepartments/false/" + // Se incluyen departamentos que no estén eliminados
                 countryName;
     }
 
