@@ -5,10 +5,20 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.CompoundIndex;
+import org.springframework.data.mongodb.core.index.CompoundIndexes;
 import org.springframework.data.mongodb.core.mapping.Document;
 import uy.com.pf.care.model.objects.AddressObject;
 
 @Document("Residential")
+@CompoundIndexes({
+        @CompoundIndex(
+                def = "{'countryName':1, 'departmentName':1, 'cityName':1, 'name':1, 'address.street':1, " +
+                        "'address.portNumber':1}",
+                name = "country_department_city_name_street_portNumber",
+                unique = true
+        )
+})
 @EqualsAndHashCode(callSuper=false)
 @Data
 @AllArgsConstructor

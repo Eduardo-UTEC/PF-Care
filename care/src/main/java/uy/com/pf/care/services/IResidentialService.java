@@ -9,7 +9,9 @@ public interface IResidentialService {
     Residential save(Residential residential);
     Boolean setDeletion(String id, Boolean isDeleted);
     Optional<Residential> findId(String id);
-    List<Residential> findByCountry(String countryName);
-    List<Residential> findByDepartment(String departmentName, String countryName);
-    List<Residential> findByCity(String cityName, String departmentName, String countryName);
+    List<Residential> findCountry(Boolean includeDeleted, String countryName);
+    List<Residential> findDepartment(Boolean includeDeleted, String countryName, String departmentName);
+    List<Residential> findCity(Boolean includeDeleted, String countryName, String departmentName, String cityName);
+    List<Residential> findName(
+            Boolean includeDeleted, String countryName, String departmentName, String cityName, String name);
 }

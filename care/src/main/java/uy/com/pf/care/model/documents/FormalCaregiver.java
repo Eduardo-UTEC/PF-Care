@@ -7,6 +7,8 @@ import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.CompoundIndex;
 import org.springframework.data.mongodb.core.index.CompoundIndexes;
+import org.springframework.data.mongodb.core.index.IndexDirection;
+import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 import uy.com.pf.care.model.objects.FormalCaregiverObject;
 import uy.com.pf.care.model.objects.InterestZonesObject;
@@ -17,16 +19,21 @@ import java.util.List;
 
 @Document("FormalCaregivers")
 @CompoundIndexes({
-    @CompoundIndex(
-            def = "{'mail':1}",
-            name = "mail",
-            unique = true
-    ),
-    @CompoundIndex(
+    @CompoundIndex(def = "{'mail':1}", unique = true),
+    /*@CompoundIndex(
             def = "{'countryName':1, 'name':1, 'telephone':1}",
             name = "country_name_telephone",
             unique = true
-    )
+    )*/
+    @CompoundIndex(
+            def = "{" +
+                    "'countryName': 1, " +
+                    "'interestZones.departmentName': 1, " +
+                    "'name': 1, " +
+                    "'telephone': 1" +
+                    "}",
+            unique = true)
+
 })
 @Data
 @AllArgsConstructor
@@ -37,9 +44,9 @@ public class FormalCaregiver extends FormalCaregiverObject {
     private String formalCaregiverId;
     private String telephone;
     private String mail;
-    private Boolean available;  // Si es False, implica que sus servicios no estan disponibles momentáneamente
     private String comments;
     private List<RatingObject> ratings;
+    private Boolean available;  // Si es False, implica que sus servicios no estan disponibles momentáneamente
     private Boolean deleted;
 
     /* Zonas de interés del Cuidador Formal:

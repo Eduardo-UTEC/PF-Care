@@ -26,10 +26,7 @@ import java.util.List;
                 unique = true
         ),
         @CompoundIndex(
-                def = "{'zone.countryName':1, " +
-                        "'zone.departmentName':1, " +
-                        "'zone.cityName':1, " +
-                        "'zone.neighborhoodName':1, " +
+                def = "{'zone.countryName':1, 'zone.departmentName':1, 'zone.cityName':1, 'zone.neighborhoodName':1, " +
                         "'name1':1}",
                 name = "country_department_city_neighborhood_name1",
                 unique = false

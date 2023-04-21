@@ -30,10 +30,13 @@ public class ResidentialController {
         }
     }
 
-    @GetMapping("findAll/{countryName}")
-    public ResponseEntity<List<Residential>> findAll(@PathVariable String countryName){
+    @GetMapping("findAll/{includeDeleted}/{countryName}")
+    public ResponseEntity<List<Residential>> findAll(
+            @PathVariable Boolean includeDeleted,
+            @PathVariable String countryName){
+
         try{
-            return ResponseEntity.ok(residentialService.findByCountry(countryName));
+            return ResponseEntity.ok(residentialService.findCountry(includeDeleted, countryName));
 
         }catch(Exception e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
@@ -52,11 +55,14 @@ public class ResidentialController {
         }
     }
 
-    @GetMapping("findByDepartment/{departmentName}/{countryName}")
-    public ResponseEntity<List<Residential>> findByDepartment(@PathVariable String departmentName,
-                                                              @PathVariable String countryName){
+    @GetMapping("findDepartment/{includeDeleted}/{departmentName}/{countryName}")
+    public ResponseEntity<List<Residential>> findDepartment(
+            @PathVariable Boolean includeDeleted,
+            @PathVariable String departmentName,
+            @PathVariable String countryName){
+
         try{
-            return ResponseEntity.ok(residentialService.findByDepartment(departmentName, countryName));
+            return ResponseEntity.ok(residentialService.findDepartment(includeDeleted, countryName, departmentName));
 
         }catch(Exception e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
@@ -65,12 +71,34 @@ public class ResidentialController {
         }
     }
 
-    @GetMapping("findByCity/{cityName}/{departmentName}/{countryName}")
-    public ResponseEntity<List<Residential>> findByCity(@PathVariable String cityName,
-                                                        @PathVariable String departmentName,
-                                                        @PathVariable String countryName){
+    @GetMapping("findCity/{includeDeleted}/{cityName}/{departmentName}/{countryName}")
+    public ResponseEntity<List<Residential>> findCity(
+            @PathVariable Boolean includeDeleted,
+            @PathVariable String cityName,
+            @PathVariable String departmentName,
+            @PathVariable String countryName){
+
         try{
-            return ResponseEntity.ok(residentialService.findByCity(cityName, departmentName, countryName));
+            return ResponseEntity.ok(residentialService.findCity(includeDeleted, countryName, departmentName, cityName));
+
+        }catch(Exception e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
+                    "Error buscando residenciales en la ciudad/localidad de " +
+                            cityName + " (" + departmentName + ", " + countryName + ")");
+        }
+    }
+
+    @GetMapping("findName/{includeDeleted}/{name}/{cityName}/{departmentName}/{countryName}")
+    public ResponseEntity<List<Residential>> findName(
+            @PathVariable Boolean includeDeleted,
+            @PathVariable String name,
+            @PathVariable String cityName,
+            @PathVariable String departmentName,
+            @PathVariable String countryName){
+
+        try{
+            return ResponseEntity.ok(residentialService.findName(
+                    includeDeleted, countryName, departmentName, cityName, name));
 
         }catch(Exception e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,

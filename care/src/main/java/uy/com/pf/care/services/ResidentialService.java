@@ -4,7 +4,6 @@ import lombok.extern.java.Log;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import uy.com.pf.care.exceptions.ResidentialSaveException;
-import uy.com.pf.care.model.documents.HealthProvider;
 import uy.com.pf.care.model.documents.Residential;
 import uy.com.pf.care.repos.IResidentialRepo;
 
@@ -51,18 +50,42 @@ public class ResidentialService implements IResidentialService{
     }
 
     @Override
-    public List<Residential> findByCountry(String countryName) {
-        return residentialRepo.findByCountryName(countryName);
+    public List<Residential> findCountry(Boolean includeDeleted, String countryName) {
+        if(includeDeleted)
+            return residentialRepo.findByCountryName(countryName);
+
+        return residentialRepo.findByCountryNameAndDeletedFalse(countryName);
     }
 
     @Override
-    public List<Residential> findByDepartment(String departmentName, String countryName) {
-        return residentialRepo.findByDepartmentNameAndCountryName(departmentName, countryName);
+    public List<Residential> findDepartment(Boolean includeDeleted, String countryName, String departmentName) {
+        if(includeDeleted)
+            return residentialRepo.findByCountryNameAndDepartmentName(countryName, departmentName);
+
+        return residentialRepo.findByCountryNameAndDepartmentNameAndDeletedFalse(countryName, departmentName);
     }
 
     @Override
-    public List<Residential> findByCity(String cityName, String departmentName, String countryName) {
-        return residentialRepo.findByCityNameAndDepartmentNameAndCountryName(cityName, departmentName, countryName);
+    public List<Residential> findCity(
+            Boolean includeDeleted, String countryName, String departmentName, String cityName) {
+
+        if(includeDeleted)
+            return residentialRepo.findByCountryNameAndDepartmentNameAndCityName(countryName, departmentName, cityName);
+
+        return residentialRepo.findByCountryNameAndDepartmentNameAndCityNameAndDeletedFalse(
+                countryName, departmentName, cityName);
+    }
+
+    @Override
+    public List<Residential> findName(
+            Boolean includeDeleted, String countryName, String departmentName, String cityName, String name) {
+
+        if(includeDeleted)
+            return residentialRepo.findByCountryNameAndDepartmentNameAndCityNameAndName(
+                    countryName, departmentName, cityName, name);
+
+        return residentialRepo.findByCountryNameAndDepartmentNameAndCityNameAndNameAndDeletedFalse(
+                countryName, departmentName, cityName, name);
     }
 
 }
