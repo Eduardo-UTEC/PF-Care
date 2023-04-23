@@ -132,30 +132,30 @@ public class FormalCaregiverService implements IFormalCaregiverService {
 
         List<FormalCaregiver> listReturn = new ArrayList<>();
 
-        // Verifico que el barrio de la ciudad y departamento existan y no esté eliminada
+        // Verifico que el barrio exista
         if (neighborhoods != null &&
             neighborhoods.length > 0 &&
             Arrays.stream(neighborhoods).anyMatch(neighborhoodObject ->
                         neighborhoodObject.getNeighborhoodName().equals(interestNeighborhoodName))){
 
-            List<FormalCaregiver> formalCaregiversByCity = this.findInterestZones_City(
-                    false, includeDeleted, interestCityName, interestDepartmentName, countryName);
-
-            if (!formalCaregiversByCity.isEmpty())
-                listReturn = formalCaregiversByCity.stream().filter(formalCaregiver ->
-                        formalCaregiver.getInterestZones().isEmpty() ||
-                        !formalCaregiver.getInterestZones().stream().filter(interestZonesObject ->
-                                //TODO: probar se hace todo en un mismo recorrido sin llamar a findInterestZones_City
-                                interestZonesObject.getDepartmentName().equals(interestDepartmentName) &&
-                                        (interestZonesObject.getCities().isEmpty() ||
-                                                !interestZonesObject.getCities().stream().filter(cityObject -> {
-                                                    if (cityObject.getCityName().equals(interestCityName))
-                                                        return cityObject.getNeighborhoodNames().isEmpty() ||
-                                                                cityObject.getNeighborhoodNames().contains(interestNeighborhoodName);
-                                                    return false;
-                                }).toList().isEmpty())
-                        ).toList().isEmpty()
-                ).toList();
+            // TODO: Testear cual de los dos filtros previos es el mas eficiente (tomando por ciudad o findAll)
+            //listReturn = this.findInterestZones_City(
+            //        false, includeDeleted, interestCityName, interestDepartmentName, countryName)
+            //        .stream().filter(
+            listReturn = this.findAll(includeDeleted, countryName).stream().filter(
+                    formalCaregiver -> formalCaregiver.getInterestZones().isEmpty() ||
+                            !formalCaregiver.getInterestZones().stream().filter(interestZonesObject ->
+                                    interestZonesObject.getDepartmentName().equals(interestDepartmentName) &&
+                                            (interestZonesObject.getCities().isEmpty() ||
+                                                    !interestZonesObject.getCities().stream().filter(cityObject ->
+                                                            cityObject.getCityName().equals(interestCityName) &&
+                                                            (cityObject.getNeighborhoodNames().isEmpty() ||
+                                                                    cityObject.getNeighborhoodNames().contains(
+                                                                            interestNeighborhoodName))
+                                                            //TODO: agregar filtro por PriceRange y DateTimeRange acá
+                                                    ).toList().isEmpty())
+                            ).toList().isEmpty()
+            ).toList();
         }
         return listReturn;
     }
@@ -177,25 +177,23 @@ public class FormalCaregiverService implements IFormalCaregiverService {
                     getUrlCities(includeDeleted, interestDepartmentName, countryName), String[].class)
                     .getBody();
 
-        // Si se desea validar la ciudad, verifico que la ciudad del departamento exista y no esté eliminada
+        // Si se desea validar la ciudad, verifico que la ciudad exista
         if (!validateCity ||
                 (cities != null && cities.length > 0 && Arrays.asList(cities).contains(interestCityName))){
 
-            List<FormalCaregiver> formalCaregiversByDepartment = this.findInterestZones_Department(
-                    false, includeDeleted, interestDepartmentName, countryName);
-
-            if (!formalCaregiversByDepartment.isEmpty())
-                listReturn = formalCaregiversByDepartment.stream().filter(formalCaregiver ->
-                        formalCaregiver.getInterestZones().isEmpty() ||
-                        !formalCaregiver.getInterestZones().stream().filter(departmentInterest ->
-                                departmentInterest.getDepartmentName().equals(interestDepartmentName) &&
-                                (departmentInterest.getCities().isEmpty() ||
-                                    !departmentInterest.getCities().stream().filter(cityInterest ->
-                                        cityInterest.getCityName().equals(interestCityName)
-
-                                    ).toList().isEmpty())
-                        ).toList().isEmpty()
-                ).toList();
+            // TODO: Testear cual de los dos filtros previos es el mas eficiente (tomando por departamento o findAll)
+            //listReturn = this.findInterestZones_Department(
+            //       false, includeDeleted, interestDepartmentName, countryName).stream().filter(
+            listReturn = this.findAll(includeDeleted, countryName).stream().filter(
+                    formalCaregiver -> formalCaregiver.getInterestZones().isEmpty() ||
+                            !formalCaregiver.getInterestZones().stream().filter(interestZonesObject ->
+                                    interestZonesObject.getDepartmentName().equals(interestDepartmentName) &&
+                                            (interestZonesObject.getCities().isEmpty() ||
+                                                    !interestZonesObject.getCities().stream().filter( cityObject ->
+                                                                    cityObject.getCityName().equals(interestCityName)
+                                                    ).toList().isEmpty())
+                            ).toList().isEmpty()
+            ).toList();
         }
         return listReturn;
     }
@@ -212,20 +210,18 @@ public class FormalCaregiverService implements IFormalCaregiverService {
             departments = restTemplate.
                     getForEntity(getUrlDepartments(includeDeleted, countryName), String[].class).getBody();
 
-        // Si se desea validar el Departamento de Interes, verifico que el departamento exista y no esté eliminado
+        // Si se desea validar el Departamento de Interes, verifico que el departamento exista
         if (!validateInterestDepartment ||
             (departments != null &&
                     departments.length > 0 &&
                     Arrays.asList(departments).contains(interestDepartmentName))){
 
-            listReturn = this.findAll(includeDeleted, countryName).stream().filter(formalCaregiver -> {
-                boolean accept = formalCaregiver.getInterestZones().isEmpty();
-                if (!accept)
-                    accept = ! formalCaregiver.getInterestZones().stream().filter(interestZonesObject ->
-                            interestZonesObject.getDepartmentName().equals(interestDepartmentName)
-                    ).toList().isEmpty();
-                return accept;
-            }).toList();
+            listReturn = this.findAll(includeDeleted, countryName).stream().filter(formalCaregiver ->
+                    formalCaregiver.getInterestZones().isEmpty() ||
+                            ! formalCaregiver.getInterestZones().stream().filter(interestZonesObject ->
+                                    interestZonesObject.getDepartmentName().equals(interestDepartmentName)
+                            ).toList().isEmpty())
+                    .toList();
         }
         return listReturn;
     }

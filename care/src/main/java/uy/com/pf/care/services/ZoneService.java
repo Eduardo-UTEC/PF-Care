@@ -92,9 +92,8 @@ public class ZoneService implements IZoneService{
 
     @Override
     public List<String> findCities(Boolean includeDeleted, String departmentName, String countryName) {
-        Query query = new Query(Criteria.where("departmentName").is(departmentName)
-                .and("countryName").is(countryName));
-
+        Query query = new Query(Criteria.where("departmentName").is(departmentName).
+                and("countryName").is(countryName));
         if (! includeDeleted)
             query.addCriteria(Criteria.where("deleted").is(false));
 
