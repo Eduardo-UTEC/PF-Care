@@ -19,14 +19,11 @@ public interface IFormalCaregiverRepo extends MongoRepository<FormalCaregiver, S
 
 
     FormalCaregiver findByMail(String mail);
-    List<FormalCaregiver> findByCountryNameOrderByInterestZones_DepartmentName(String countryName);
-    List<FormalCaregiver> findByCountryNameAndDeletedFalseOrderByInterestZones_DepartmentName(String countryName);
-    List<FormalCaregiver> findByCountryNameAndNameOrderByInterestZones_DepartmentName(String countryName, String name);
-    List<FormalCaregiver> findByCountryNameAndNameAndDeletedFalseOrderByInterestZones_DepartmentName(
-        String countryName, String name);
-    List<FormalCaregiver> findByCountryNameAndNameLikeOrderByInterestZones_DepartmentName(
-            String countryName, String name);
-    List<FormalCaregiver> findByCountryNameAndNameLikeAndDeletedFalseOrderByInterestZones_DepartmentName(
-            String countryName, String name);
+    List<FormalCaregiver> findByCountryName(String countryName);
+    List<FormalCaregiver> findByCountryNameAndDeletedFalse(String countryName);
+    List<FormalCaregiver> findByCountryNameAndName(String countryName, String name);
+    List<FormalCaregiver> findByCountryNameAndNameAndDeletedFalse(String countryName, String name);
+    List<FormalCaregiver> findByCountryNameAndNameLike(String countryName, String name);
+    List<FormalCaregiver> findByCountryNameAndNameLikeAndDeletedFalse(String countryName, String name);
 
 }

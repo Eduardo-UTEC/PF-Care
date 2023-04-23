@@ -81,9 +81,9 @@ public class FormalCaregiverService implements IFormalCaregiverService {
     @Override
     public List<FormalCaregiver> findAll(Boolean includeDeleted, String countryName) {
         if (includeDeleted)
-            return formalCaregiverRepo.findByCountryNameOrderByInterestZones_DepartmentName(countryName);
+            return formalCaregiverRepo.findByCountryName(countryName);
 
-        return formalCaregiverRepo.findByCountryNameAndDeletedFalseOrderByInterestZones_DepartmentName(countryName);
+        return formalCaregiverRepo.findByCountryNameAndDeletedFalse(countryName);
     }
 
     @Override
@@ -100,9 +100,9 @@ public class FormalCaregiverService implements IFormalCaregiverService {
     public List<FormalCaregiver> findName(Boolean includeDeleted, String countryName, String name) {
 
         if (includeDeleted)
-            return formalCaregiverRepo.findByCountryNameAndNameOrderByInterestZones_DepartmentName(countryName, name);
+            return formalCaregiverRepo.findByCountryNameAndName(countryName, name);
 
-        return formalCaregiverRepo.findByCountryNameAndNameAndDeletedFalseOrderByInterestZones_DepartmentName(
+        return formalCaregiverRepo.findByCountryNameAndNameAndDeletedFalse(
                 countryName, name);
     }
 
@@ -110,10 +110,10 @@ public class FormalCaregiverService implements IFormalCaregiverService {
     public List<FormalCaregiver> findNameLike(Boolean includeDeleted, String countryName, String name) {
 
         if (includeDeleted)
-            return formalCaregiverRepo.findByCountryNameAndNameLikeOrderByInterestZones_DepartmentName(
+            return formalCaregiverRepo.findByCountryNameAndNameLike(
                     countryName, name);
 
-        return formalCaregiverRepo.findByCountryNameAndNameLikeAndDeletedFalseOrderByInterestZones_DepartmentName(
+        return formalCaregiverRepo.findByCountryNameAndNameLikeAndDeletedFalse(
                 countryName, name);
     }
 
@@ -127,7 +127,7 @@ public class FormalCaregiverService implements IFormalCaregiverService {
 
         RestTemplate restTemplate = new RestTemplate();
         NeighborhoodObject[] neighborhoods = restTemplate.getForEntity(
-                getUrlNeighborhoods(interestCityName, interestDepartmentName, countryName),
+                getUrlNeighborhoods(includeDeleted, interestCityName, interestDepartmentName, countryName),
                 NeighborhoodObject[].class).getBody();
 
         List<FormalCaregiver> listReturn = new ArrayList<>();
@@ -145,14 +145,15 @@ public class FormalCaregiverService implements IFormalCaregiverService {
                 listReturn = formalCaregiversByCity.stream().filter(formalCaregiver ->
                         formalCaregiver.getInterestZones().isEmpty() ||
                         !formalCaregiver.getInterestZones().stream().filter(interestZonesObject ->
-                                interestZonesObject.getCities().isEmpty() ||
-                                !interestZonesObject.getCities().stream().filter(cityObject -> {
-                                    if (cityObject.getCityName().equals(interestCityName)){
-                                        return cityObject.getNeighborhoodNames().isEmpty() ||
-                                                cityObject.getNeighborhoodNames().contains(interestNeighborhoodName);
-                                    }
-                                    return false;
-                                }).toList().isEmpty()
+                                //TODO: probar se hace todo en un mismo recorrido sin llamar a findInterestZones_City
+                                interestZonesObject.getDepartmentName().equals(interestDepartmentName) &&
+                                        (interestZonesObject.getCities().isEmpty() ||
+                                                !interestZonesObject.getCities().stream().filter(cityObject -> {
+                                                    if (cityObject.getCityName().equals(interestCityName))
+                                                        return cityObject.getNeighborhoodNames().isEmpty() ||
+                                                                cityObject.getNeighborhoodNames().contains(interestNeighborhoodName);
+                                                    return false;
+                                }).toList().isEmpty())
                         ).toList().isEmpty()
                 ).toList();
         }
@@ -172,10 +173,8 @@ public class FormalCaregiverService implements IFormalCaregiverService {
         String[] cities = null;
 
         if (validateCity)
-            /*ResponseEntity<String[]> citiesResponse = restTemplate.getForEntity(
-                    getUrlCities(interestDepartmentName, countryName), String[].class);
-            cities = citiesResponse.getBody();*/
-            cities = restTemplate.getForEntity(getUrlCities(interestDepartmentName, countryName), String[].class)
+            cities = restTemplate.getForEntity(
+                    getUrlCities(includeDeleted, interestDepartmentName, countryName), String[].class)
                     .getBody();
 
         // Si se desea validar la ciudad, verifico que la ciudad del departamento exista y no esté eliminada
@@ -188,11 +187,13 @@ public class FormalCaregiverService implements IFormalCaregiverService {
             if (!formalCaregiversByDepartment.isEmpty())
                 listReturn = formalCaregiversByDepartment.stream().filter(formalCaregiver ->
                         formalCaregiver.getInterestZones().isEmpty() ||
-                        !formalCaregiver.getInterestZones().stream().filter(interestZonesObject ->
-                                interestZonesObject.getCities().isEmpty() ||
-                                !interestZonesObject.getCities().stream().filter(cityObject ->
-                                        cityObject.getCityName().equals(interestCityName)
-                                ).toList().isEmpty()
+                        !formalCaregiver.getInterestZones().stream().filter(departmentInterest ->
+                                departmentInterest.getDepartmentName().equals(interestDepartmentName) &&
+                                (departmentInterest.getCities().isEmpty() ||
+                                    !departmentInterest.getCities().stream().filter(cityInterest ->
+                                        cityInterest.getCityName().equals(interestCityName)
+
+                                    ).toList().isEmpty())
                         ).toList().isEmpty()
                 ).toList();
         }
@@ -208,7 +209,8 @@ public class FormalCaregiverService implements IFormalCaregiverService {
         List<FormalCaregiver> listReturn = new ArrayList<>();
 
         if (validateInterestDepartment)
-            departments = restTemplate.getForEntity(getUrlDepartments(countryName), String[].class).getBody();
+            departments = restTemplate.
+                    getForEntity(getUrlDepartments(includeDeleted, countryName), String[].class).getBody();
 
         // Si se desea validar el Departamento de Interes, verifico que el departamento exista y no esté eliminado
         if (!validateInterestDepartment ||
@@ -249,7 +251,7 @@ public class FormalCaregiverService implements IFormalCaregiverService {
             String interestDepartmentName,
             String countryName){
 
-        List<FormalCaregiver> formalCaregiversList = new ArrayList<>();
+        List<FormalCaregiver> formalCaregiversList;
 
         if (interestNeighborhoodName.isEmpty())
              formalCaregiversList = this.findInterestZones_City(
@@ -264,24 +266,23 @@ public class FormalCaregiverService implements IFormalCaregiverService {
         return formalCaregiversList.stream().filter(formalCaregiver -> {
             if (formalCaregiver.getDayTimeRange().isEmpty())
                 return true;
-            return formalCaregiver.getDayTimeRange().stream().anyMatch(formalCaregiverRange -> {
-                return dayTimeRange.stream().anyMatch(searchRange -> {
-                    if (formalCaregiverRange.getDay().ordinal() ==  searchRange.getDay().ordinal()){
-                        if (formalCaregiverRange.getTimeRange().isEmpty())
-                            return true;
-                        return formalCaregiverRange.getTimeRange().stream().anyMatch(formalCaregiverSubRange -> {
-                            return searchRange.getTimeRange().stream().anyMatch(searchSubRange ->
-                                (formalCaregiverSubRange.getStartTime().compareTo(searchSubRange.getStartTime()) < 0 ||
-                                formalCaregiverSubRange.getStartTime().compareTo(searchSubRange.getStartTime()) == 0)
-                                &&
-                                (formalCaregiverSubRange.getEndTime().compareTo(searchSubRange.getEndTime()) > 0 ||
-                                formalCaregiverSubRange.getEndTime().compareTo(searchSubRange.getEndTime()) == 0)
-                            );
-                        });
-                    }
-                    return false;
-                });
-            });
+            return formalCaregiver.getDayTimeRange().stream().anyMatch(formalCaregiverRange ->
+                    dayTimeRange.stream().anyMatch(searchRange -> {
+                        if (formalCaregiverRange.getDay().ordinal() ==  searchRange.getDay().ordinal()){
+                            if (formalCaregiverRange.getTimeRange().isEmpty())
+                                return true;
+
+                            return formalCaregiverRange.getTimeRange().stream().anyMatch(formalCaregiverSubRange ->
+                                    searchRange.getTimeRange().stream().anyMatch(searchSubRange ->
+                                            (formalCaregiverSubRange.getStartTime().compareTo(searchSubRange.getStartTime()) < 0 ||
+                                            formalCaregiverSubRange.getStartTime().compareTo(searchSubRange.getStartTime()) == 0)
+                                            &&
+                                            (formalCaregiverSubRange.getEndTime().compareTo(searchSubRange.getEndTime()) > 0 ||
+                                            formalCaregiverSubRange.getEndTime().compareTo(searchSubRange.getEndTime()) == 0)
+                    ));
+                }
+                return false;
+            }));
         }).toList();
     }
 
@@ -289,24 +290,29 @@ public class FormalCaregiverService implements IFormalCaregiverService {
         return paramConfig.getProtocol() + "://" + paramConfig.getSocket() + "/";
     }
 
-    private String getUrlNeighborhoods(String cityName, String departmentName, String countryName) {
+    private String getUrlNeighborhoods(
+            Boolean includeDeleted, String cityName, String departmentName, String countryName) {
+
         return getStartUrl() +
-               "zones/findNeighborhoods/false/" + // Se incluyen barrios que no estén eliminados
-               cityName + "/" +
+               //"zones/findNeighborhoods/false/" + // Se incluyen barrios que no estén eliminados
+                "zones/findNeighborhoods/" + includeDeleted.toString() + "/" +
+                cityName + "/" +
                departmentName + "/" +
                countryName;
     }
 
-    private String getUrlCities(String departmentName, String countryName){
+    private String getUrlCities(Boolean includeDeleted, String departmentName, String countryName){
         return  getStartUrl() +
-                "zones/findCities/false/" + // Se incluyen ciudades que no estén eliminadas
+                //"zones/findCities/false/" + // Se incluyen ciudades que no estén eliminadas
+                "zones/findCities/" + includeDeleted.toString() + "/" +
                 departmentName + "/" +
                 countryName;
     }
 
-    private String getUrlDepartments(String countryName){
+    private String getUrlDepartments(Boolean includeDeleted, String countryName){
         return  getStartUrl() +
-               "zones/findDepartments/false/" + // Se incluyen departamentos que no estén eliminados
+               //"zones/findDepartments/false/" + // Se incluyen departamentos que no estén eliminados
+                "zones/findDepartments/" + includeDeleted.toString() + "/" +
                 countryName;
     }
 

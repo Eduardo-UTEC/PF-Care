@@ -33,7 +33,6 @@ import java.util.List;
                     "'telephone': 1" +
                     "}",
             unique = true)
-
 })
 @Data
 @AllArgsConstructor
