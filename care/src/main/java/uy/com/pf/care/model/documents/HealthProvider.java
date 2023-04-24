@@ -13,7 +13,6 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @CompoundIndexes({
         @CompoundIndex(
                 def = "{'countryName':1, 'departmentName':1, 'cityName':1, 'name':1}",
-                name = "country_department_city_name",
                 unique = true
         )
 })

@@ -15,7 +15,6 @@ import uy.com.pf.care.model.objects.AddressObject;
         @CompoundIndex(
                 def = "{'countryName':1, 'departmentName':1, 'cityName':1, 'name':1, 'address.street':1, " +
                         "'address.portNumber':1}",
-                name = "country_department_city_name_street_portNumber",
                 unique = true
         )
 })

@@ -152,7 +152,6 @@ public class FormalCaregiverService implements IFormalCaregiverService {
                                                             (cityObject.getNeighborhoodNames().isEmpty() ||
                                                                     cityObject.getNeighborhoodNames().contains(
                                                                             interestNeighborhoodName))
-                                                            //TODO: agregar filtro por PriceRange y DateTimeRange acá
                                                     ).toList().isEmpty())
                             ).toList().isEmpty()
             ).toList();
@@ -270,11 +269,15 @@ public class FormalCaregiverService implements IFormalCaregiverService {
 
                             return formalCaregiverRange.getTimeRange().stream().anyMatch(formalCaregiverSubRange ->
                                     searchRange.getTimeRange().stream().anyMatch(searchSubRange ->
-                                            (formalCaregiverSubRange.getStartTime().compareTo(searchSubRange.getStartTime()) < 0 ||
-                                            formalCaregiverSubRange.getStartTime().compareTo(searchSubRange.getStartTime()) == 0)
+                                            (formalCaregiverSubRange.getStartTime().compareTo(
+                                                    searchSubRange.getStartTime()) < 0 ||
+                                                    formalCaregiverSubRange.getStartTime().compareTo(
+                                                            searchSubRange.getStartTime()) == 0)
                                             &&
-                                            (formalCaregiverSubRange.getEndTime().compareTo(searchSubRange.getEndTime()) > 0 ||
-                                            formalCaregiverSubRange.getEndTime().compareTo(searchSubRange.getEndTime()) == 0)
+                                            (formalCaregiverSubRange.getEndTime().compareTo(
+                                                    searchSubRange.getEndTime()) > 0 ||
+                                                    formalCaregiverSubRange.getEndTime().compareTo(
+                                                            searchSubRange.getEndTime()) == 0)
                     ));
                 }
                 return false;
