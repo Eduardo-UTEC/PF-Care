@@ -10,6 +10,7 @@ public interface IFormalCaregiverService {
     FormalCaregiver save(FormalCaregiver formalCaregiver);
     Boolean setAvailability(String id, Boolean isAvailable);
     Boolean setDeletion(String id, Boolean isDeleted);
+    Boolean updateVotes(String formalCaregiverId, int previousScore, int currentScore);
     Optional<FormalCaregiver> findId(String id);
     List<FormalCaregiver> findAll(Boolean includeDeleted, String countryName);
     FormalCaregiver findMail(String mail);

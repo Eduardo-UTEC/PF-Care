@@ -9,8 +9,6 @@ import java.util.List;
 @Repository
 public interface IEmergencyServiceRepo extends MongoRepository<EmergencyService, String> {
 
-    //**** Busquedas por indice ****
-
     EmergencyService findByCountryNameAndDepartmentNameAndCityNameAndName(
             String countryName,
             String departmentName,

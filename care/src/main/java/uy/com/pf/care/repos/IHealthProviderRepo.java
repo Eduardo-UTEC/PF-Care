@@ -7,8 +7,6 @@ import java.util.List;
 
 public interface IHealthProviderRepo extends MongoRepository<HealthProvider, String> {
 
-    //*** Busquedas con indice ***
-
     List<HealthProvider> findByCountryNameOrderByName(String countryName);
     List<HealthProvider> findByCountryNameAndDeletedFalseOrderByName(String countryName);
     List<HealthProvider> findByCountryNameAndDepartmentNameOrderByName(String countryName, String departmentName);

@@ -108,7 +108,7 @@ public class ResidentialController {
     }
 
     // Devuelve true si la operación fue exitosa
-    @PatchMapping("setDeletion/{id}/{isDeleted}")
+    @PostMapping("setDeletion/{id}/{isDeleted}")
     public ResponseEntity<Boolean> setDeletion(@PathVariable String id, @PathVariable Boolean isDeleted) {
         try{
             return ResponseEntity.ok(residentialService.setDeletion(id, isDeleted));

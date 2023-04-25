@@ -10,8 +10,6 @@ import java.util.Optional;
 @Repository
 public interface IPatientRepo extends MongoRepository<Patient, String> {
 
-    //**** Busquedas por indices ****
-
     Optional<Patient> findByIdentificationDocumentAndZone_CountryName(Integer identificationDocument, String countryName);
     Optional<Patient> findByMail(String mail);
     List<Patient> findByZone_CountryNameOrderByName1(String countryName);

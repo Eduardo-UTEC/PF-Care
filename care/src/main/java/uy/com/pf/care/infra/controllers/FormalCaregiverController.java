@@ -99,7 +99,7 @@ public class FormalCaregiverController {
     }
 
     //  Devuelve true si la operación fue exitosa.
-    @PatchMapping("setAvailability/{id}/{isAvailable}")
+    @PostMapping("setAvailability/{id}/{isAvailable}")
     public ResponseEntity<Boolean> setAvailability(@PathVariable String id, @PathVariable Boolean isAvailable) {
         try{
             return ResponseEntity.ok(formalCaregiverService.setAvailability(id, isAvailable));
@@ -110,8 +110,26 @@ public class FormalCaregiverController {
         }
     }
 
+    //  Devuelve true si la operación fue exitosa.
+    @PostMapping("updateVotes/{formalCaregiverId}/{previousScore}/{currentScore}")
+    public ResponseEntity<Boolean> updateVotes(
+            @PathVariable String formalCaregiverId,
+            @PathVariable Integer previousScore,
+            @PathVariable Integer currentScore) {
+
+        try{
+            return ResponseEntity.ok(formalCaregiverService.updateVotes(
+                    formalCaregiverId, previousScore, currentScore));
+
+        }catch(Exception e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
+                    "No se pudo actualizar el scoreData del cuidador formal con id " + formalCaregiverId);
+        }
+    }
+
+
     // Devuelve true si la operación fue exitosa
-    @PatchMapping("setDeletion/{id}/{isDeleted}")
+    @PostMapping("setDeletion/{id}/{isDeleted}")
     public ResponseEntity<Boolean> setDeletion(@PathVariable String id, @PathVariable Boolean isDeleted) {
         try{
             return ResponseEntity.ok(formalCaregiverService.setDeletion(id, isDeleted));
@@ -229,6 +247,8 @@ public class FormalCaregiverController {
                     "Error buscando cuidadores formales por rango de dias/horas");
         }
     }
+
+
 
 
 }

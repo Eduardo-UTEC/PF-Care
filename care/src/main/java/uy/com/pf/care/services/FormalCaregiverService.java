@@ -79,6 +79,17 @@ public class FormalCaregiverService implements IFormalCaregiverService {
     }
 
     @Override
+    public Boolean updateVotes(String formalCaregiverId, int previousScore, int currentScore) {
+        //TODO: OJO, puede haber problemas de concurrencia en las sumas (ver solucion por atomicidad)
+        Optional<FormalCaregiver> formalCaregiver = this.findId(formalCaregiverId);
+        if (formalCaregiver.isPresent()) {
+            formalCaregiver.get().updateVote(previousScore, currentScore);
+            return this.save(formalCaregiver.get()) != null;
+        }
+        return false;
+    }
+
+    @Override
     public List<FormalCaregiver> findAll(Boolean includeDeleted, String countryName) {
         if (includeDeleted)
             return formalCaregiverRepo.findByCountryName(countryName);
