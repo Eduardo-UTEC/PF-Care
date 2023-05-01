@@ -11,10 +11,7 @@ import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
-import uy.com.pf.care.exceptions.FormalCaregiverScoreDuplicateKeyException;
-import uy.com.pf.care.exceptions.FormalCaregiverScoreNotFoundException;
-import uy.com.pf.care.exceptions.FormalCaregiverScoreSaveException;
-import uy.com.pf.care.exceptions.FormalCaregiverScoreUpdateVotesException;
+import uy.com.pf.care.exceptions.*;
 import uy.com.pf.care.infra.config.ParamConfig;
 import uy.com.pf.care.model.documents.FormalCaregiverScore;
 import uy.com.pf.care.repos.IFormalCaregiverScoreRepo;
@@ -41,17 +38,30 @@ public class FormalCaregiverScoreService implements IFormalCaregiverScoreService
 
         String formalCaregiverScoreId = null;
         try{
+            // Agrego el puntaje a la colección FormalCaregiverScore
             formalCaregiverScoreId = formalCaregiverScoreRepo.save(formalCaregiverScore).getFormalCaregiverScoreId();
 
-            // previousScore = -1: indica que no hay un score previo, ya que es un nuevo documento
+            // Actualizo votos en coleccion FormalCaregiver
+            //      * previousScore = -1: indica que no hay un score previo, ya que es un nuevo documento
             if (this.updateVotesFormalCaregiver(formalCaregiverScore, -1))
                 return formalCaregiverScoreId;
             return null;
 
             // el cuidador formal ya tiene un voto registrado del paciente
-        } catch (DuplicateKeyException e){
+        } catch (DuplicateKeyException e) {
             log.warning("DuplicateKeyException: El paciente ya habia calificado al Cuidador Formal");
             throw new FormalCaregiverScoreDuplicateKeyException("El paciente ya había calificado al Cuidador Formal");
+
+        }catch (FormalCaregiverScoreUpdateVotesException e){
+            try{
+                // Borro fisicamente el puntaje dado de alta en la colección FormalCaregiversScores para mantener la
+                // integridad de la bbdd
+                this.physicallyDeleteScore(formalCaregiverScoreId);
+
+            }catch (FormalCaregiverScorePhysicallyDeleteException e1){
+                throw new FormalCaregiverScorePhysicallyDeleteException(e.getMessage());
+            }
+            throw new FormalCaregiverScoreUpdateVotesException(e.getMessage());
 
         } catch(Exception e1){
             log.warning("Error guardando puntaje del cuidador formal: " + e1.getMessage() + ". "
@@ -86,25 +96,33 @@ public class FormalCaregiverScoreService implements IFormalCaregiverScoreService
                 formalCaregiverScore.getPatientId()
         );
 
-        if (formalCaregiverScoreFound == null){
+        if (formalCaregiverScoreFound == null) {
             log.info("No existe la calificación para modificar");
             throw new FormalCaregiverScoreNotFoundException("No existe la calificación para modificar");
         }
 
-        Query query = new Query(Criteria.where("formalCaregiverId").is(formalCaregiverScore.getFormalCaregiverId())
-                .and("patientId").is(formalCaregiverScore.getPatientId()));
-        query.fields().include("score").include("comment"); // Obtengo solo campos "score" y "comment"
+        try{
+            if (! this.updateScoreFormalCaregiver(formalCaregiverScore, ""))
+                return false;
+            return this.updateVotesFormalCaregiver(formalCaregiverScore, formalCaregiverScoreFound.getScore());
 
-        Update update = new Update()
-                .set("score", formalCaregiverScore.getScore())
-                .set("comment", formalCaregiverScore.getComment());
-        //Actualizacion atomica
-        UpdateResult updateResult = mongoTemplate.updateFirst(query, update, FormalCaregiverScore.class);
+        }catch (FormalCaregiverScoreUpdateVotesException e){
+            try{
+                // Deshago la actualización de la calificacion en la coleccion FormalCaregiverScores
+                this.updateScoreFormalCaregiver(formalCaregiverScoreFound,
+                        "No se pudo deshacer la actualización de la calificación otorgada al Cuidador Formal " +
+                                "con Id " + formalCaregiverScore.getFormalCaregiverId() + " por parte del Paciente " +
+                                "con Id " + formalCaregiverScore.getPatientId());
+                log.info("Actualización de calificación deshecha con éxito");
+                throw new FormalCaregiverScoreUpdateVotesException(e.getMessage());
 
-        if (!updateResult.wasAcknowledged())
-            return false;
+            }catch (FormalCaregiverScoreUpdateScoreException e1){
+                throw new FormalCaregiverScoreUpdateScoreException(e1.getMessage());
+            }
 
-        return this.updateVotesFormalCaregiver(formalCaregiverScore, formalCaregiverScoreFound.getScore());
+        }catch (Exception e){
+            throw new FormalCaregiverScoreUpdateScoreException(e.getMessage());
+        }
     }
 
     private String getUrlUpdateVotes(String formalCaregiverId, Integer previousScore, Integer currentScore){
@@ -119,37 +137,82 @@ public class FormalCaregiverScoreService implements IFormalCaregiverScoreService
         return paramConfig.getProtocol() + "://" + paramConfig.getSocket() + "/";
     }
 
-    private boolean updateVotesFormalCaregiver(FormalCaregiverScore formalCaregiverScore, Integer previousScore){
+    private boolean updateScoreFormalCaregiver(FormalCaregiverScore formalCaregiverScore, String errorMsg){
+
+        Query query = new Query(Criteria.where("formalCaregiverId").is(formalCaregiverScore.getFormalCaregiverId())
+                .and("patientId").is(formalCaregiverScore.getPatientId()));
+        query.fields().include("score").include("comment"); // Obtengo solo campos "score" y "comment"
+
+        Update update = new Update()
+                .set("score", formalCaregiverScore.getScore())
+                .set("comment", formalCaregiverScore.getComment());
 
         try {
-            WebClient webClient = WebClient.create();
+            //Actualizacion atomica
+            UpdateResult updateResult = mongoTemplate.updateFirst(query, update, FormalCaregiverScore.class);
+            return updateResult.wasAcknowledged();
 
-            // Actualizo los votos  del cuidador formal
-            Mono<Boolean> updateVotesResponse = webClient.post()
-                    .uri(this.getUrlUpdateVotes(
-                            formalCaregiverScore.getFormalCaregiverId(),
-                            previousScore,
-                            formalCaregiverScore.getScore()))
-                    .retrieve()
-                    .bodyToMono(Boolean.class);
+        }catch (Exception e) {
+            if (errorMsg.isEmpty()) {
+                log.warning("Error al intentar actualizar la calificación del Cuidador Formal con id " +
+                        formalCaregiverScore.getFormalCaregiverId() + " otorgada por el Paciente con id " +
+                        formalCaregiverScore.getPatientId() + ". " + e.getMessage());
+                throw new FormalCaregiverScoreUpdateScoreException(
+                        "Error al intentar actualizar la calificación del Cuidador Formal.");
+            } else {
+                log.warning(errorMsg + ". " + e.getMessage());
+                throw new FormalCaregiverScoreUpdateScoreException(errorMsg);
+            }
+        }
+    }
 
-            // Manejo la respuesta y un posible error
-            updateVotesResponse.subscribe(response -> {
-                        if (response)
-                            log.info("*** Puntaje asignado con exito al Cuidador Formal: " + LocalDateTime.now());
-                        else
-                            log.info("No se pudo asignar el puntaje al Cuidador Formal con id " +
-                                    formalCaregiverScore.getFormalCaregiverId() +
-                                    " del paciente  con id " + formalCaregiverScore.getPatientId());
-                    },
-                    error -> log.info("Ocurrió un error al intentar asignar el puntaje al Cuidador Formal: "
-                            + error.getMessage())
-            );
-            return true;
+    private boolean updateVotesFormalCaregiver(FormalCaregiverScore formalCaregiverScore, Integer previousScore){
 
-        } catch (Exception e) {
-            log.warning("Error al intentar actualizar votos del Cuidador Formal: " + e.getMessage());
-            throw new FormalCaregiverScoreUpdateVotesException("Error al intentar actualizar votos del Cuidador Formal");
+        WebClient webClient = WebClient.create();
+
+        Mono<Boolean> updateVotesResponse = webClient.post()
+                .uri(this.getUrlUpdateVotes(
+                        formalCaregiverScore.getFormalCaregiverId(),
+                        previousScore,
+                        formalCaregiverScore.getScore()))
+                .retrieve()
+                .bodyToMono(Boolean.class);
+
+        return updateVotesResponse.flatMap(response -> {
+            if (response) {
+                log.info("Voto actualizado con éxito del Cuidador Formal con Id " +
+                        formalCaregiverScore.getFormalCaregiverId() + ". " + LocalDateTime.now());
+                return Mono.just(true);
+            } else {
+                log.info("No se pudo actualizar el voto al Cuidador Formal con id " +
+                        formalCaregiverScore.getFormalCaregiverId() +
+                        " del paciente  con id " + formalCaregiverScore.getPatientId() + ". "
+                        + LocalDateTime.now());
+                return Mono.error(new FormalCaregiverScoreUpdateVotesException(
+                        "Error al intentar actualizar votos del Cuidador Formal"));
+            }
+        }).onErrorResume(error -> {
+            log.info("Ocurrió un error al intentar actualizar el voto al Cuidador Formal: "
+                    + formalCaregiverScore.getFormalCaregiverId() + ". "
+                    + error.getMessage());
+            return Mono.error(new FormalCaregiverScoreUpdateVotesException(
+                    "Error al intentar actualizar votos del Cuidador Formal"));
+        }).blockOptional().orElse(false);
+    }
+
+    private void physicallyDeleteScore(String formalCaregiverScoreId){
+        try{
+            formalCaregiverScoreRepo.deleteById(formalCaregiverScoreId);
+            log.info("Se ha eliminado la calificación del Cuidador Formal con id: " + formalCaregiverScoreId);
+
+        }catch(IllegalArgumentException e){
+            log.warning("No se pudo eliminar la calificación del Cuidador Formal con Id: "
+                    + formalCaregiverScoreId +
+                    ". Verifique posible inconsistencia de la base de datos en las colecciones FormalCaregiversScores " +
+                    "y FormalCaregivers. La clave 'votes' del cuidador formal debe representar la suma de sus " +
+                    "calificaciones");
+            throw new FormalCaregiverScorePhysicallyDeleteException(
+                    "No se pudo eliminar la calificación del Cuidador Formal con Id: " + formalCaregiverScoreId);
         }
     }
 }

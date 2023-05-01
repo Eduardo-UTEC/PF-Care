@@ -5,10 +5,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
-import uy.com.pf.care.exceptions.FormalCaregiverSaveException;
-import uy.com.pf.care.exceptions.FormalCaregiverScoreDuplicateKeyException;
-import uy.com.pf.care.exceptions.FormalCaregiverScoreNotFoundException;
-import uy.com.pf.care.exceptions.FormalCaregiverScoreSaveException;
+import uy.com.pf.care.exceptions.*;
 import uy.com.pf.care.model.documents.FormalCaregiverScore;
 import uy.com.pf.care.model.objects.VoteObject;
 import uy.com.pf.care.services.IFormalCaregiverScoreService;
@@ -31,7 +28,7 @@ public class FormalCaregiverScoreController {
         }catch (FormalCaregiverScoreDuplicateKeyException e){
             throw new ResponseStatusException(HttpStatus.CONFLICT, e.getMessage());
 
-        }catch (FormalCaregiverScoreSaveException e){
+        }catch (Exception e){
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
         }
     }
@@ -80,8 +77,9 @@ public class FormalCaregiverScoreController {
         try {
             return ResponseEntity.ok(formalCaregiverScoreService.updateScore(formalCaregiverScore));
 
-        }catch (FormalCaregiverScoreNotFoundException e){
+        }catch(FormalCaregiverScoreNotFoundException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+
         }catch(Exception e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
         }
