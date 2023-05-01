@@ -6,6 +6,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import uy.com.pf.care.exceptions.FormalCaregiverSaveException;
+import uy.com.pf.care.exceptions.FormalCaregiverScoreDuplicateKeyException;
+import uy.com.pf.care.exceptions.FormalCaregiverScoreNotFoundException;
+import uy.com.pf.care.exceptions.FormalCaregiverScoreSaveException;
 import uy.com.pf.care.model.documents.FormalCaregiverScore;
 import uy.com.pf.care.model.objects.VoteObject;
 import uy.com.pf.care.services.IFormalCaregiverScoreService;
@@ -21,13 +24,15 @@ public class FormalCaregiverScoreController {
     private IFormalCaregiverScoreService formalCaregiverScoreService;
 
     @PostMapping("/add")
-    public ResponseEntity<FormalCaregiverScore> add(@RequestBody FormalCaregiverScore formalCaregiverScore){
+    public ResponseEntity<String> add(@RequestBody FormalCaregiverScore formalCaregiverScore){
         try{
             return ResponseEntity.ok(formalCaregiverScoreService.save(formalCaregiverScore));
 
-        }catch (FormalCaregiverSaveException e){
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
-                    "Error guardando rating del cuidador formal");
+        }catch (FormalCaregiverScoreDuplicateKeyException e){
+            throw new ResponseStatusException(HttpStatus.CONFLICT, e.getMessage());
+
+        }catch (FormalCaregiverScoreSaveException e){
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
         }
     }
 
@@ -38,7 +43,7 @@ public class FormalCaregiverScoreController {
 
         }catch(Exception e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
-                    "Error buscando ratings del cuidador formal con id " + formalCaregiverId);
+                    "Error buscando puntajes del cuidador formal con id " + formalCaregiverId);
         }
     }
 
@@ -48,40 +53,37 @@ public class FormalCaregiverScoreController {
             return ResponseEntity.ok(formalCaregiverScoreService.findId(id));
 
         }catch(Exception e) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error buscando rating con id " + id);
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error buscando score con id " + id);
         }
     }
 
     //  Devuelve true si la operación fue exitosa.
-    @PostMapping("updateScore/{formalCaregiverId}/{patientId}")
-    public ResponseEntity<Boolean> updateScore(
-            @PathVariable String formalCaregiverId,
-            @PathVariable String patientId,
-            @RequestBody VoteObject rating) {
-
-        try{
-            return ResponseEntity.ok(formalCaregiverScoreService.updateScore(formalCaregiverId, patientId, rating));
-
-        }catch(Exception e) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
-                    "No se pudo actualizar el rating del cuidador formal con id " + formalCaregiverId +
-                    " del paciente con id " + patientId);
-        }
-    }
-
-    //  Devuelve true si la operación fue exitosa.
-    @GetMapping("find_rating_of_patient/{formalCaregiverId}/{patientId}")
-    public ResponseEntity<FormalCaregiverScore> findRatingOfPatient(
+    @GetMapping("findScore/{formalCaregiverId}/{patientId}")
+    public ResponseEntity<FormalCaregiverScore> findScore(
             @PathVariable String formalCaregiverId,
             @PathVariable String patientId) {
 
         try{
-            return ResponseEntity.ok(formalCaregiverScoreService.findRatingOfPatient(formalCaregiverId, patientId));
+            return ResponseEntity.ok(formalCaregiverScoreService.findScore(formalCaregiverId, patientId));
 
         }catch(Exception e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
-                    "Error buscando rating del cuidador formal con id " + formalCaregiverId +
+                    "Error buscando score del cuidador formal con id " + formalCaregiverId +
                     "del paciente con id " + patientId);
+        }
+    }
+
+    //  Devuelve true si la operación fue exitosa.
+    @PostMapping("/updateScore")
+    public ResponseEntity<Boolean> updateScore(@RequestBody FormalCaregiverScore formalCaregiverScore ) {
+
+        try {
+            return ResponseEntity.ok(formalCaregiverScoreService.updateScore(formalCaregiverScore));
+
+        }catch (FormalCaregiverScoreNotFoundException e){
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+        }catch(Exception e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
         }
     }
 

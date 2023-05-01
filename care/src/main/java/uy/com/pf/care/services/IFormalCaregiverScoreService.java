@@ -7,9 +7,9 @@ import java.util.List;
 import java.util.Optional;
 
 public interface IFormalCaregiverScoreService {
-    FormalCaregiverScore save(FormalCaregiverScore formalCaregiverScore);
-    Boolean updateScore(String formalCaregiverId, String patientId, VoteObject voteObject);
-    Optional<FormalCaregiverScore> findId(String formalCaregiverScoreId);
-    FormalCaregiverScore findRatingOfPatient(String formalCaregiverId, String patientId);
+    String save(FormalCaregiverScore formalCaregiverScore);
     List<FormalCaregiverScore> findAll(String formalCaregiverId);
+    Optional<FormalCaregiverScore> findId(String formalCaregiverScoreId);
+    FormalCaregiverScore findScore(String formalCaregiverId, String patientId);
+    Boolean updateScore(FormalCaregiverScore formalCaregiverScore);
 }

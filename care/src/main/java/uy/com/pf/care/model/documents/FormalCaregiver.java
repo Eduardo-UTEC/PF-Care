@@ -59,11 +59,11 @@ public class FormalCaregiver extends FormalCaregiverObject {
         Si previousScore = [1..5], implica hay un puntaje previo en el ordinal previousScore - 1 y debe restarse.
         currentScore: es el puntaje que debe sumarse en el ordinal currentScore - 1.
      */
-    public void updateVote(int previousScore, int currentScore){
+    /*public void updateVote(int previousScore, int currentScore){
         if (previousScore != -1)
             votes[previousScore-1] = votes[previousScore-1] - 1;
         votes[currentScore-1] = votes[currentScore-1] + 1;
-    }
+    }*/
 
     public double getAverageScore(){
         int votesCount = 0, votesByScore = 0;
@@ -73,6 +73,6 @@ public class FormalCaregiver extends FormalCaregiverObject {
             votesCount += votesByScore;
             votesSum += votesByScore * score;
         }
-        return votesCount > 0 ? votesSum / votesCount : 0;
+        return (votesCount > 0) ? (votesSum / votesCount) : 0;
     }
 }

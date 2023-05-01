@@ -5,7 +5,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
-import uy.com.pf.care.exceptions.FormalCaregiverSaveException;
+import uy.com.pf.care.exceptions.*;
 import uy.com.pf.care.model.documents.FormalCaregiver;
 import uy.com.pf.care.model.objects.DayTimeRangeObject;
 import uy.com.pf.care.model.objects.FormalCaregiverIdObject;
@@ -28,7 +28,7 @@ public class FormalCaregiverController {
                     new FormalCaregiverIdObject(formalCaregiverService.save(formalCaregiver).getFormalCaregiverId()));
 
         }catch (FormalCaregiverSaveException e){
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error guardando cuidador formal");
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
         }
     }
 
@@ -37,12 +37,11 @@ public class FormalCaregiverController {
             @PathVariable Boolean includeDeleted,
             @PathVariable String countryName){
 
-        try{
+        try {
             return ResponseEntity.ok(formalCaregiverService.findAll(includeDeleted, countryName));
 
-        }catch(Exception e) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
-                    "Error buscando todos los cuidadores formales de " + countryName);
+        }catch(FormalCaregiverFindAllException e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
         }
     }
 
@@ -51,9 +50,8 @@ public class FormalCaregiverController {
         try{
             return ResponseEntity.ok(formalCaregiverService.findId(id));
 
-        }catch(Exception e) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
-                    "Error buscando cuidador formal con id " + id);
+        }catch(FormalCaregiverFindIdException e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
         }
     }
 
@@ -62,9 +60,8 @@ public class FormalCaregiverController {
         try{
             return ResponseEntity.ok(formalCaregiverService.findMail(mail));
 
-        }catch(Exception e) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
-                    "Error buscando por mail del cuidador formal (" + mail + ")");
+        }catch(FormalCaregiverFindMailException e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
         }
     }
 
@@ -77,9 +74,8 @@ public class FormalCaregiverController {
         try{
             return ResponseEntity.ok(formalCaregiverService.findName(includeDeleted, countryName, name));
 
-        }catch(Exception e) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
-                    "Error buscando el cuidador formal " + name + " (" + countryName + ")");
+        }catch(FormalCaregiverFindNameException e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
         }
     }
 
@@ -92,9 +88,8 @@ public class FormalCaregiverController {
         try{
             return ResponseEntity.ok(formalCaregiverService.findNameLike(includeDeleted, countryName, name));
 
-        }catch(Exception e) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
-                    "Error buscando cuidadores formales de nombre " + name + " (" + countryName + ")");
+        }catch(FormalCaregiverFindNameLikeException e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
         }
     }
 
@@ -104,9 +99,8 @@ public class FormalCaregiverController {
         try{
             return ResponseEntity.ok(formalCaregiverService.setAvailability(id, isAvailable));
 
-        }catch(Exception e) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
-                    "No se pudo setear la disponibilidad del cuidador formal con id " + id);
+        }catch(FormalCaregiverSetAvailabilityException e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
         }
     }
 
@@ -121,12 +115,10 @@ public class FormalCaregiverController {
             return ResponseEntity.ok(formalCaregiverService.updateVotes(
                     formalCaregiverId, previousScore, currentScore));
 
-        }catch(Exception e) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
-                    "No se pudo actualizar el scoreData del cuidador formal con id " + formalCaregiverId);
+        }catch(FormalCaregiverUpdateVotesException e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
         }
     }
-
 
     // Devuelve true si la operación fue exitosa
     @PostMapping("setDeletion/{id}/{isDeleted}")
@@ -134,9 +126,8 @@ public class FormalCaregiverController {
         try{
             return ResponseEntity.ok(formalCaregiverService.setDeletion(id, isDeleted));
 
-        }catch(Exception e) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
-                    "No se pudo setear el borrado lógico del cuidador formal con id " + id);
+        }catch(FormalCaregiverSetDeletionException e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
         }
     }
 
@@ -162,10 +153,8 @@ public class FormalCaregiverController {
                     interestDepartmentName,
                     countryName));
 
-        }catch(Exception e) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
-                    "Error buscando cuidadores formales por zona de interés en barrio " + interestNeighborhoodName +
-                            " (" + interestCityName+ ", " + interestDepartmentName + ", " + countryName + ")");
+        }catch(FormalCaregiverFindInterestZones_NeighborhoodException e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
         }
     }
     @GetMapping("findInterestZones_City/{includeDeleted}/{interestCityName}/{interestDepartmentName}/{countryName}")
@@ -178,10 +167,8 @@ public class FormalCaregiverController {
             return ResponseEntity.ok(formalCaregiverService.findInterestZones_City(
                     true, includeDeleted, interestCityName, interestDepartmentName, countryName));
 
-        }catch(Exception e) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
-                    "Error buscando cuidadores formales por zona de interés en ciudad " + interestCityName + " (" +
-                            interestDepartmentName + ", " + countryName + ")");
+        }catch(FormalCaregiverFindInterestZones_CityException e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
         }
     }
     @GetMapping("findInterestZones_Department/{includeDeleted}/{interestDepartmentName}/{countryName}")
@@ -194,10 +181,8 @@ public class FormalCaregiverController {
             return ResponseEntity.ok(formalCaregiverService.findInterestZones_Department(
                     true, includeDeleted, interestDepartmentName, countryName));
 
-        }catch(Exception e) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
-                    "Error buscando cuidadores formales por zona de interés en departamento/provincia de " +
-                            interestDepartmentName + " (" + countryName + ")");
+        }catch(FormalCaregiverFindInterestZones_DepartmentException e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
         }
     }
 
@@ -219,9 +204,8 @@ public class FormalCaregiverController {
             return ResponseEntity.ok(formalCaregiverService.findPriceRange(
                     maxPrice, interestNeighborhoodName, interestCityName, interestDepartmentName, countryName));
 
-        }catch(Exception e) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
-                    "Error buscando cuidadores formales por rango de precios");
+        }catch(FormalCaregiverFindPriceRangeException e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
         }
     }
 
@@ -242,13 +226,9 @@ public class FormalCaregiverController {
             return ResponseEntity.ok(formalCaregiverService.findDateTimeRange(
                     dayTimeRange, interestNeighborhoodName, interestCityName, interestDepartmentName, countryName));
 
-        }catch(Exception e) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
-                    "Error buscando cuidadores formales por rango de dias/horas");
+        }catch(FormalCaregiverFindDateTimeRangeException e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
         }
     }
-
-
-
 
 }

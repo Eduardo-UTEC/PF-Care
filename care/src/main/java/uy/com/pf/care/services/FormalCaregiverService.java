@@ -1,11 +1,15 @@
 package uy.com.pf.care.services;
 
+import com.mongodb.client.result.UpdateResult;
 import lombok.extern.java.Log;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
-import uy.com.pf.care.exceptions.FormalCaregiverSaveException;
+import uy.com.pf.care.exceptions.*;
 import uy.com.pf.care.infra.config.ParamConfig;
 import uy.com.pf.care.model.documents.FormalCaregiver;
 import uy.com.pf.care.model.objects.DayTimeRangeObject;
@@ -35,12 +39,12 @@ public class FormalCaregiverService implements IFormalCaregiverService {
     public FormalCaregiver save(FormalCaregiver formalCaregiver) {
         try{
             FormalCaregiver newformalCaregiver = formalCaregiverRepo.save(formalCaregiver);
-            log.info("*** Cuidador Formal guardado con exito: " + LocalDateTime.now());
+            log.info("Cuidador Formal guardado con exito: " + LocalDateTime.now());
             return newformalCaregiver;
 
         }catch(Exception e){
-            log.warning("*** ERROR GUARDANDO CUIDADOR FORMAL: " + e);
-            throw new FormalCaregiverSaveException(formalCaregiver);
+            log.warning("Error guardando Cuidador Formal: " + e.getMessage());
+            throw new FormalCaregiverSaveException("Error guardando Cuidador Formal");
         }
     }
 
@@ -50,13 +54,23 @@ public class FormalCaregiverService implements IFormalCaregiverService {
      */
     @Override
     public Boolean setAvailability(String id, Boolean isAvailable) {
-        Optional<FormalCaregiver> formalCaregiver = this.findId(id);
-        if (formalCaregiver.isPresent() && ! formalCaregiver.get().getDeleted()) {
-            formalCaregiver.get().setAvailable(isAvailable);
-            this.save(formalCaregiver.get());
-            return true;
+        try{
+            Optional<FormalCaregiver> formalCaregiver = this.findId(id);
+            if (formalCaregiver.isPresent() && ! formalCaregiver.get().getDeleted()) {
+                formalCaregiver.get().setAvailable(isAvailable);
+                this.save(formalCaregiver.get());
+                return true;
+            }
+            return false;
+
+
+        }catch(Exception e){
+            log.warning("No se pudo setear la disponibilidad del cuidador formal con id: " + id + ". "
+                    + e.getMessage());
+            throw new FormalCaregiverSetAvailabilityException("No se pudo setear la disponibilidad del cuidador formal con id: "
+                    + id + ". ");
         }
-        return false;
+
 
     }
 
@@ -68,64 +82,127 @@ public class FormalCaregiverService implements IFormalCaregiverService {
      */
     @Override
     public Boolean setDeletion(String id, Boolean isDeleted) {
-        Optional<FormalCaregiver> formalCaregiver = this.findId(id);
-        if (formalCaregiver.isPresent()) {
-            formalCaregiver.get().setDeleted(isDeleted);
-            formalCaregiver.get().setAvailable(false);
-            this.save(formalCaregiver.get());
-            return true;
+        try{
+            Optional<FormalCaregiver> formalCaregiver = this.findId(id);
+            if (formalCaregiver.isPresent()) {
+                formalCaregiver.get().setDeleted(isDeleted);
+                formalCaregiver.get().setAvailable(false);
+                this.save(formalCaregiver.get());
+                return true;
+            }
+            return false;
+
+        }catch(Exception e){
+            log.warning("No se pudo setear el borrado lógico del cuidador formal con id: " + id + ". "
+                    + e.getMessage());
+            throw new FormalCaregiverSetDeletionException(
+                    "No se pudo setear el borrado lógico del cuidador formal con id " + id);
         }
-        return false;
     }
 
     @Override
     public Boolean updateVotes(String formalCaregiverId, int previousScore, int currentScore) {
-        //TODO: OJO, puede haber problemas de concurrencia en las sumas (ver solucion por atomicidad)
-        Optional<FormalCaregiver> formalCaregiver = this.findId(formalCaregiverId);
-        if (formalCaregiver.isPresent()) {
-            formalCaregiver.get().updateVote(previousScore, currentScore);
-            return this.save(formalCaregiver.get()) != null;
+        try{
+            Query query = new Query(Criteria.where("_id").is(formalCaregiverId));
+            FormalCaregiver formalCaregiver = mongoTemplate.findOne(query, FormalCaregiver.class);
+
+            if (formalCaregiver != null) {
+                Update update = new Update().set("votes",
+                        this.obtainNewVotes(formalCaregiver.getVotes(), previousScore, currentScore));
+                UpdateResult updateResult = mongoTemplate.updateFirst(query, update, FormalCaregiver.class);
+                return updateResult.wasAcknowledged();
+            }
+            return false;
+
+        }catch(Exception e){
+            log.warning("No se pudo actualizar votos del cuidador formal con id: " + formalCaregiverId + ". "
+                    + e.getMessage());
+            throw new FormalCaregiverUpdateVotesException("No se pudo actualizar votos del cuidador formal con id: "
+                    + formalCaregiverId);
         }
-        return false;
+    }
+
+    /*  Si previousScore = -1, implica que no hay un puntaje previo asignado.
+       Si previousScore = [1..5], implica hay un puntaje previo en el ordinal previousScore - 1 y debe restarse.
+       currentScore: es el puntaje que debe sumarse en el ordinal currentScore - 1.
+    */
+    private int[] obtainNewVotes(int[] votes, int previousScore, int currentScore){
+        if (previousScore != -1)
+            votes[previousScore-1] = votes[previousScore-1] - 1;
+        votes[currentScore-1] = votes[currentScore-1] + 1;
+        return votes;
     }
 
     @Override
     public List<FormalCaregiver> findAll(Boolean includeDeleted, String countryName) {
-        if (includeDeleted)
-            return formalCaregiverRepo.findByCountryName(countryName);
+        try{
+            if (includeDeleted)
+                return formalCaregiverRepo.findByCountryName(countryName);
 
-        return formalCaregiverRepo.findByCountryNameAndDeletedFalse(countryName);
+            return formalCaregiverRepo.findByCountryNameAndDeletedFalse(countryName);
+
+        }catch (Exception e){
+            log.warning("Error buscando todos los cuidadores formales de " + countryName + ". " + e.getMessage());
+            throw new FormalCaregiverFindAllException("Error buscando todos los cuidadores formales de " + countryName);
+        }
     }
 
     @Override
     public Optional<FormalCaregiver> findId(String id) {
-        return formalCaregiverRepo.findById(id);
+        try{
+            return formalCaregiverRepo.findById(id);
+
+        }catch(Exception e){
+            log.warning("Error buscando cuidador formal con id: " + id + ". " + e.getMessage());
+            throw new FormalCaregiverFindIdException("Error buscando cuidador formal con id: " + id);
+        }
     }
 
     @Override
     public FormalCaregiver findMail(String mail) {
-        return formalCaregiverRepo.findByMail(mail);
+        try{
+            return formalCaregiverRepo.findByMail(mail);
+
+        }catch(Exception e){
+            log.warning("Error buscando cuidador formal con mail: " + mail + ". " + e.getMessage());
+            throw new FormalCaregiverFindMailException("Error buscando cuidador formal con mail: " + mail);
+        }
     }
 
     @Override
     public List<FormalCaregiver> findName(Boolean includeDeleted, String countryName, String name) {
 
-        if (includeDeleted)
-            return formalCaregiverRepo.findByCountryNameAndName(countryName, name);
+        try{
+            if (includeDeleted)
+                return formalCaregiverRepo.findByCountryNameAndName(countryName, name);
 
-        return formalCaregiverRepo.findByCountryNameAndNameAndDeletedFalse(
-                countryName, name);
+            return formalCaregiverRepo.findByCountryNameAndNameAndDeletedFalse(
+                    countryName, name);
+
+        }catch(Exception e){
+            log.warning("Error buscando cuidador formal: " + name + " (" + countryName + ")" + ". "
+                    + e.getMessage());
+            throw new FormalCaregiverFindNameException("Error buscando cuidador formal: " + name
+                    + " (" + countryName + ")");
+        }
     }
 
     @Override
     public List<FormalCaregiver> findNameLike(Boolean includeDeleted, String countryName, String name) {
+        try{
+            if (includeDeleted)
+                return formalCaregiverRepo.findByCountryNameAndNameLike(
+                        countryName, name);
 
-        if (includeDeleted)
-            return formalCaregiverRepo.findByCountryNameAndNameLike(
+            return formalCaregiverRepo.findByCountryNameAndNameLikeAndDeletedFalse(
                     countryName, name);
 
-        return formalCaregiverRepo.findByCountryNameAndNameLikeAndDeletedFalse(
-                countryName, name);
+        }catch(Exception e){
+            log.warning("Error buscando cuidadores formales de nombre: " + name + " (" + countryName + ")" + ". "
+                    + e.getMessage());
+            throw new FormalCaregiverFindNameLikeException("Error buscando cuidadores formales de nombre: " + name
+                    + " (" + countryName + ")");
+        }
     }
 
     @Override
@@ -136,38 +213,48 @@ public class FormalCaregiverService implements IFormalCaregiverService {
             String interestDepartmentName,
             String countryName) {
 
-        RestTemplate restTemplate = new RestTemplate();
-        NeighborhoodObject[] neighborhoods = restTemplate.getForEntity(
-                getUrlNeighborhoods(includeDeleted, interestCityName, interestDepartmentName, countryName),
-                NeighborhoodObject[].class).getBody();
+        try{
+            RestTemplate restTemplate = new RestTemplate();
+            NeighborhoodObject[] neighborhoods = restTemplate.getForEntity(
+                    getUrlNeighborhoods(includeDeleted, interestCityName, interestDepartmentName, countryName),
+                    NeighborhoodObject[].class).getBody();
 
-        List<FormalCaregiver> listReturn = new ArrayList<>();
+            List<FormalCaregiver> listReturn = new ArrayList<>();
 
-        // Verifico que el barrio exista
-        if (neighborhoods != null &&
-            neighborhoods.length > 0 &&
-            Arrays.stream(neighborhoods).anyMatch(neighborhoodObject ->
-                        neighborhoodObject.getNeighborhoodName().equals(interestNeighborhoodName))){
+            // Verifico que el barrio exista
+            if (neighborhoods != null &&
+                    neighborhoods.length > 0 &&
+                    Arrays.stream(neighborhoods).anyMatch(neighborhoodObject ->
+                            neighborhoodObject.getNeighborhoodName().equals(interestNeighborhoodName))){
 
-            // TODO: Testear cual de los dos filtros previos es el mas eficiente (tomando por ciudad o findAll)
-            //listReturn = this.findInterestZones_City(
-            //        false, includeDeleted, interestCityName, interestDepartmentName, countryName)
-            //        .stream().filter(
-            listReturn = this.findAll(includeDeleted, countryName).stream().filter(
-                    formalCaregiver -> formalCaregiver.getInterestZones().isEmpty() ||
-                            !formalCaregiver.getInterestZones().stream().filter(interestZonesObject ->
-                                    interestZonesObject.getDepartmentName().equals(interestDepartmentName) &&
-                                            (interestZonesObject.getCities().isEmpty() ||
-                                                    !interestZonesObject.getCities().stream().filter(cityObject ->
-                                                            cityObject.getCityName().equals(interestCityName) &&
-                                                            (cityObject.getNeighborhoodNames().isEmpty() ||
-                                                                    cityObject.getNeighborhoodNames().contains(
-                                                                            interestNeighborhoodName))
-                                                    ).toList().isEmpty())
-                            ).toList().isEmpty()
-            ).toList();
+                // TODO: Testear cual de los dos filtros previos es el mas eficiente (tomando por ciudad o findAll)
+                //listReturn = this.findInterestZones_City(
+                //        false, includeDeleted, interestCityName, interestDepartmentName, countryName)
+                //        .stream().filter(
+                listReturn = this.findAll(includeDeleted, countryName).stream().filter(
+                        formalCaregiver -> formalCaregiver.getInterestZones().isEmpty() ||
+                                !formalCaregiver.getInterestZones().stream().filter(interestZonesObject ->
+                                        interestZonesObject.getDepartmentName().equals(interestDepartmentName) &&
+                                                (interestZonesObject.getCities().isEmpty() ||
+                                                        !interestZonesObject.getCities().stream().filter(cityObject ->
+                                                                cityObject.getCityName().equals(interestCityName) &&
+                                                                        (cityObject.getNeighborhoodNames().isEmpty() ||
+                                                                                cityObject.getNeighborhoodNames().contains(
+                                                                                        interestNeighborhoodName))
+                                                        ).toList().isEmpty())
+                                ).toList().isEmpty()
+                ).toList();
+            }
+            return listReturn;
+
+        }catch(Exception e){
+            log.warning( "Error buscando cuidadores formales por zona de interés en barrio: "
+                    + interestNeighborhoodName + " (" + interestCityName+ ", " + interestDepartmentName + ", "
+                    + countryName + ")" + ". " + e.getMessage());
+            throw new FormalCaregiverFindInterestZones_NeighborhoodException(
+                    "Error buscando cuidadores formales por zona de interés en barrio " + interestNeighborhoodName +
+                    " (" + interestCityName+ ", " + interestDepartmentName + ", " + countryName + ")");
         }
-        return listReturn;
     }
 
     @Override
@@ -178,62 +265,80 @@ public class FormalCaregiverService implements IFormalCaregiverService {
             String interestDepartmentName,
             String countryName) {
 
-        List<FormalCaregiver> listReturn = new ArrayList<>();
-        RestTemplate restTemplate = new RestTemplate();
-        String[] cities = null;
+        try{
+            List<FormalCaregiver> listReturn = new ArrayList<>();
+            RestTemplate restTemplate = new RestTemplate();
+            String[] cities = null;
 
-        if (validateCity)
-            cities = restTemplate.getForEntity(
-                    getUrlCities(includeDeleted, interestDepartmentName, countryName), String[].class)
-                    .getBody();
+            if (validateCity)
+                cities = restTemplate.getForEntity(
+                                getUrlCities(includeDeleted, interestDepartmentName, countryName), String[].class)
+                        .getBody();
 
-        // Si se desea validar la ciudad, verifico que la ciudad exista
-        if (!validateCity ||
-                (cities != null && cities.length > 0 && Arrays.asList(cities).contains(interestCityName))){
+            // Si se desea validar la ciudad, verifico que la ciudad exista
+            if (!validateCity ||
+                    (cities != null && cities.length > 0 && Arrays.asList(cities).contains(interestCityName))){
 
-            // TODO: Testear cual de los dos filtros previos es el mas eficiente (tomando por departamento o findAll)
-            //listReturn = this.findInterestZones_Department(
-            //       false, includeDeleted, interestDepartmentName, countryName).stream().filter(
-            listReturn = this.findAll(includeDeleted, countryName).stream().filter(
-                    formalCaregiver -> formalCaregiver.getInterestZones().isEmpty() ||
-                            !formalCaregiver.getInterestZones().stream().filter(interestZonesObject ->
-                                    interestZonesObject.getDepartmentName().equals(interestDepartmentName) &&
-                                            (interestZonesObject.getCities().isEmpty() ||
-                                                    !interestZonesObject.getCities().stream().filter( cityObject ->
-                                                                    cityObject.getCityName().equals(interestCityName)
-                                                    ).toList().isEmpty())
-                            ).toList().isEmpty()
-            ).toList();
+                // TODO: Testear cual de los dos filtros previos es el mas eficiente (tomando por departamento o findAll)
+                //listReturn = this.findInterestZones_Department(
+                //       false, includeDeleted, interestDepartmentName, countryName).stream().filter(
+                listReturn = this.findAll(includeDeleted, countryName).stream().filter(
+                        formalCaregiver -> formalCaregiver.getInterestZones().isEmpty() ||
+                                !formalCaregiver.getInterestZones().stream().filter(interestZonesObject ->
+                                        interestZonesObject.getDepartmentName().equals(interestDepartmentName) &&
+                                                (interestZonesObject.getCities().isEmpty() ||
+                                                        !interestZonesObject.getCities().stream().filter( cityObject ->
+                                                                cityObject.getCityName().equals(interestCityName)
+                                                        ).toList().isEmpty())
+                                ).toList().isEmpty()
+                ).toList();
+            }
+            return listReturn;
+
+        }catch(Exception e){
+            log.warning("Error buscando cuidadores formales por zona de interés en ciudad: " + interestCityName +
+                    " (" + interestDepartmentName + ", " + countryName + ")" + ". " + e.getMessage());
+            throw new FormalCaregiverFindInterestZones_CityException(
+                    "Error buscando cuidadores formales por zona de interés en ciudad " + interestCityName + " (" +
+                            interestDepartmentName + ", " + countryName + ")");
         }
-        return listReturn;
     }
 
     @Override
     public List<FormalCaregiver> findInterestZones_Department(
             Boolean validateInterestDepartment, Boolean includeDeleted, String interestDepartmentName, String countryName) {
 
-        RestTemplate restTemplate = new RestTemplate();
-        String[] departments = null;
-        List<FormalCaregiver> listReturn = new ArrayList<>();
+        try{
+            RestTemplate restTemplate = new RestTemplate();
+            String[] departments = null;
+            List<FormalCaregiver> listReturn = new ArrayList<>();
 
-        if (validateInterestDepartment)
-            departments = restTemplate.
-                    getForEntity(getUrlDepartments(includeDeleted, countryName), String[].class).getBody();
+            if (validateInterestDepartment)
+                departments = restTemplate.
+                        getForEntity(getUrlDepartments(includeDeleted, countryName), String[].class).getBody();
 
-        // Si se desea validar el Departamento de Interes, verifico que el departamento exista
-        if (!validateInterestDepartment ||
-            (departments != null &&
-                    departments.length > 0 &&
-                    Arrays.asList(departments).contains(interestDepartmentName))){
+            // Si se desea validar el Departamento de Interes, verifico que el departamento exista
+            if (!validateInterestDepartment ||
+                    (departments != null &&
+                            departments.length > 0 &&
+                            Arrays.asList(departments).contains(interestDepartmentName))){
 
-            listReturn = this.findAll(includeDeleted, countryName).stream().filter(formalCaregiver ->
-                    formalCaregiver.getInterestZones().isEmpty() ||
-                            ! formalCaregiver.getInterestZones().stream().filter(interestZonesObject ->
-                                    interestZonesObject.getDepartmentName().equals(interestDepartmentName)
-                            ).toList().isEmpty())
-                    .toList();
+                listReturn = this.findAll(includeDeleted, countryName).stream().filter(formalCaregiver ->
+                                formalCaregiver.getInterestZones().isEmpty() ||
+                                        ! formalCaregiver.getInterestZones().stream().filter(interestZonesObject ->
+                                                interestZonesObject.getDepartmentName().equals(interestDepartmentName)
+                                        ).toList().isEmpty())
+                        .toList();
+            }
+            return listReturn;
+
+        }catch(Exception e){
+            log.warning("Error buscando cuidadores formales por zona de interés en departamento/provincia: " +
+                    interestDepartmentName + " (" + countryName + ")" + ". " + e.getMessage());
+            throw new FormalCaregiverFindInterestZones_DepartmentException(
+                    "Error buscando cuidadores formales por zona de interés en departamento/provincia: " +
+                            interestDepartmentName + " (" + countryName + ")");
         }
-        return listReturn;
     }
 
     @Override
@@ -244,9 +349,20 @@ public class FormalCaregiverService implements IFormalCaregiverService {
             String interestDepartmentName,
             String countryName) {
 
-        return this.findInterestZones_Neighborhood(
-                false, interestNeighborhoodName, interestCityName, interestDepartmentName, countryName)
-                .stream().filter(formalCaregiver -> formalCaregiver.getPriceHour() <= maxPrice).toList();
+        try {
+            return this.findInterestZones_Neighborhood(
+                            false,
+                            interestNeighborhoodName,
+                            interestCityName,
+                            interestDepartmentName,
+                            countryName)
+                    .stream().filter(formalCaregiver -> formalCaregiver.getPriceHour() <= maxPrice).toList();
+
+        }catch(Exception e){
+            log.warning("Error buscando cuidadores formales por rango de precios. " + e.getMessage());
+            throw new FormalCaregiverFindPriceRangeException(
+                    "Error buscando cuidadores formales por rango de precios");
+        }
     }
 
     @Override
@@ -257,43 +373,50 @@ public class FormalCaregiverService implements IFormalCaregiverService {
             String interestDepartmentName,
             String countryName){
 
-        List<FormalCaregiver> formalCaregiversList;
+        try{
+            List<FormalCaregiver> formalCaregiversList;
 
-        if (interestNeighborhoodName.isEmpty())
-             formalCaregiversList = this.findInterestZones_City(
-                    true, false, interestCityName, interestDepartmentName, countryName);
-        else
-            formalCaregiversList = this.findInterestZones_Neighborhood(
-                    false, interestNeighborhoodName, interestCityName, interestDepartmentName, countryName);
+            if (interestNeighborhoodName.isEmpty())
+                formalCaregiversList = this.findInterestZones_City(
+                        true, false, interestCityName, interestDepartmentName, countryName);
+            else
+                formalCaregiversList = this.findInterestZones_Neighborhood(
+                        false, interestNeighborhoodName, interestCityName, interestDepartmentName, countryName);
 
-        if (dayTimeRange.isEmpty()) // Todos los dias y horarios
-            return formalCaregiversList;
+            if (dayTimeRange.isEmpty()) // Todos los dias y horarios
+                return formalCaregiversList;
 
-        return formalCaregiversList.stream().filter(formalCaregiver -> {
-            if (formalCaregiver.getDayTimeRange().isEmpty())
-                return true;
-            return formalCaregiver.getDayTimeRange().stream().anyMatch(formalCaregiverRange ->
-                    dayTimeRange.stream().anyMatch(searchRange -> {
-                        if (formalCaregiverRange.getDay().ordinal() ==  searchRange.getDay().ordinal()){
-                            if (formalCaregiverRange.getTimeRange().isEmpty())
-                                return true;
+            return formalCaregiversList.stream().filter(formalCaregiver -> {
+                if (formalCaregiver.getDayTimeRange().isEmpty())
+                    return true;
+                return formalCaregiver.getDayTimeRange().stream().anyMatch(formalCaregiverRange ->
+                        dayTimeRange.stream().anyMatch(searchRange -> {
+                            if (formalCaregiverRange.getDay().ordinal() ==  searchRange.getDay().ordinal()){
+                                if (formalCaregiverRange.getTimeRange().isEmpty())
+                                    return true;
 
-                            return formalCaregiverRange.getTimeRange().stream().anyMatch(formalCaregiverSubRange ->
-                                    searchRange.getTimeRange().stream().anyMatch(searchSubRange ->
-                                            (formalCaregiverSubRange.getStartTime().compareTo(
-                                                    searchSubRange.getStartTime()) < 0 ||
-                                                    formalCaregiverSubRange.getStartTime().compareTo(
-                                                            searchSubRange.getStartTime()) == 0)
-                                            &&
-                                            (formalCaregiverSubRange.getEndTime().compareTo(
-                                                    searchSubRange.getEndTime()) > 0 ||
-                                                    formalCaregiverSubRange.getEndTime().compareTo(
-                                                            searchSubRange.getEndTime()) == 0)
-                    ));
-                }
-                return false;
-            }));
-        }).toList();
+                                return formalCaregiverRange.getTimeRange().stream().anyMatch(formalCaregiverSubRange ->
+                                        searchRange.getTimeRange().stream().anyMatch(searchSubRange ->
+                                                (formalCaregiverSubRange.getStartTime().compareTo(
+                                                        searchSubRange.getStartTime()) < 0 ||
+                                                        formalCaregiverSubRange.getStartTime().compareTo(
+                                                                searchSubRange.getStartTime()) == 0)
+                                                        &&
+                                                        (formalCaregiverSubRange.getEndTime().compareTo(
+                                                                searchSubRange.getEndTime()) > 0 ||
+                                                                formalCaregiverSubRange.getEndTime().compareTo(
+                                                                        searchSubRange.getEndTime()) == 0)
+                                        ));
+                            }
+                            return false;
+                        }));
+            }).toList();
+
+        }catch(Exception e){
+            log.warning("Error buscando cuidadores formales por rango de dias/horas. " + e.getMessage());
+            throw new FormalCaregiverFindDateTimeRangeException(
+                    "Error buscando cuidadores formales por rango de dias/horas");
+        }
     }
 
     private String getStartUrl(){
