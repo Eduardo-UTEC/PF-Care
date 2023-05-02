@@ -1,7 +1,7 @@
 package uy.com.pf.care.services;
 
 import uy.com.pf.care.model.documents.FormalCaregiverScore;
-import uy.com.pf.care.model.objects.VoteObject;
+import uy.com.pf.care.model.objects.ScoreObject;
 
 import java.util.List;
 import java.util.Optional;

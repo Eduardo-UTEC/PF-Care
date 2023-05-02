@@ -14,6 +14,7 @@ import reactor.core.publisher.Mono;
 import uy.com.pf.care.exceptions.*;
 import uy.com.pf.care.infra.config.ParamConfig;
 import uy.com.pf.care.model.documents.FormalCaregiverScore;
+import uy.com.pf.care.model.objects.ScoreObject;
 import uy.com.pf.care.repos.IFormalCaregiverScoreRepo;
 
 import java.time.LocalDateTime;
@@ -72,7 +73,7 @@ public class FormalCaregiverScoreService implements IFormalCaregiverScoreService
 
     @Override
     public List<FormalCaregiverScore> findAll(String formalCaregiverId) {
-        return formalCaregiverScoreRepo.findByFormalCaregiverId(formalCaregiverId);
+        return formalCaregiverScoreRepo.findByFormalCaregiverIdOrderByDateDesc(formalCaregiverId);
     }
 
     @Override
@@ -141,11 +142,13 @@ public class FormalCaregiverScoreService implements IFormalCaregiverScoreService
 
         Query query = new Query(Criteria.where("formalCaregiverId").is(formalCaregiverScore.getFormalCaregiverId())
                 .and("patientId").is(formalCaregiverScore.getPatientId()));
-        query.fields().include("score").include("comment"); // Obtengo solo campos "score" y "comment"
+        // Obtengo solo campos "score", "comment" y "date"
+        //query.fields().include("score").include("comment").include("date").
 
         Update update = new Update()
                 .set("score", formalCaregiverScore.getScore())
-                .set("comment", formalCaregiverScore.getComment());
+                .set("comment", formalCaregiverScore.getComment())
+                .set("date", formalCaregiverScore.getDate());
 
         try {
             //Actualizacion atomica

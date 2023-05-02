@@ -7,7 +7,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import uy.com.pf.care.exceptions.*;
 import uy.com.pf.care.model.documents.FormalCaregiverScore;
-import uy.com.pf.care.model.objects.VoteObject;
 import uy.com.pf.care.services.IFormalCaregiverScoreService;
 
 import java.util.List;
@@ -54,7 +53,6 @@ public class FormalCaregiverScoreController {
         }
     }
 
-    //  Devuelve true si la operación fue exitosa.
     @GetMapping("findScore/{formalCaregiverId}/{patientId}")
     public ResponseEntity<FormalCaregiverScore> findScore(
             @PathVariable String formalCaregiverId,
