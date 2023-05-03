@@ -199,7 +199,7 @@ public class FormalCaregiverScoreService implements IFormalCaregiverScoreService
                     + formalCaregiverScore.getFormalCaregiverId() + ". "
                     + error.getMessage());
             return Mono.error(new FormalCaregiverScoreUpdateVotesException(
-                    "Error al intentar actualizar votos del Cuidador Formal"));
+                    "Error al intentar actualizar votos del Cuidador Formal" + ". " + error.getMessage()));
         }).blockOptional().orElse(false);
     }
 
@@ -218,4 +218,5 @@ public class FormalCaregiverScoreService implements IFormalCaregiverScoreService
                     "No se pudo eliminar la calificación del Cuidador Formal con Id: " + formalCaregiverScoreId);
         }
     }
+
 }

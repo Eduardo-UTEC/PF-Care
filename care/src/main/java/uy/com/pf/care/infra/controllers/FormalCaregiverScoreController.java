@@ -1,5 +1,6 @@
 package uy.com.pf.care.infra.controllers;
 
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,7 +21,7 @@ public class FormalCaregiverScoreController {
     private IFormalCaregiverScoreService formalCaregiverScoreService;
 
     @PostMapping("/add")
-    public ResponseEntity<String> add(@RequestBody FormalCaregiverScore formalCaregiverScore){
+    public ResponseEntity<String> add(@Valid @RequestBody FormalCaregiverScore formalCaregiverScore){
         try{
             return ResponseEntity.ok(formalCaregiverScoreService.save(formalCaregiverScore));
 
@@ -70,7 +71,7 @@ public class FormalCaregiverScoreController {
 
     //  Devuelve true si la operación fue exitosa.
     @PostMapping("/updateScore")
-    public ResponseEntity<Boolean> updateScore(@RequestBody FormalCaregiverScore formalCaregiverScore ) {
+    public ResponseEntity<Boolean> updateScore(@Valid @RequestBody FormalCaregiverScore formalCaregiverScore ) {
 
         try {
             return ResponseEntity.ok(formalCaregiverScoreService.updateScore(formalCaregiverScore));

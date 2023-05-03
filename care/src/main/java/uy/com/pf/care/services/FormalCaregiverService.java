@@ -118,7 +118,7 @@ public class FormalCaregiverService implements IFormalCaregiverService {
             log.warning("No se pudo actualizar votos del cuidador formal con id: " + formalCaregiverId + ". "
                     + e.getMessage());
             throw new FormalCaregiverUpdateVotesException("No se pudo actualizar votos del cuidador formal con id: "
-                    + formalCaregiverId);
+                    + formalCaregiverId + ". " + e.getMessage());
         }
     }
 
