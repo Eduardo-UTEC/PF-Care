@@ -1,5 +1,6 @@
 package uy.com.pf.care.infra.controllers;
 
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,7 +25,7 @@ public class EmergencyServiceController {
     private IEmergencyServiceRepo iEmergencyServiceRepo;
 
     @PostMapping("/add")
-    public ResponseEntity<EmergencyServiceIdObject> add(@RequestBody EmergencyService emergencyService){
+    public ResponseEntity<EmergencyServiceIdObject> add(@Valid @RequestBody EmergencyService emergencyService){
         try{
             return ResponseEntity.ok(
                     new EmergencyServiceIdObject(

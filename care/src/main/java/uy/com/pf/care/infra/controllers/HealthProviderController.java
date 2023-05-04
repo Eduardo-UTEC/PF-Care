@@ -1,5 +1,7 @@
 package uy.com.pf.care.infra.controllers;
 
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,7 +23,7 @@ public class HealthProviderController {
     private IHealthProviderService healthProviderService;
 
     @PostMapping("/add")
-    public ResponseEntity<HealthProviderIdObject> add(@RequestBody HealthProvider healthProvider){
+    public ResponseEntity<HealthProviderIdObject> add(@Valid @NotNull @RequestBody HealthProvider healthProvider){
         try{
             return ResponseEntity.ok(
                     new HealthProviderIdObject(healthProviderService.save(healthProvider).getHealthProviderId()));

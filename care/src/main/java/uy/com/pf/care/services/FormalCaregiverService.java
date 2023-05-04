@@ -37,6 +37,9 @@ public class FormalCaregiverService implements IFormalCaregiverService {
 
     @Override
     public FormalCaregiver save(FormalCaregiver formalCaregiver) {
+
+        this.validateVote(formalCaregiver.getVotes());
+
         try{
             FormalCaregiver newformalCaregiver = formalCaregiverRepo.save(formalCaregiver);
             log.info("Cuidador Formal guardado con exito: " + LocalDateTime.now());
@@ -447,6 +450,15 @@ public class FormalCaregiverService implements IFormalCaregiverService {
                //"zones/findDepartments/false/" + // Se incluyen departamentos que no estén eliminados
                 "zones/findDepartments/" + includeDeleted.toString() + "/" +
                 countryName;
+    }
+
+    // Valida que 'votes' tenga enteros válidos y no tenga votos negativos
+    private void validateVote(int[] votes){
+        for(int i = 0; i < votes.length; i++){
+            if (votes[i] != votes[i] || votes[i] < 0 )
+                throw new FormalCaregiverValidateVoteException(
+                        "FormalCaregiverService: la clave 'votes' debe contener dígitos enteros positivos o 0");
+        }
     }
 
 }

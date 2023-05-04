@@ -1,9 +1,9 @@
 package uy.com.pf.care.model.documents;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.*;
+import jdk.jfr.BooleanFlag;
+import lombok.*;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.Transient;
 import org.springframework.data.mongodb.core.index.CompoundIndex;
@@ -23,11 +23,20 @@ import java.util.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper=false)
+@Builder
 public class FormalCaregiver extends FormalCaregiverObject {
     @Id
     private String formalCaregiverId;
+
+    @NotNull(message = "FormalCaregiver: El telefono del Cuidador Formal no puede ser nulo")
+    @NotEmpty(message = "FormalCaregiver: El telefono del Cuidador Formal no puede ser vacío")
     private String telephone;
+
+    @NotNull(message = "FormalCaregiver: El mail del Cuidador Formal no puede ser nulo")
+    @NotEmpty(message = "FormalCaregiver: El mail del Cuidador Formal no puede ser vacío")
     private String mail;
+
+    @NotNull(message = "FormalCaregiver: La propiedad 'comments' del Cuidador Formal no puede ser nula")
     private String comments;
 
     /* Votos por cada puntaje.
@@ -36,11 +45,24 @@ public class FormalCaregiver extends FormalCaregiverObject {
             ...
             votes[4]: cantidad de votos para el puntaje 5
      */
+    @NotNull(message = "FormalCaregiver: Clave 'votes[]' del Cuidador Formal no puede ser nulo")
+    @Size(min = 5, max = 5, message = "FormalCaregiver: La cardinalidad de la propiedad 'votes[]' debe ser 5")
     private int[] votes;
+/*
+    @NotNull(message = "FormalCaregiver: Clave 'votes[]' del Cuidador Formal no puede ser nula")
+    @Valid
+    private VotesObject votesObject;
+*/
+
     @Transient
     private double averageScore;
 
+    @NotNull(message = "FormalCaregiver: La propiedad 'available' no puede ser nula")
+    @BooleanFlag
     private Boolean available;  // Si es False, implica que sus servicios no estan disponibles momentáneamente
+
+    @NotNull(message = "FormalCaregiver: La propiedad 'deleted' no puede ser nula")
+    @BooleanFlag
     private Boolean deleted;
 
     /* Zonas de interés del Cuidador Formal:
@@ -52,7 +74,12 @@ public class FormalCaregiver extends FormalCaregiverObject {
          -Si interestZones[n] tiene un departmentName, una cityName y barrios registrados, implica que llega solo a esos
          barrios de la ciudad.
     */
+    @Builder.Default
+    @Valid
     List<InterestZonesObject> interestZones = new ArrayList<>();
+
+    @NotNull(message = "FormalCaregiver: El país del Cuidador Formal no puede ser nulo")
+    @NotEmpty(message = "FormalCaregiver: El país del Cuidador Formal no puede ser vacío")
     private String countryName; // Pais de residencia del Cuidador Formal
 
     /*  Si previousScore = -1, implica que no hay un puntaje previo asignado.
@@ -64,7 +91,6 @@ public class FormalCaregiver extends FormalCaregiverObject {
             votes[previousScore-1] = votes[previousScore-1] - 1;
         votes[currentScore-1] = votes[currentScore-1] + 1;
     }*/
-
     public double getAverageScore(){
         int votesCount = 0, votesByScore = 0;
         double votesSum = 0;

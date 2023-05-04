@@ -1,5 +1,8 @@
 package uy.com.pf.care.infra.controllers;
 
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
+import lombok.extern.java.Log;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,18 +19,20 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/formal_caregivers")
+@Log
 public class FormalCaregiverController {
 
     @Autowired
     private IFormalCaregiverService formalCaregiverService;
 
     @PostMapping("/add")
-    public ResponseEntity<FormalCaregiverIdObject> add(@RequestBody FormalCaregiver formalCaregiver){
-        try{
+    public ResponseEntity<FormalCaregiverIdObject> add(@Valid @NotNull @RequestBody FormalCaregiver formalCaregiver){
+        try {
             return ResponseEntity.ok(
                     new FormalCaregiverIdObject(formalCaregiverService.save(formalCaregiver).getFormalCaregiverId()));
 
-        }catch (FormalCaregiverSaveException e){
+        }catch(FormalCaregiverValidateVoteException | FormalCaregiverSaveException e){
+            log.info(e.getMessage());
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
         }
     }
@@ -220,7 +225,7 @@ public class FormalCaregiverController {
             @PathVariable String interestCityName,
             @PathVariable String interestDepartmentName,
             @PathVariable String countryName,
-            @RequestBody List<DayTimeRangeObject> dayTimeRange){
+            @Valid @RequestBody List<DayTimeRangeObject> dayTimeRange){
 
         try{
             return ResponseEntity.ok(formalCaregiverService.findDateTimeRange(

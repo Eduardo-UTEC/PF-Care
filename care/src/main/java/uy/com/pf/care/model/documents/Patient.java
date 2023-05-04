@@ -1,5 +1,8 @@
 package uy.com.pf.care.model.documents;
 
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
+import jdk.jfr.BooleanFlag;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -36,12 +39,29 @@ import java.util.List;
 public class Patient extends PersonObject {
     @Id
     private String patientId;
+
+    @NotNull(message = "Patient: La clave 'zone' no puede ser nula")
     private ZoneObject zone;
+
+    @NotNull(message = "Patient: La clave 'referenceCaregiver' no puede ser nula")
     private ReferenceCaregiverObject referenceCaregiver;
+
+    @Valid
     private List<FormalCaregiverOthersObject> formalCaregivers = new ArrayList<>();
+
+    @Valid
     private List<InformalCaregiverObject> informalCaregivers = new ArrayList<>();
+
+    @NotNull(message = "Patient: La clave 'healthProvider' no puede ser nula")
     private HealthProviderObject healthProvider;
+
+    @NotNull(message = "Patient: La clave 'emergencyService' no puede ser nula")
     private EmergencyServiceObject emergencyService;
+
+    @NotNull(message = "Patient: La clave 'residential' no puede ser nula")
     private ResidentialObject residential;
+
+    @NotNull(message = "Patient: La clave 'deleted' no puede ser nula")
+    @BooleanFlag
     private Boolean deleted;
 }

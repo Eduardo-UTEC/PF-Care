@@ -2,6 +2,7 @@ package uy.com.pf.care.model.documents;
 
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
+import jdk.jfr.BooleanFlag;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -32,7 +33,8 @@ public class EmergencyService {
     @NotEmpty(message = "EmergencyService: El nombre del Servicio de Emergencia no puede ser vacío")
     private String name;
 
-    @NotNull(message = "EmergencyService: la clave 'deleted' no puede ser nula")
+    @NotNull(message = "EmergencyService: La propiedad 'deleted' no puede ser nula")
+    @BooleanFlag
     private Boolean deleted;
 
     @NotNull(message = "EmergencyService: La ciudad del Servicio de Emergencia no puede ser nula")

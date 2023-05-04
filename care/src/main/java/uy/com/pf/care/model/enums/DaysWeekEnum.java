@@ -1,14 +1,14 @@
 package uy.com.pf.care.model.enums;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
+import com.fasterxml.jackson.annotation.JsonEnumDefaultValue;
+import jakarta.validation.constraints.NotNull;
+import lombok.*;
 
+//@Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
-@ToString
+//@ToString
 public enum DaysWeekEnum {
     MON("Lunes"),
     TUE("Martes"),
