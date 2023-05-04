@@ -30,6 +30,8 @@ public class FormalCaregiver extends FormalCaregiverObject {
 
     @NotNull(message = "FormalCaregiver: El telefono del Cuidador Formal no puede ser nulo")
     @NotEmpty(message = "FormalCaregiver: El telefono del Cuidador Formal no puede ser vacío")
+    @Size(min = 7, max = 20,
+            message = "FormalCaregiver: El telefono del Cuidador Formal debe contener entre 7 y 20 caracteres")
     private String telephone;
 
     @NotNull(message = "FormalCaregiver: El mail del Cuidador Formal no puede ser nulo")
