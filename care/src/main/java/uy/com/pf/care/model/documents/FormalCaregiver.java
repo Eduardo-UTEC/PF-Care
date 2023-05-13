@@ -25,6 +25,7 @@ import java.util.*;
 @EqualsAndHashCode(callSuper=false)
 @Builder
 public class FormalCaregiver extends FormalCaregiverObject {
+
     @Id
     private String formalCaregiverId;
 
@@ -36,9 +37,12 @@ public class FormalCaregiver extends FormalCaregiverObject {
 
     @NotNull(message = "FormalCaregiver: El mail del Cuidador Formal no puede ser nulo")
     @NotEmpty(message = "FormalCaregiver: El mail del Cuidador Formal no puede ser vacío")
+    @Size(max = 50, message = "FormalCaregiver: El mail del Cuidador Formal no puede exceder los 50 caracteres")
     private String mail;
 
     @NotNull(message = "FormalCaregiver: La propiedad 'comments' del Cuidador Formal no puede ser nula")
+    @Size(max = 100,
+            message = "FormalCaregiver: Los comentarios del Cuidador Formal no pueden exceder los 100 caracteres")
     private String comments;
 
     /* Votos por cada puntaje.
@@ -50,11 +54,6 @@ public class FormalCaregiver extends FormalCaregiverObject {
     @NotNull(message = "FormalCaregiver: Clave 'votes[]' del Cuidador Formal no puede ser nulo")
     @Size(min = 5, max = 5, message = "FormalCaregiver: La cardinalidad de la propiedad 'votes[]' debe ser 5")
     private int[] votes;
-/*
-    @NotNull(message = "FormalCaregiver: Clave 'votes[]' del Cuidador Formal no puede ser nula")
-    @Valid
-    private VotesObject votesObject;
-*/
 
     @Transient
     private double averageScore;
@@ -82,6 +81,8 @@ public class FormalCaregiver extends FormalCaregiverObject {
 
     @NotNull(message = "FormalCaregiver: El país del Cuidador Formal no puede ser nulo")
     @NotEmpty(message = "FormalCaregiver: El país del Cuidador Formal no puede ser vacío")
+    @Size(max = 15,
+            message = "FormalCaregiver: El pais del Cuidador Formal no puede exceder los 15 caracteres")
     private String countryName; // Pais de residencia del Cuidador Formal
 
     /*  Si previousScore = -1, implica que no hay un puntaje previo asignado.

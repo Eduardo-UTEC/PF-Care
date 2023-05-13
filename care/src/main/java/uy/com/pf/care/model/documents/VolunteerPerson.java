@@ -1,5 +1,7 @@
 package uy.com.pf.care.model.documents;
 
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -20,6 +22,7 @@ public class VolunteerPerson extends PersonObject {
 
     //TODO: zonas preferidas
 
+    @Valid
     private List<DayTimeRangeObject> dayTimeRanges = new ArrayList<>(); // Rangos de dias y horarios disponibles
 
 }

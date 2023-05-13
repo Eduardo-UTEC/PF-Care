@@ -2,6 +2,7 @@ package uy.com.pf.care.model.documents;
 
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import jdk.jfr.BooleanFlag;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -26,11 +27,14 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @AllArgsConstructor
 @NoArgsConstructor
 public class EmergencyService {
+
     @Id
     private String emergencyServiceId;
 
     @NotNull(message = "EmergencyService: El nombre del Servicio de Emergencia no puede ser nulo")
     @NotEmpty(message = "EmergencyService: El nombre del Servicio de Emergencia no puede ser vacío")
+    @Size(max = 20,
+            message = "EmergencyService: El nombre del Servicio de Emergencia no puede exceder los 20 caracteres")
     private String name;
 
     @NotNull(message = "EmergencyService: La propiedad 'deleted' no puede ser nula")
@@ -39,13 +43,19 @@ public class EmergencyService {
 
     @NotNull(message = "EmergencyService: La ciudad del Servicio de Emergencia no puede ser nula")
     @NotEmpty(message = "EmergencyService: La ciudad del Servicio de Emergencia no puede ser vacía")
+    @Size(max = 25,
+            message = "EmergencyService: La ciudad del Servicio de Emergencia no puede exceder los 25 caracteres")
     private String cityName;
 
     @NotNull(message = "EmergencyService: El departamento del Servicio de Emergencia no puede ser nulo")
     @NotEmpty(message = "EmergencyService: El departamento del Servicio de Emergencia no puede ser vacío")
+    @Size(max = 25,
+            message = "EmergencyService: El departamento del Servicio de Emergencia no puede exceder los 25 caracteres")
     private String departmentName;
 
     @NotNull(message = "EmergencyService: El país del Servicio de Emergencia no puede ser nulo")
     @NotEmpty(message = "EmergencyService: El país del Servicio de Emergencia no puede ser vacío")
+    @Size(max = 15,
+            message = "EmergencyService: El pais  del Servicio de Emergencia no puede exceder los 15 caracteres")
     private String countryName;
 }

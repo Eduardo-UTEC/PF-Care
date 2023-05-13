@@ -2,6 +2,7 @@ package uy.com.pf.care.model.documents;
 
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import jdk.jfr.BooleanFlag;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -24,28 +25,33 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @AllArgsConstructor
 @NoArgsConstructor
 public class HealthProvider {
+
     @Id
     private String healthProviderId;
 
     @NotNull(message = "HealthProvider: La propiedad 'name' no puede ser nula")
     @NotEmpty(message = "HealthProvider: La propiedad 'name' no puede ser vacía")
+    @Size(max = 20, message = "HealthProvider: El nombre del Proveedor de Salud no puede exceder los 20 caracteres")
     private String name;
 
     @NotNull(message = "HealthProvider: La propiedad 'deleted' no puede ser nula")
-    @NotEmpty(message = "HealthProvider: La propiedad 'deleted' no puede ser vacía")
     @BooleanFlag
     private Boolean deleted;
 
     @NotNull(message = "HealthProvider: La propiedad 'cityName' no puede ser nula")
     @NotEmpty(message = "HealthProvider: La propiedad 'cityName' no puede ser vacía")
+    @Size(max = 25 , message = "HealthProvider: La ciudad del Proveedor de Salud no puede exceder los 25 caracteres")
     private String cityName;
 
     @NotNull(message = "HealthProvider: La propiedad 'departmentName' no puede ser nula")
     @NotEmpty(message = "HealthProvider: La propiedad 'departmentName' no puede ser vacía")
+    @Size(max = 25 ,
+            message = "HealthProvider: El departamento del Proveedor de Salud no puede exceder los 25 caracteres")
     private String departmentName;
 
     @NotNull(message = "HealthProvider: La propiedad 'countryName' no puede ser nula")
     @NotEmpty(message = "HealthProvider: La propiedad 'countryName' no puede ser vacía")
+    @Size(max = 15 , message = "HealthProvider: El pais del Proveedor de Salud no puede exceder los 15 caracteres")
     private String countryName;
 
 }

@@ -25,9 +25,6 @@ public class ParamConfig {
 //    @Value("${lista}")
 //    private List<Integer> lista;
 
-    /*
-    Datos reales
-     */
     @Value("${protocol}")
     private String protocol;
 

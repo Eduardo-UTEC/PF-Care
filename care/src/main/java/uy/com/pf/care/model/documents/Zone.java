@@ -1,5 +1,7 @@
 package uy.com.pf.care.model.documents;
 
+import jakarta.validation.constraints.NotNull;
+import jdk.jfr.BooleanFlag;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -8,6 +10,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.CompoundIndex;
 import org.springframework.data.mongodb.core.index.CompoundIndexes;
 import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.validation.annotation.Validated;
 import uy.com.pf.care.model.objects.ZoneObject;
 
 @Document("Zones")
@@ -26,7 +29,11 @@ import uy.com.pf.care.model.objects.ZoneObject;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Zone extends ZoneObject {
+
     @Id
     private String zoneId;
+
+    @NotNull(message = "Zone: La propiedad 'deleted' no puede ser nula")
+    @BooleanFlag
     private Boolean deleted;
 }

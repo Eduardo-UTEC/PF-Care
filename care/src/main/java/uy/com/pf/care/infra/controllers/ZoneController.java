@@ -1,5 +1,6 @@
 package uy.com.pf.care.infra.controllers;
 
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,7 +23,7 @@ public class ZoneController {
     private IZoneService zoneService;
 
     @PostMapping("/add")
-    public ResponseEntity<ZoneIdObject> add(@RequestBody Zone zone){
+    public ResponseEntity<ZoneIdObject> add(@Valid @RequestBody Zone zone){
         try{
             return ResponseEntity.ok(new ZoneIdObject(zoneService.save(zone).getZoneId()));
 

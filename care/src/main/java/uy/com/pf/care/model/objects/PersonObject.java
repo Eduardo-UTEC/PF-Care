@@ -16,44 +16,44 @@ import java.time.LocalDate;
 @NoArgsConstructor
 public class PersonObject {
 
-    @NotNull(message = "Patient: La clave 'name1' no puede ser nula")
-    @NotEmpty(message = "Patient: La clave 'name1' no puede ser vacía")
-    @Size(max = 25, message = "PersonObject: La clave 'name1' no puede exceder los 25 caracteres")
+    @NotNull(message = "PersonObject: La clave 'name1' no puede ser nula")
+    @NotEmpty(message = "PersonObject: La clave 'name1' no puede ser vacía")
+    @Size(max = 15, message = "PersonObject: La clave 'name1' no puede exceder los 15 caracteres")
     private String name1;
 
-    @Size(max = 25, message = "PersonObject: La clave 'name2' no puede exceder los 25 caracteres")
+    @Size(max = 15, message = "PersonObject: La clave 'name2' no puede exceder los 15 caracteres")
     private String name2;
 
-    @NotNull(message = "Patient: La clave 'surname1' no puede ser nula")
-    @NotEmpty(message = "Patient: La clave 'surname1' no puede ser vacía")
-    @Size(max = 25, message = "PersonObject: La clave 'surname1' no puede exceder los 25 caracteres")
+    @NotNull(message = "PersonObject: La clave 'surname1' no puede ser nula")
+    @NotEmpty(message = "PersonObject: La clave 'surname1' no puede ser vacía")
+    @Size(max = 15, message = "PersonObject: La clave 'surname1' no puede exceder los 15 caracteres")
     private String surname1;
 
-    @Size(max = 25, message = "PersonObject: La clave 'surname2' no puede exceder los 25 caracteres")
+    @Size(max = 15, message = "PersonObject: La clave 'surname2' no puede exceder los 15 caracteres")
     private String surname2;
 
-    @NotNull(message = "Patient: La clave 'gender' no puede ser nula")
+    @NotNull(message = "PersonObject: La clave 'gender' no puede ser nula")
     private PersonGenderEnum gender;
 
-    @NotNull(message = "Patient: La clave 'address' no puede ser nula")
+    @NotNull(message = "PersonObject: La clave 'address' no puede ser nula")
     private AddressObject address;
 
-    @NotNull(message = "Patient: La clave 'telephone' no puede ser nula")
-    @NotEmpty(message = "Patient: La clave 'telephone' no puede ser vacía")
+    @NotNull(message = "PersonObject: La clave 'telephone' no puede ser nula")
+    @NotEmpty(message = "PersonObject: La clave 'telephone' no puede ser vacía")
     @Size(max = 20, message = "PersonObject: La clave 'telephone' no puede exceder los 20 caracteres")
     private String  telephone;
 
-    @NotNull(message = "Patient: La clave 'mail' no puede ser nula")
-    @NotEmpty(message = "Patient: La clave 'mail' no puede ser vacía")
-    @Size(max = 80, message = "PersonObject: La clave 'mail' no puede exceder los 80 caracteres")
+    @NotNull(message = "PersonObject: La clave 'mail' no puede ser nula")
+    @NotEmpty(message = "PersonObject: La clave 'mail' no puede ser vacía")
+    @Size(max = 60, message = "PersonObject: La clave 'mail' no puede exceder los 60 caracteres")
     private String mail;
 
-    @NotNull(message = "Patient: La clave 'identificationDocument' no puede ser nula")
-    @NotEmpty(message = "Patient: La clave 'identificationDocument' no puede ser vacía")
+    @NotNull(message = "PersonObject: La clave 'identificationDocument' no puede ser nula")
+    @NotEmpty(message = "PersonObject: La clave 'identificationDocument' no puede ser vacía")
     @Positive(message = "PersonObject: La clave 'identificationDocument' debe contener dígitos")
     private Integer identificationDocument;
 
-    @NotNull(message = "Patient: La clave 'dateBirth' no puede ser nula")
-    @NotEmpty(message = "Patient: La clave 'dateBirth' no puede ser vacía")
+    @NotNull(message = "PersonObject: La clave 'dateBirth' no puede ser nula")
+    @NotEmpty(message = "PersonObject: La clave 'dateBirth' no puede ser vacía")
     private LocalDate dateBirth;
 }

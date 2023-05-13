@@ -37,6 +37,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Patient extends PersonObject {
+
     @Id
     private String patientId;
 

@@ -11,6 +11,6 @@
         <module name="uy.com.pf.care.main" />
       </profile>
     </annotationProcessing>
-    <bytecodeTargetLevel target="18" />
+    <bytecodeTargetLevel target="19" />
   </component>
 </project>

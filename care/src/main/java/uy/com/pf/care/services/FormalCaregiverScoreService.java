@@ -91,7 +91,7 @@ public class FormalCaregiverScoreService implements IFormalCaregiverScoreService
     @Override
     public Boolean updateScore(FormalCaregiverScore formalCaregiverScore) {
 
-        // Obtengo el documento "original"
+        // Obtengo el documento almacenado
         FormalCaregiverScore formalCaregiverScoreFound = this.findScore(
                 formalCaregiverScore.getFormalCaregiverId(),
                 formalCaregiverScore.getPatientId()
@@ -103,8 +103,10 @@ public class FormalCaregiverScoreService implements IFormalCaregiverScoreService
         }
 
         try{
+            //Actualizo el puntaje en el documento FormalCaregiversScores
             if (! this.updateScoreFormalCaregiver(formalCaregiverScore, ""))
                 return false;
+            // Actualizo el voto en el documento FormalCaregivers
             return this.updateVotesFormalCaregiver(formalCaregiverScore, formalCaregiverScoreFound.getScore());
 
         }catch (FormalCaregiverScoreUpdateVotesException e){
