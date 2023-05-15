@@ -23,10 +23,13 @@ public class HealthProviderController {
     private IHealthProviderService healthProviderService;
 
     @PostMapping("/add")
-    public ResponseEntity<HealthProviderIdObject> add(@Valid @NotNull @RequestBody HealthProvider healthProvider){
+    //public ResponseEntity<HealthProviderIdObject> add(@Valid @NotNull @RequestBody HealthProvider healthProvider){
+    public ResponseEntity<String> add(@Valid @NotNull @RequestBody HealthProvider healthProvider){
         try{
-            return ResponseEntity.ok(
+            /*return ResponseEntity.ok(
                     new HealthProviderIdObject(healthProviderService.save(healthProvider).getHealthProviderId()));
+*/
+            return ResponseEntity.ok(healthProviderService.save(healthProvider));
 
         }catch (HealthProviderSaveException e){
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error guardando proveedor de salud");

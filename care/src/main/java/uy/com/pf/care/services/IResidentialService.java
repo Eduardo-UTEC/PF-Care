@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface IResidentialService {
-    Residential save(Residential residential);
+    String save(Residential residential);
     Boolean setDeletion(String id, Boolean isDeleted);
     Optional<Residential> findId(String id);
     List<Residential> findCountry(Boolean includeDeleted, String countryName);

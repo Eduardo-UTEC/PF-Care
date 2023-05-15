@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface IEmergencyServiceService {
-    EmergencyService save(EmergencyService emergencyService);
+    String save(EmergencyService emergencyService);
     boolean setDeletion(String id, Boolean isDeleted);
     List<EmergencyService> findAll(Boolean includeDeleted, String countryName);
     Optional<EmergencyService> findId(String id);

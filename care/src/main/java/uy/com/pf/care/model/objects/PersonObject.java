@@ -49,11 +49,9 @@ public class PersonObject {
     private String mail;
 
     @NotNull(message = "PersonObject: La clave 'identificationDocument' no puede ser nula")
-    @NotEmpty(message = "PersonObject: La clave 'identificationDocument' no puede ser vacía")
     @Positive(message = "PersonObject: La clave 'identificationDocument' debe contener dígitos")
     private Integer identificationDocument;
 
     @NotNull(message = "PersonObject: La clave 'dateBirth' no puede ser nula")
-    @NotEmpty(message = "PersonObject: La clave 'dateBirth' no puede ser vacía")
     private LocalDate dateBirth;
 }

@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface IPatientService {
-    Patient save(Patient patient);
+    String save(Patient patient);
     Boolean setDeletion(String id, Boolean isDeleted);
     Optional<Patient> findId(String id);
     Optional<Patient> findIdentificationDocument(Integer identificationDocument, String countryName);

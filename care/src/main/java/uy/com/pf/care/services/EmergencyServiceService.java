@@ -21,11 +21,11 @@ public class EmergencyServiceService implements IEmergencyServiceService{
     //private static final Logger log = LoggerFactory.getLogger(CuidadosApplication.class);
 
     @Override
-    public EmergencyService save(EmergencyService emergencyService) {
+    public String save(EmergencyService emergencyService) {
         try{
             EmergencyService newEmeregencyService = emergencyServiceRepo.save(emergencyService);
             log.info("*** Servicio de Emergencia guardado con exito: " + LocalDateTime.now());
-            return newEmeregencyService;
+            return newEmeregencyService.getEmergencyServiceId();
 
         }catch(Exception e){
             log.warning("*** ERROR GUARDANDO SERVICIO DE EMERGENCIA: " + e);

@@ -25,4 +25,6 @@ public class ScoreObject {
 
     @Size(max = 100, message = "ScoreObject: El comentario no puede exceder los 100 caracteres")
     private String comment;
+
+    private String feeling;
 }

@@ -1,6 +1,7 @@
 package uy.com.pf.care.infra.controllers;
 
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,11 +26,14 @@ public class EmergencyServiceController {
     private IEmergencyServiceRepo iEmergencyServiceRepo;
 
     @PostMapping("/add")
-    public ResponseEntity<EmergencyServiceIdObject> add(@Valid @RequestBody EmergencyService emergencyService){
+    //public ResponseEntity<EmergencyServiceIdObject> add(@Valid @NotNull @RequestBody EmergencyService emergencyService){
+    public ResponseEntity<String> add(@Valid @NotNull @RequestBody EmergencyService emergencyService){
         try{
-            return ResponseEntity.ok(
+            /*return ResponseEntity.ok(
                     new EmergencyServiceIdObject(
                             emergencyServiceService.save(emergencyService).getEmergencyServiceId()));
+            */
+            return ResponseEntity.ok(emergencyServiceService.save(emergencyService));
 
         }catch (EmergencyServiceSaveException e){
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error guardando servicio de emergencia");

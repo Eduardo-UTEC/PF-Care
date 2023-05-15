@@ -21,11 +21,11 @@ public class PatientService implements IPatientService{
    // private static final Logger log = LoggerFactory.getLogger(CuidadosApplication.class);
 
     @Override
-    public Patient save(Patient patient) {
+    public String save(Patient patient) {
         try{
             Patient newPatient = patientRepo.save(patient);
             log.info("*** Paciente guardado con exito: " + LocalDateTime.now());
-            return newPatient;
+            return newPatient.getPatientId();
 
         }catch(Exception e){
             log.warning("*** ERROR GUARDANDO PACIENTE: " + e);

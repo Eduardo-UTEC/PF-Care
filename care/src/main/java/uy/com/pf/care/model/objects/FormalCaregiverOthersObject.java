@@ -12,4 +12,6 @@ public class FormalCaregiverOthersObject extends FormalCaregiverObject{
 
     @NotNull(message = "FormalCaregiverOthersObject: La clave 'formalCaregiverId' no puede ser nula")
     private String formalCaregiverId;
+
+
 }

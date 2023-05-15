@@ -1,6 +1,7 @@
 package uy.com.pf.care.infra.controllers;
 
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,9 +24,11 @@ public class ZoneController {
     private IZoneService zoneService;
 
     @PostMapping("/add")
-    public ResponseEntity<ZoneIdObject> add(@Valid @RequestBody Zone zone){
+    //public ResponseEntity<ZoneIdObject> add(@Valid @NotNull @RequestBody Zone zone){
+    public ResponseEntity<String> add(@Valid @NotNull @RequestBody Zone zone){
         try{
-            return ResponseEntity.ok(new ZoneIdObject(zoneService.save(zone).getZoneId()));
+            //return ResponseEntity.ok(new ZoneIdObject(zoneService.save(zone).getZoneId()));
+            return ResponseEntity.ok(zoneService.save(zone));
 
         }catch (ZoneSaveException e){
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error guardando zona");

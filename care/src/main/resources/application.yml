@@ -18,7 +18,7 @@ logging:
       #mongodb.driver: DEBUG
       springframework.data.mongodb: DEBUG
 
-#
+
 # Parametrizaciones
 #
 

@@ -1,6 +1,14 @@
 package uy.com.pf.care.services;
 
 import com.mongodb.client.result.UpdateResult;
+
+import edu.stanford.nlp.ling.CoreAnnotations;
+import edu.stanford.nlp.pipeline.*;
+//import edu.stanford.nlp.pipeline.Annotation;
+//import edu.stanford.nlp.pipeline.StanfordCoreNLP;
+
+import edu.stanford.nlp.sentiment.SentimentCoreAnnotations;
+import edu.stanford.nlp.util.CoreMap;
 import lombok.extern.java.Log;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
@@ -14,12 +22,14 @@ import reactor.core.publisher.Mono;
 import uy.com.pf.care.exceptions.*;
 import uy.com.pf.care.infra.config.ParamConfig;
 import uy.com.pf.care.model.documents.FormalCaregiverScore;
-import uy.com.pf.care.model.objects.ScoreObject;
 import uy.com.pf.care.repos.IFormalCaregiverScoreRepo;
 
+import java.io.FileReader;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Properties;
 
 @Service
 @Log
@@ -39,10 +49,36 @@ public class FormalCaregiverScoreService implements IFormalCaregiverScoreService
 
         String formalCaregiverScoreId = null;
         try{
+
+            //********************************* prueba con CoreNPL ******************
+
+            //Ejemplo 1:
+            //SentimentAnalyzer sent = new SentimentAnalyzer();
+            //log.info(String.valueOf(sent.stanfordScore("Frida es una buena perra")));
+
+            //Ejemplo 2:
+            /*Properties props = new Properties();
+            props.setProperty("annotators", "tokenize, ssplit, pos, lemma, ner, parse, sentiment");
+            //props.setProperty("pos.model", "edu/stanford/nlp/models/pos-tagger/spanish/spanish-distsim.tagger");
+            StanfordCoreNLP pipeline = new StanfordCoreNLP(props);
+            Annotation document = new Annotation("Este es un texto para analizar.");
+            pipeline.annotate(document);
+
+            List<CoreMap> sentences = document.get(CoreAnnotations.SentencesAnnotation.class);
+
+            //sentiments.add(sentence.get(CoreAnnotations.SentimentCoreAnnotations.SentimentAnnotatedTree.class));
+            List<CoreMap> sentiments = new ArrayList<>(sentences);
+
+            for (CoreMap sentiment : sentiments) {
+                System.out.println(sentiment.toString());
+            }*/
+
+            //****************************************
+
             // Agrego el puntaje a la colección FormalCaregiverScore
             formalCaregiverScoreId = formalCaregiverScoreRepo.save(formalCaregiverScore).getFormalCaregiverScoreId();
 
-            // Actualizo votos en coleccion FormalCaregiver
+            // Actualizo votos en coleccion FormalCaregivers
             //      * previousScore = -1: indica que no hay un score previo, ya que es un nuevo documento
             if (this.updateVotesFormalCaregiver(formalCaregiverScore, -1))
                 return formalCaregiverScoreId;
@@ -150,7 +186,8 @@ public class FormalCaregiverScoreService implements IFormalCaregiverScoreService
         Update update = new Update()
                 .set("score", formalCaregiverScore.getScore())
                 .set("comment", formalCaregiverScore.getComment())
-                .set("date", formalCaregiverScore.getDate());
+                .set("date", formalCaregiverScore.getDate())
+                .set("feeling", formalCaregiverScore.getFeeling());
 
         try {
             //Actualizacion atomica

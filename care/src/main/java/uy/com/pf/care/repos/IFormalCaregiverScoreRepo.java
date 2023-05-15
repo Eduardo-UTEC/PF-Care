@@ -3,7 +3,6 @@ package uy.com.pf.care.repos;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
 import uy.com.pf.care.model.documents.FormalCaregiverScore;
-import uy.com.pf.care.model.objects.ScoreObject;
 
 import java.util.List;
 

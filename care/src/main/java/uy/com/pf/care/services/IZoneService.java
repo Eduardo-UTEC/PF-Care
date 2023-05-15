@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface IZoneService {
-    Zone save(Zone zone);
+    String save(Zone zone);
     List<Zone> findAll(Boolean includeDeleted, String countryName);
     Optional<Zone> findId(String id);
     List<NeighborhoodObject> findNeighborhoods(

@@ -21,11 +21,11 @@ public class HealthProviderService implements IHealthProviderService {
     //private static final Logger log = LoggerFactory.getLogger(CuidadosApplication.class);
 
     @Override
-    public HealthProvider save(HealthProvider healthProvider) {
+    public String save(HealthProvider healthProvider) {
         try{
             HealthProvider newHealthProvider = healthProviderRepo.save(healthProvider);
             log.info("*** Proveedor de Salud guardado con exito: " + LocalDateTime.now());
-            return newHealthProvider;
+            return newHealthProvider.getHealthProviderId();
 
         }catch(Exception e){
             log.warning("*** ERROR GUARDANDO PROVEEDOR DE SALUD: " + e);

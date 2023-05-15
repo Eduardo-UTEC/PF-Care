@@ -21,11 +21,11 @@ public class ResidentialService implements IResidentialService{
     //private static final Logger log = LoggerFactory.getLogger(CuidadosApplication.class);
 
     @Override
-    public Residential save(Residential residential) {
+    public String save(Residential residential) {
         try{
             Residential newResidential = residentialRepo.save(residential);
             log.info("*** Resiencial guardado con exito: " + LocalDateTime.now());
-            return newResidential;
+            return newResidential.getResidentialId();
 
         }catch(Exception e){
             log.warning("*** ERROR GUARDANDO RESIDENCIAL: " + e);

@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface IFormalCaregiverService {
-    FormalCaregiver save(FormalCaregiver formalCaregiver);
+    String save(FormalCaregiver formalCaregiver);
     Boolean setAvailability(String id, Boolean isAvailable);
     Boolean setDeletion(String id, Boolean isDeleted);
     Boolean updateVotes(String formalCaregiverId, int previousScore, int currentScore);

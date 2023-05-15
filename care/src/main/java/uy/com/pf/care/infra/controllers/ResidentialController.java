@@ -1,5 +1,7 @@
 package uy.com.pf.care.infra.controllers;
 
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,9 +23,11 @@ public class ResidentialController {
     private IResidentialService residentialService;
 
     @PostMapping("/add")
-    public ResponseEntity<ResidentialIdObject> add(@RequestBody Residential residential){
+    //public ResponseEntity<ResidentialIdObject> add(@Valid @NotNull @RequestBody Residential residential){
+    public ResponseEntity<String> add(@Valid @NotNull @RequestBody Residential residential){
         try{
-            return ResponseEntity.ok(new ResidentialIdObject(residentialService.save(residential).getResidentialId()));
+            //return ResponseEntity.ok(new ResidentialIdObject(residentialService.save(residential).getResidentialId()));
+            return ResponseEntity.ok(residentialService.save(residential));
 
         }catch (ResidentialSaveException e){
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error guardando residencial");

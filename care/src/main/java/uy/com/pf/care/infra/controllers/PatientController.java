@@ -1,5 +1,7 @@
 package uy.com.pf.care.infra.controllers;
 
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,9 +22,11 @@ public class PatientController {
     private IPatientService patientService;
 
     @PostMapping("/add")
-    public ResponseEntity<PatientIdObject> add(@RequestBody Patient patient){
+    //public ResponseEntity<PatientIdObject> add(@Valid @NotNull @RequestBody Patient patient){
+    public ResponseEntity<String> add(@Valid @NotNull @RequestBody Patient patient){
         try{
-            return ResponseEntity.ok(new PatientIdObject(patientService.save(patient).getPatientId()));
+            //return ResponseEntity.ok(new PatientIdObject(patientService.save(patient).getPatientId()));
+            return ResponseEntity.ok(patientService.save(patient));
 
         }catch (PatientSaveException e){
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error guardando paciente");

@@ -29,11 +29,11 @@ public class ZoneService implements IZoneService{
     //private static final Logger log = LoggerFactory.getLogger(CuidadosApplication.class);
 
     @Override
-    public Zone save(Zone zone) {
+    public String save(Zone zone) {
         try{
             Zone newZone = zoneRepo.save(zone);
             log.info("*** Zona guardada con exito: " + LocalDateTime.now());
-            return newZone;
+            return newZone.getZoneId();
 
         }catch(Exception e){
             log.warning("*** ERROR GUARDANDO ZONA: " + e);

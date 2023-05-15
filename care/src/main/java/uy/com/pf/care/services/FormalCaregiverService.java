@@ -36,14 +36,14 @@ public class FormalCaregiverService implements IFormalCaregiverService {
     //private static final Logger log = LoggerFactory.getLogger(CuidadosApplication.class);
 
     @Override
-    public FormalCaregiver save(FormalCaregiver formalCaregiver) {
+    public String save(FormalCaregiver formalCaregiver) {
 
         this.validateVote(formalCaregiver.getVotes());
 
         try{
             FormalCaregiver newformalCaregiver = formalCaregiverRepo.save(formalCaregiver);
             log.info("Cuidador Formal guardado con exito: " + LocalDateTime.now());
-            return newformalCaregiver;
+            return newformalCaregiver.getFormalCaregiverId();
 
         }catch(Exception e){
             log.warning("Error guardando Cuidador Formal: " + e.getMessage());
@@ -66,15 +66,12 @@ public class FormalCaregiverService implements IFormalCaregiverService {
             }
             return false;
 
-
         }catch(Exception e){
             log.warning("No se pudo setear la disponibilidad del cuidador formal con id: " + id + ". "
                     + e.getMessage());
             throw new FormalCaregiverSetAvailabilityException("No se pudo setear la disponibilidad del cuidador formal con id: "
                     + id + ". ");
         }
-
-
     }
 
     /*  Devuelve true si la operación fue exitosa.
@@ -452,10 +449,10 @@ public class FormalCaregiverService implements IFormalCaregiverService {
                 countryName;
     }
 
-    // Valida que 'votes' tenga enteros válidos y no tenga votos negativos
+    // Valida que 'votes' no tenga votos negativos
     private void validateVote(int[] votes){
-        for(int i = 0; i < votes.length; i++){
-            if (votes[i] != votes[i] || votes[i] < 0 )
+        for (int vote : votes) {
+            if (vote < 0)
                 throw new FormalCaregiverValidateVoteException(
                         "FormalCaregiverService: la clave 'votes' debe contener dígitos enteros positivos o 0");
         }

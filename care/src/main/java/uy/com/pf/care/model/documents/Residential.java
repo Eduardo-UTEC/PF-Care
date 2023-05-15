@@ -42,8 +42,6 @@ public class Residential {
     private String telephone;
 
     @NotNull(message = "Residential: La direccion del Residencial no puede ser nula")
-    @NotEmpty(message = "Residential: La direccion del Residencial no puede ser vacia")
-    @Size(max = 50 , message = "Residential: La direccion del Residencial no puede exceder los 50 caracteres")
     private AddressObject address;
 
     @NotNull(message = "Residential: el atributo 'deleted' no puede ser nulo")

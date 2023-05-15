@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface IHealthProviderService {
-    HealthProvider save(HealthProvider healthProvider);
+    String save(HealthProvider healthProvider);
     Optional<HealthProvider> findId(String id);
     HealthProvider findByName(String cityName, String departmentName, String countryName, String name);
     List<HealthProvider> findAll(Boolean includeDeleted, String countryName);

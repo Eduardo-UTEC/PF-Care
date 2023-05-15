@@ -26,10 +26,13 @@ public class FormalCaregiverController {
     private IFormalCaregiverService formalCaregiverService;
 
     @PostMapping("/add")
-    public ResponseEntity<FormalCaregiverIdObject> add(@Valid @NotNull @RequestBody FormalCaregiver formalCaregiver){
+    //public ResponseEntity<FormalCaregiverIdObject> add(@Valid @NotNull @RequestBody FormalCaregiver formalCaregiver){
+    public ResponseEntity<String> add(@Valid @NotNull @RequestBody FormalCaregiver formalCaregiver){
         try {
-            return ResponseEntity.ok(
+            /*return ResponseEntity.ok(
                     new FormalCaregiverIdObject(formalCaregiverService.save(formalCaregiver).getFormalCaregiverId()));
+*/
+            return ResponseEntity.ok(formalCaregiverService.save(formalCaregiver));
 
         }catch(FormalCaregiverValidateVoteException | FormalCaregiverSaveException e){
             log.info(e.getMessage());
@@ -225,7 +228,7 @@ public class FormalCaregiverController {
             @PathVariable String interestCityName,
             @PathVariable String interestDepartmentName,
             @PathVariable String countryName,
-            @Valid @RequestBody List<DayTimeRangeObject> dayTimeRange){
+            @Valid @NotNull @RequestBody List<DayTimeRangeObject> dayTimeRange){
 
         try{
             return ResponseEntity.ok(formalCaregiverService.findDateTimeRange(
