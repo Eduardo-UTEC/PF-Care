@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import uy.com.pf.care.exceptions.EmergencyServiceSaveException;
+import uy.com.pf.care.exceptions.EmergencyServiceUpdateException;
 import uy.com.pf.care.model.documents.EmergencyService;
 import uy.com.pf.care.model.objects.EmergencyServiceIdObject;
 import uy.com.pf.care.repos.IEmergencyServiceRepo;
@@ -36,7 +37,19 @@ public class EmergencyServiceController {
             return ResponseEntity.ok(emergencyServiceService.save(emergencyService));
 
         }catch (EmergencyServiceSaveException e){
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error guardando servicio de emergencia");
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
+                    "Error guardando servicio de emergencia");
+        }
+    }
+
+    @PutMapping("/update")
+    public ResponseEntity<Boolean> update(@Valid @NotNull @RequestBody EmergencyService newEmergencyService){
+        try{
+            return ResponseEntity.ok(emergencyServiceService.update(newEmergencyService));
+
+        }catch (EmergencyServiceUpdateException e){
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
+                    "Error actualizando servicio de emergencia");
         }
     }
 

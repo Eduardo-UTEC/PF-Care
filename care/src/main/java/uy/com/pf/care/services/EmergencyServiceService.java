@@ -34,6 +34,26 @@ public class EmergencyServiceService implements IEmergencyServiceService{
     }
 
     @Override
+    public Boolean update(EmergencyService newEmergencyService) {
+
+        Optional<EmergencyService> entityFound =
+                emergencyServiceRepo.findById(newEmergencyService.getEmergencyServiceId());
+
+        if (entityFound.isPresent()){
+            EmergencyService newEntity = new EmergencyService();
+            newEntity.setEmergencyServiceId(newEmergencyService.getEmergencyServiceId());
+            newEntity.setName(newEmergencyService.getName());
+            newEntity.setCityName(newEmergencyService.getCityName());
+            newEntity.setDepartmentName(newEmergencyService.getDepartmentName());
+            newEntity.setCountryName(newEmergencyService.getCountryName());
+            newEntity.setDeleted(newEmergencyService.getDeleted());
+            emergencyServiceRepo.save(newEntity);
+            return true;
+        }
+        return false;
+    }
+
+    @Override
     public List<EmergencyService> findAll(Boolean includeDeleted, String countryName) {
         if (includeDeleted)
             return emergencyServiceRepo.findByCountryNameOrderByName(countryName);

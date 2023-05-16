@@ -33,8 +33,8 @@ public class EmergencyService {
 
     @NotNull(message = "EmergencyService: El nombre del Servicio de Emergencia no puede ser nulo")
     @NotEmpty(message = "EmergencyService: El nombre del Servicio de Emergencia no puede ser vacío")
-    @Size(max = 20,
-            message = "EmergencyService: El nombre del Servicio de Emergencia no puede exceder los 20 caracteres")
+    @Size(max = 25,
+            message = "EmergencyService: El nombre del Servicio de Emergencia no puede exceder los 25 caracteres")
     private String name;
 
     @NotNull(message = "EmergencyService: La propiedad 'deleted' no puede ser nula")
