@@ -108,7 +108,7 @@ public class FormalCaregiverController {
     }
 
     //  Devuelve true si la operación fue exitosa.
-    @PostMapping("setAvailability/{id}/{isAvailable}")
+    @PutMapping("setAvailability/{id}/{isAvailable}")
     public ResponseEntity<Boolean> setAvailability(@PathVariable String id, @PathVariable Boolean isAvailable) {
         try{
             return ResponseEntity.ok(formalCaregiverService.setAvailability(id, isAvailable));
@@ -119,7 +119,7 @@ public class FormalCaregiverController {
     }
 
     //  Devuelve true si la operación fue exitosa.
-    @PostMapping("updateVotes/{formalCaregiverId}/{previousScore}/{currentScore}")
+    @PutMapping("updateVotes/{formalCaregiverId}/{previousScore}/{currentScore}")
     public ResponseEntity<Boolean> updateVotes(
             @PathVariable String formalCaregiverId,
             @PathVariable Integer previousScore,
@@ -135,7 +135,7 @@ public class FormalCaregiverController {
     }
 
     // Devuelve true si la operación fue exitosa
-    @PostMapping("setDeletion/{id}/{isDeleted}")
+    @PutMapping("setDeletion/{id}/{isDeleted}")
     public ResponseEntity<Boolean> setDeletion(@PathVariable String id, @PathVariable Boolean isDeleted) {
         try{
             return ResponseEntity.ok(formalCaregiverService.setDeletion(id, isDeleted));

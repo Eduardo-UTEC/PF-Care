@@ -2,12 +2,15 @@ package uy.com.pf.care.infra.controllers;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
+import lombok.extern.java.Log;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
+import uy.com.pf.care.exceptions.FormalCaregiverUpdateException;
 import uy.com.pf.care.exceptions.ZoneSaveException;
+import uy.com.pf.care.model.documents.Residential;
 import uy.com.pf.care.model.documents.Zone;
 import uy.com.pf.care.model.objects.NeighborhoodObject;
 import uy.com.pf.care.model.objects.ZoneIdObject;
@@ -18,6 +21,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/zones")
+@Log
 public class ZoneController {
 
     @Autowired
@@ -32,6 +36,17 @@ public class ZoneController {
 
         }catch (ZoneSaveException e){
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error guardando zona");
+        }
+    }
+
+    @PutMapping("/update")
+    public ResponseEntity<Boolean> update(@Valid @NotNull @RequestBody Zone newZone){
+        try {
+            return ResponseEntity.ok(zoneService.update(newZone));
+
+        }catch(FormalCaregiverUpdateException e){
+            log.info(e.getMessage());
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
         }
     }
 
@@ -108,7 +123,7 @@ public class ZoneController {
     }
 
     // Devuelve true si la operación fue exitosa
-    @PostMapping("setDeletion/{id}/{isDeleted}")
+    @PutMapping("setDeletion/{id}/{isDeleted}")
     public ResponseEntity<Boolean> setDeletion(@PathVariable String id, @PathVariable Boolean isDeleted) {
         try{
             return ResponseEntity.ok(zoneService.setDeletion(id, isDeleted));

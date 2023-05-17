@@ -2,12 +2,15 @@ package uy.com.pf.care.infra.controllers;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
+import lombok.extern.java.Log;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
+import uy.com.pf.care.exceptions.FormalCaregiverUpdateException;
 import uy.com.pf.care.exceptions.PatientSaveException;
+import uy.com.pf.care.model.documents.HealthProvider;
 import uy.com.pf.care.model.documents.Patient;
 import uy.com.pf.care.model.objects.PatientIdObject;
 import uy.com.pf.care.services.IPatientService;
@@ -17,6 +20,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/patients")
+@Log
 public class PatientController {
     @Autowired
     private IPatientService patientService;
@@ -30,6 +34,17 @@ public class PatientController {
 
         }catch (PatientSaveException e){
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error guardando paciente");
+        }
+    }
+
+    @PutMapping("/update")
+    public ResponseEntity<Boolean> update(@Valid @NotNull @RequestBody Patient newPatient){
+        try {
+            return ResponseEntity.ok(patientService.update(newPatient));
+
+        }catch(FormalCaregiverUpdateException e){
+            log.info(e.getMessage());
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
         }
     }
 
@@ -136,7 +151,7 @@ public class PatientController {
     }
 
     // Devuelve true si la operación fue exitosa
-    @PostMapping("setDeletion/{id}/{isDeleted}")
+    @PutMapping("setDeletion/{id}/{isDeleted}")
     public ResponseEntity<Boolean> setDeletion(@PathVariable String id, @PathVariable Boolean isDeleted) {
         try{
             return ResponseEntity.ok(patientService.setDeletion(id, isDeleted));

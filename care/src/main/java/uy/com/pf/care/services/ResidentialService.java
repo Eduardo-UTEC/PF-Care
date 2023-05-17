@@ -4,6 +4,7 @@ import lombok.extern.java.Log;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import uy.com.pf.care.exceptions.ResidentialSaveException;
+import uy.com.pf.care.model.documents.Patient;
 import uy.com.pf.care.model.documents.Residential;
 import uy.com.pf.care.repos.IResidentialRepo;
 
@@ -23,14 +24,28 @@ public class ResidentialService implements IResidentialService{
     @Override
     public String save(Residential residential) {
         try{
-            Residential newResidential = residentialRepo.save(residential);
+            this.defaultValues(residential);
+            String id = residentialRepo.save(residential).getResidentialId();
             log.info("*** Resiencial guardado con exito: " + LocalDateTime.now());
-            return newResidential.getResidentialId();
+            return id;
 
         }catch(Exception e){
             log.warning("*** ERROR GUARDANDO RESIDENCIAL: " + e);
             throw new ResidentialSaveException(residential);
         }
+    }
+
+    @Override
+    public Boolean update(Residential newResidential) {
+        Optional<Residential> entityFound = residentialRepo.findById(newResidential.getResidentialId());
+        if (entityFound.isPresent()){
+            this.defaultValues(entityFound.get(), newResidential);
+            residentialRepo.save(newResidential);
+            log.info("Residencial actualizado con exito");
+            return true;
+        }
+        log.info("No se encontro el residencial con id " + newResidential.getResidentialId());
+        return false;
     }
 
     @Override
@@ -86,6 +101,16 @@ public class ResidentialService implements IResidentialService{
 
         return residentialRepo.findByCountryNameAndDepartmentNameAndCityNameAndNameAndDeletedFalse(
                 countryName, departmentName, cityName, name);
+    }
+
+    // Asigna los valores por default a la entitdad
+    private void defaultValues(Residential residential){
+        residential.setDeleted(false);
+    }
+
+    // Asigna los valores a la nueva entitdad, tomados de la vieja entidad (de la persistida)
+    private void defaultValues(Residential oldResidential, Residential newResidential){
+        newResidential.setDeleted(oldResidential.getDeleted());
     }
 
 }

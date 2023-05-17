@@ -33,7 +33,6 @@ public class Zone extends ZoneObject {
     @Id
     private String zoneId;
 
-    @NotNull(message = "Zone: La propiedad 'deleted' no puede ser nula")
     @BooleanFlag
     private Boolean deleted;
 }

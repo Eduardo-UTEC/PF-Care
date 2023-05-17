@@ -24,9 +24,10 @@ public class PatientService implements IPatientService{
     @Override
     public String save(Patient patient) {
         try{
-            Patient newPatient = patientRepo.save(patient);
+            this.defaultValues(patient);
+            String id = patientRepo.save(patient).getPatientId();
             log.info("*** Paciente guardado con exito: " + LocalDateTime.now());
-            return newPatient.getPatientId();
+            return id;
 
         }catch(Exception e){
             log.warning("*** ERROR GUARDANDO PACIENTE: " + e);
@@ -38,7 +39,7 @@ public class PatientService implements IPatientService{
     public Boolean update(Patient newPatient) {
         Optional<Patient> entityFound = patientRepo.findById(newPatient.getPatientId());
         if (entityFound.isPresent()){
-            //TODO: tomar valores por default para newPatient (deleted, por ejemplo)
+            this.defaultValues(entityFound.get(), newPatient);
             patientRepo.save(newPatient);
             log.info("Paciente actualizado con exito");
             return true;
@@ -145,5 +146,15 @@ public class PatientService implements IPatientService{
         );
     }
 */
+
+    // Asigna los valores por default a la entitdad
+    private void defaultValues(Patient patient){
+        patient.setDeleted(false);
+    }
+
+    // Asigna los valores a la nueva entitdad, tomados de la vieja entidad (de la persistida)
+    private void defaultValues(Patient oldPatient, Patient newPatient){
+        newPatient.setDeleted(oldPatient.getDeleted());
+    }
 
 }

@@ -7,6 +7,7 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 import uy.com.pf.care.exceptions.ZoneSaveException;
+import uy.com.pf.care.model.documents.Residential;
 import uy.com.pf.care.model.documents.Zone;
 import uy.com.pf.care.model.objects.NeighborhoodObject;
 import uy.com.pf.care.repos.IZoneRepo;
@@ -31,14 +32,28 @@ public class ZoneService implements IZoneService{
     @Override
     public String save(Zone zone) {
         try{
-            Zone newZone = zoneRepo.save(zone);
+            this.defaultValues(zone);
+            String id = zoneRepo.save(zone).getZoneId();
             log.info("*** Zona guardada con exito: " + LocalDateTime.now());
-            return newZone.getZoneId();
+            return id;
 
         }catch(Exception e){
             log.warning("*** ERROR GUARDANDO ZONA: " + e);
             throw new ZoneSaveException(zone);
         }
+    }
+
+    @Override
+    public Boolean update(Zone newZone) {
+        Optional<Zone> entityFound = zoneRepo.findById(newZone.getZoneId());
+        if (entityFound.isPresent()){
+            this.defaultValues(entityFound.get(), newZone);
+            zoneRepo.save(newZone);
+            log.info("Zona actualizada con exito");
+            return true;
+        }
+        log.info("No se encontro la zona con id " + newZone.getZoneId());
+        return false;
     }
 
     @Override
@@ -129,4 +144,13 @@ public class ZoneService implements IZoneService{
         return false;
     }
 
+    // Asigna los valores por default a la entitdad
+    private void defaultValues(Zone zone){
+        zone.setDeleted(false);
+    }
+
+    // Asigna los valores a la nueva entitdad, tomados de la vieja entidad (de la persistida)
+    private void defaultValues(Zone oldZone, Zone newZone){
+        newZone.setDeleted(oldZone.getDeleted());
+    }
 }

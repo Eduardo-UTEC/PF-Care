@@ -24,10 +24,10 @@ public class HealthProviderService implements IHealthProviderService {
     @Override
     public String save(HealthProvider healthProvider) {
         try{
-            healthProvider.setDeleted(false); // Seteo propiedad por defecto
-            HealthProvider newHealthProvider = healthProviderRepo.save(healthProvider);
+            this.defaultValues(healthProvider);
+            String id = healthProviderRepo.save(healthProvider).getHealthProviderId();
             log.info("*** Proveedor de Salud guardado con exito: " + LocalDateTime.now());
-            return newHealthProvider.getHealthProviderId();
+            return id;
 
         }catch(Exception e){
             log.warning("*** ERROR GUARDANDO PROVEEDOR DE SALUD: " + e);
@@ -36,16 +36,15 @@ public class HealthProviderService implements IHealthProviderService {
     }
 
     @Override
-    public Boolean update(HealthProvider newHealtProvider) {
-        Optional<HealthProvider> entityFound = healthProviderRepo.findById(newHealtProvider.getHealthProviderId());
+    public Boolean update(HealthProvider newHealthProvider) {
+        Optional<HealthProvider> entityFound = healthProviderRepo.findById(newHealthProvider.getHealthProviderId());
         if (entityFound.isPresent()){
-            // Tomo valor de la propiedad persistida. Esta propiedad solo se puede alterar mediante setDeleted.
-            newHealtProvider.setDeleted(entityFound.get().getDeleted());
-            healthProviderRepo.save(newHealtProvider);
+            this.defaultValues(entityFound.get(), newHealthProvider);
+            healthProviderRepo.save(newHealthProvider);
             log.info("Proveedor de salud actualizado con exito");
             return true;
         }
-        log.info("No se encontro el proveedor de salud con id " + newHealtProvider.getHealthProviderId());
+        log.info("No se encontro el proveedor de salud con id " + newHealthProvider.getHealthProviderId());
         return false;
     }
 
@@ -98,6 +97,16 @@ public class HealthProviderService implements IHealthProviderService {
             return true;
         }
         return false;
+    }
+
+    // Asigna los valores por default a la entitdad
+    private void defaultValues(HealthProvider healthProvider){
+        healthProvider.setDeleted(false);
+    }
+
+    // Asigna los valores a la nueva entitdad, tomados de la vieja entidad (de la persistida)
+    private void defaultValues(HealthProvider oldHealthProvider, HealthProvider newHealthProvider){
+        newHealthProvider.setDeleted(oldHealthProvider.getDeleted());
     }
 
 }

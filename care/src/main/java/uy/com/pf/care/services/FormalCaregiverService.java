@@ -37,14 +37,12 @@ public class FormalCaregiverService implements IFormalCaregiverService {
 
     @Override
     public String save(FormalCaregiver formalCaregiver) {
-
-        this.validateVote(formalCaregiver.getVotes());
-
+        //this.validateVote(formalCaregiver.getVotes());
         try{
-            formalCaregiver.setVotes(new int[] {0,0,0,0,0}); //Agrego los votos por defecto
-            FormalCaregiver newformalCaregiver = formalCaregiverRepo.save(formalCaregiver);
+            this.defaultValues(formalCaregiver);
+            String id = formalCaregiverRepo.save(formalCaregiver).getFormalCaregiverId();
             log.info("Cuidador Formal guardado con exito: " + LocalDateTime.now());
-            return newformalCaregiver.getFormalCaregiverId();
+            return id;
 
         }catch(Exception e){
             log.warning("Error guardando Cuidador Formal: " + e.getMessage());
@@ -56,7 +54,7 @@ public class FormalCaregiverService implements IFormalCaregiverService {
     public Boolean update(FormalCaregiver newFormalCaregiver) {
         Optional<FormalCaregiver> entityFound = formalCaregiverRepo.findById(newFormalCaregiver.getFormalCaregiverId());
         if (entityFound.isPresent()){
-            newFormalCaregiver.setVotes(entityFound.get().getVotes()); //Tomo los votos actuales (viene vacío)
+            this.defaultValues(entityFound.get(), newFormalCaregiver);
             formalCaregiverRepo.save(newFormalCaregiver);
             log.info("Cuidador formal actualizado con exito");
             return true;
@@ -464,12 +462,27 @@ public class FormalCaregiverService implements IFormalCaregiverService {
     }
 
     // Valida que 'votes' no tenga votos negativos
-    private void validateVote(int[] votes){
+    /*private void validateVote(int[] votes){
         for (int vote : votes) {
             if (vote < 0)
                 throw new FormalCaregiverValidateVoteException(
                         "FormalCaregiverService: la clave 'votes' debe contener dígitos enteros positivos o 0");
         }
+    }*/
+
+    // Asigna los valores por default a la entitdad
+    private void defaultValues(FormalCaregiver formalCaregiver){
+        formalCaregiver.setVotes(new int[] {0,0,0,0,0});
+        formalCaregiver.setAvailable(true);
+        formalCaregiver.setDeleted(false);
     }
+
+    // Asigna los valores a la nueva entitdad, tomados de la vieja entidad (de la persistida)
+    private void defaultValues(FormalCaregiver oldFormalCaregiver, FormalCaregiver newFormalCaregiver){
+        newFormalCaregiver.setVotes(oldFormalCaregiver.getVotes());
+        newFormalCaregiver.setAvailable(oldFormalCaregiver.getAvailable());
+        newFormalCaregiver.setDeleted(oldFormalCaregiver.getDeleted());
+    }
+
 
 }

@@ -71,7 +71,7 @@ public class FormalCaregiverScoreController {
     }
 
     //  Devuelve true si la operación fue exitosa.
-    @PostMapping("/updateScore")
+    @PutMapping("/updateScore")
     public ResponseEntity<Boolean> updateScore(@Valid @NotNull @RequestBody FormalCaregiverScore formalCaregiverScore ){
 
         try {

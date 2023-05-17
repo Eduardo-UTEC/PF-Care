@@ -44,7 +44,6 @@ public class Residential {
     @NotNull(message = "Residential: La direccion del Residencial no puede ser nula")
     private AddressObject address;
 
-    @NotNull(message = "Residential: el atributo 'deleted' no puede ser nulo")
     @BooleanFlag
     private Boolean deleted;
 

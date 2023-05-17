@@ -62,7 +62,6 @@ public class Patient extends PersonObject {
     @NotNull(message = "Patient: La clave 'residential' no puede ser nula")
     private ResidentialObject residential;
 
-    @NotNull(message = "Patient: La clave 'deleted' no puede ser nula")
     @BooleanFlag
     private Boolean deleted;
 }

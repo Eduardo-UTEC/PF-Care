@@ -121,7 +121,7 @@ public class HealthProviderController {
     }
 
     // Devuelve true si la operación fue exitosa
-    @PostMapping("setDeletion/{id}/{isDeleted}")
+    @PutMapping("setDeletion/{id}/{isDeleted}")
     public ResponseEntity<Boolean> setDeletion(@PathVariable String id, @PathVariable Boolean isDeleted) {
         try{
             return ResponseEntity.ok(healthProviderService.setDeletion(id, isDeleted));

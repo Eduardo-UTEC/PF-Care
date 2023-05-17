@@ -60,11 +60,9 @@ public class FormalCaregiver extends FormalCaregiverObject {
     @Transient
     private double averageScore;
 
-    @NotNull(message = "FormalCaregiver: La propiedad 'available' no puede ser nula")
     @BooleanFlag
     private Boolean available;  // Si es False, implica que sus servicios no estan disponibles momentáneamente
 
-    @NotNull(message = "FormalCaregiver: La propiedad 'deleted' no puede ser nula")
     @BooleanFlag
     private Boolean deleted;
 

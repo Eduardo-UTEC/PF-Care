@@ -23,9 +23,9 @@ public class EmergencyServiceService implements IEmergencyServiceService{
     @Override
     public String save(EmergencyService emergencyService) {
         try{
-            EmergencyService newEmeregencyService = emergencyServiceRepo.save(emergencyService);
+            String id = emergencyServiceRepo.save(emergencyService).getEmergencyServiceId();
             log.info("*** Servicio de Emergencia guardado con exito: " + LocalDateTime.now());
-            return newEmeregencyService.getEmergencyServiceId();
+            return id;
 
         }catch(Exception e){
             log.warning("*** ERROR GUARDANDO SERVICIO DE EMERGENCIA: " + e);

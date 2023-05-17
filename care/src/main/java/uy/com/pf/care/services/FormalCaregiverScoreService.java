@@ -124,8 +124,8 @@ public class FormalCaregiverScoreService implements IFormalCaregiverScoreService
         );
 
         if (formalCaregiverScoreFound == null) {
-            log.info("No existe la calificación para modificar");
-            throw new FormalCaregiverScoreNotFoundException("No existe la calificación para modificar");
+            log.info("El cuidador formal no ha sido calificado por el paciente");
+            throw new FormalCaregiverScoreNotFoundException("El cuidador formal no ha sido calificado por el paciente");
         }
 
         try{
@@ -202,7 +202,7 @@ public class FormalCaregiverScoreService implements IFormalCaregiverScoreService
 
         WebClient webClient = WebClient.create();
 
-        Mono<Boolean> updateVotesResponse = webClient.post()
+        Mono<Boolean> updateVotesResponse = webClient.put()
                 .uri(this.getUrlUpdateVotes(
                         formalCaregiverScore.getFormalCaregiverId(),
                         previousScore,
