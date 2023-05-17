@@ -34,7 +34,6 @@ public class HealthProvider {
     @Size(max = 20, message = "HealthProvider: El nombre del Proveedor de Salud no puede exceder los 20 caracteres")
     private String name;
 
-    @NotNull(message = "HealthProvider: La propiedad 'deleted' no puede ser nula")
     @BooleanFlag
     private Boolean deleted;
 

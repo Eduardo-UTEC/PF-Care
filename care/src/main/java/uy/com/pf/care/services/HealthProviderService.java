@@ -4,6 +4,7 @@ import lombok.extern.java.Log;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import uy.com.pf.care.exceptions.HealthProviderSaveException;
+import uy.com.pf.care.model.documents.FormalCaregiver;
 import uy.com.pf.care.model.documents.HealthProvider;
 import uy.com.pf.care.repos.IHealthProviderRepo;
 
@@ -23,6 +24,7 @@ public class HealthProviderService implements IHealthProviderService {
     @Override
     public String save(HealthProvider healthProvider) {
         try{
+            healthProvider.setDeleted(false); // Seteo propiedad por defecto
             HealthProvider newHealthProvider = healthProviderRepo.save(healthProvider);
             log.info("*** Proveedor de Salud guardado con exito: " + LocalDateTime.now());
             return newHealthProvider.getHealthProviderId();
@@ -31,6 +33,20 @@ public class HealthProviderService implements IHealthProviderService {
             log.warning("*** ERROR GUARDANDO PROVEEDOR DE SALUD: " + e);
             throw new HealthProviderSaveException(healthProvider);
         }
+    }
+
+    @Override
+    public Boolean update(HealthProvider newHealtProvider) {
+        Optional<HealthProvider> entityFound = healthProviderRepo.findById(newHealtProvider.getHealthProviderId());
+        if (entityFound.isPresent()){
+            // Tomo valor de la propiedad persistida. Esta propiedad solo se puede alterar mediante setDeleted.
+            newHealtProvider.setDeleted(entityFound.get().getDeleted());
+            healthProviderRepo.save(newHealtProvider);
+            log.info("Proveedor de salud actualizado con exito");
+            return true;
+        }
+        log.info("No se encontro el proveedor de salud con id " + newHealtProvider.getHealthProviderId());
+        return false;
     }
 
     @Override
@@ -78,7 +94,7 @@ public class HealthProviderService implements IHealthProviderService {
         Optional<HealthProvider> healthProvider = this.findId(id);
         if (healthProvider.isPresent()) {
             healthProvider.get().setDeleted(isDeleted);
-            this.save(healthProvider.get());
+            healthProviderRepo.save(healthProvider.get());
             return true;
         }
         return false;

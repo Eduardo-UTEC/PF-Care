@@ -2,13 +2,6 @@ package uy.com.pf.care.services;
 
 import com.mongodb.client.result.UpdateResult;
 
-import edu.stanford.nlp.ling.CoreAnnotations;
-import edu.stanford.nlp.pipeline.*;
-//import edu.stanford.nlp.pipeline.Annotation;
-//import edu.stanford.nlp.pipeline.StanfordCoreNLP;
-
-import edu.stanford.nlp.sentiment.SentimentCoreAnnotations;
-import edu.stanford.nlp.util.CoreMap;
 import lombok.extern.java.Log;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
@@ -24,12 +17,9 @@ import uy.com.pf.care.infra.config.ParamConfig;
 import uy.com.pf.care.model.documents.FormalCaregiverScore;
 import uy.com.pf.care.repos.IFormalCaregiverScoreRepo;
 
-import java.io.FileReader;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.Properties;
 
 @Service
 @Log

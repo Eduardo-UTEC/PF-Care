@@ -123,7 +123,7 @@ public class ZoneService implements IZoneService{
         Optional<Zone> zone = this.findId(id);
         if (zone.isPresent()) {
             zone.get().setDeleted(isDeleted);
-            this.save(zone.get());
+            zoneRepo.save(zone.get());
             return true;
         }
         return false;

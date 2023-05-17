@@ -41,6 +41,7 @@ public class FormalCaregiverService implements IFormalCaregiverService {
         this.validateVote(formalCaregiver.getVotes());
 
         try{
+            formalCaregiver.setVotes(new int[] {0,0,0,0,0}); //Agrego los votos por defecto
             FormalCaregiver newformalCaregiver = formalCaregiverRepo.save(formalCaregiver);
             log.info("Cuidador Formal guardado con exito: " + LocalDateTime.now());
             return newformalCaregiver.getFormalCaregiverId();
@@ -49,6 +50,19 @@ public class FormalCaregiverService implements IFormalCaregiverService {
             log.warning("Error guardando Cuidador Formal: " + e.getMessage());
             throw new FormalCaregiverSaveException("Error guardando Cuidador Formal");
         }
+    }
+
+    @Override
+    public Boolean update(FormalCaregiver newFormalCaregiver) {
+        Optional<FormalCaregiver> entityFound = formalCaregiverRepo.findById(newFormalCaregiver.getFormalCaregiverId());
+        if (entityFound.isPresent()){
+            newFormalCaregiver.setVotes(entityFound.get().getVotes()); //Tomo los votos actuales (viene vacío)
+            formalCaregiverRepo.save(newFormalCaregiver);
+            log.info("Cuidador formal actualizado con exito");
+            return true;
+        }
+        log.info("No se encontro el cuidador formal con id " + newFormalCaregiver.getFormalCaregiverId());
+        return false;
     }
 
     /*  Devuelve true si la operación fue exitosa.
@@ -61,7 +75,7 @@ public class FormalCaregiverService implements IFormalCaregiverService {
             Optional<FormalCaregiver> formalCaregiver = this.findId(id);
             if (formalCaregiver.isPresent() && ! formalCaregiver.get().getDeleted()) {
                 formalCaregiver.get().setAvailable(isAvailable);
-                this.save(formalCaregiver.get());
+                formalCaregiverRepo.save(formalCaregiver.get());
                 return true;
             }
             return false;
@@ -87,7 +101,7 @@ public class FormalCaregiverService implements IFormalCaregiverService {
             if (formalCaregiver.isPresent()) {
                 formalCaregiver.get().setDeleted(isDeleted);
                 formalCaregiver.get().setAvailable(false);
-                this.save(formalCaregiver.get());
+                formalCaregiverRepo.save(formalCaregiver.get());
                 return true;
             }
             return false;

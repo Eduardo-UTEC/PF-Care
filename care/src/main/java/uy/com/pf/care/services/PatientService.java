@@ -4,6 +4,7 @@ import lombok.extern.java.Log;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import uy.com.pf.care.exceptions.PatientSaveException;
+import uy.com.pf.care.model.documents.FormalCaregiver;
 import uy.com.pf.care.model.documents.Patient;
 import uy.com.pf.care.repos.IPatientRepo;
 
@@ -34,11 +35,24 @@ public class PatientService implements IPatientService{
     }
 
     @Override
+    public Boolean update(Patient newPatient) {
+        Optional<Patient> entityFound = patientRepo.findById(newPatient.getPatientId());
+        if (entityFound.isPresent()){
+            //TODO: tomar valores por default para newPatient (deleted, por ejemplo)
+            patientRepo.save(newPatient);
+            log.info("Paciente actualizado con exito");
+            return true;
+        }
+        log.info("No se encontro el paciente con id " + newPatient.getPatientId());
+        return false;
+    }
+
+    @Override
     public Boolean setDeletion(String id, Boolean isDeleted) {
         Optional<Patient> patient = this.findId(id);
         if (patient.isPresent()) {
             patient.get().setDeleted(isDeleted);
-            this.save(patient.get());
+            patientRepo.save(patient.get());
             return true;
         }
         return false;

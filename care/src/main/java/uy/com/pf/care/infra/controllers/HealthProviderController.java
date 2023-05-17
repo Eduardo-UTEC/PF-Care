@@ -2,14 +2,15 @@ package uy.com.pf.care.infra.controllers;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
+import lombok.extern.java.Log;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
+import uy.com.pf.care.exceptions.FormalCaregiverUpdateException;
 import uy.com.pf.care.exceptions.HealthProviderSaveException;
 import uy.com.pf.care.model.documents.HealthProvider;
-import uy.com.pf.care.model.objects.HealthProviderIdObject;
 import uy.com.pf.care.services.IHealthProviderService;
 
 import java.util.List;
@@ -17,22 +18,30 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/health_providers")
+@Log
 public class HealthProviderController {
 
     @Autowired
     private IHealthProviderService healthProviderService;
 
     @PostMapping("/add")
-    //public ResponseEntity<HealthProviderIdObject> add(@Valid @NotNull @RequestBody HealthProvider healthProvider){
     public ResponseEntity<String> add(@Valid @NotNull @RequestBody HealthProvider healthProvider){
         try{
-            /*return ResponseEntity.ok(
-                    new HealthProviderIdObject(healthProviderService.save(healthProvider).getHealthProviderId()));
-*/
             return ResponseEntity.ok(healthProviderService.save(healthProvider));
 
         }catch (HealthProviderSaveException e){
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error guardando proveedor de salud");
+        }
+    }
+
+    @PutMapping("/update")
+    public ResponseEntity<Boolean> update(@Valid @NotNull @RequestBody HealthProvider newHealthProvider){
+        try {
+            return ResponseEntity.ok(healthProviderService.update(newHealthProvider));
+
+        }catch(FormalCaregiverUpdateException e){
+            log.info(e.getMessage());
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
         }
     }
 

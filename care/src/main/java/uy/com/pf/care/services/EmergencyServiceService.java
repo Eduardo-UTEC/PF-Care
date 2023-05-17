@@ -35,21 +35,12 @@ public class EmergencyServiceService implements IEmergencyServiceService{
 
     @Override
     public Boolean update(EmergencyService newEmergencyService) {
-
-        Optional<EmergencyService> entityFound =
-                emergencyServiceRepo.findById(newEmergencyService.getEmergencyServiceId());
-
-        if (entityFound.isPresent()){
-            EmergencyService newEntity = new EmergencyService();
-            newEntity.setEmergencyServiceId(newEmergencyService.getEmergencyServiceId());
-            newEntity.setName(newEmergencyService.getName());
-            newEntity.setCityName(newEmergencyService.getCityName());
-            newEntity.setDepartmentName(newEmergencyService.getDepartmentName());
-            newEntity.setCountryName(newEmergencyService.getCountryName());
-            newEntity.setDeleted(newEmergencyService.getDeleted());
-            emergencyServiceRepo.save(newEntity);
+        if (emergencyServiceRepo.findById(newEmergencyService.getEmergencyServiceId()).isPresent()){
+            emergencyServiceRepo.save(newEmergencyService);
+            log.info("Servicio de emergencia actualizado con exito");
             return true;
         }
+        log.info("No se encontro el servicio de emergencia con id " + newEmergencyService.getEmergencyServiceId());
         return false;
     }
 
@@ -103,7 +94,7 @@ public class EmergencyServiceService implements IEmergencyServiceService{
         Optional<EmergencyService> emergencyService = this.findId(id);
         if (emergencyService.isPresent()) {
             emergencyService.get().setDeleted(isDeleted);
-            this.save(emergencyService.get());
+            emergencyServiceRepo.save(emergencyService.get());
             return true;
         }
         return false;

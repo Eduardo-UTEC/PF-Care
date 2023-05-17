@@ -11,7 +11,6 @@ import org.springframework.web.server.ResponseStatusException;
 import uy.com.pf.care.exceptions.*;
 import uy.com.pf.care.model.documents.FormalCaregiver;
 import uy.com.pf.care.model.objects.DayTimeRangeObject;
-import uy.com.pf.care.model.objects.FormalCaregiverIdObject;
 import uy.com.pf.care.services.IFormalCaregiverService;
 
 import java.util.List;
@@ -26,15 +25,22 @@ public class FormalCaregiverController {
     private IFormalCaregiverService formalCaregiverService;
 
     @PostMapping("/add")
-    //public ResponseEntity<FormalCaregiverIdObject> add(@Valid @NotNull @RequestBody FormalCaregiver formalCaregiver){
     public ResponseEntity<String> add(@Valid @NotNull @RequestBody FormalCaregiver formalCaregiver){
         try {
-            /*return ResponseEntity.ok(
-                    new FormalCaregiverIdObject(formalCaregiverService.save(formalCaregiver).getFormalCaregiverId()));
-*/
             return ResponseEntity.ok(formalCaregiverService.save(formalCaregiver));
 
         }catch(FormalCaregiverValidateVoteException | FormalCaregiverSaveException e){
+            log.info(e.getMessage());
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
+        }
+    }
+
+    @PutMapping("/update")
+    public ResponseEntity<Boolean> update(@Valid @NotNull @RequestBody FormalCaregiver newFormalCaregiver){
+        try {
+            return ResponseEntity.ok(formalCaregiverService.update(newFormalCaregiver));
+
+        }catch(FormalCaregiverUpdateException e){
             log.info(e.getMessage());
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
         }

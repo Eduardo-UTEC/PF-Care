@@ -17,7 +17,9 @@ import java.util.*;
 @Document("FormalCaregivers")
 @CompoundIndexes({
         @CompoundIndex(def = "{'mail':1}", unique = true),
-        @CompoundIndex(def = "{'countryName':1, 'name':1, 'telephone':1}", unique = true)
+        //@CompoundIndex(def = "{'countryName':1, 'name':1, 'telephone':1}", unique = true),
+        @CompoundIndex(def = "{'telephone':1}", unique = true),
+        @CompoundIndex(def = "{'countryName':1, 'name':1}", unique = false)
 })
 @Data
 @AllArgsConstructor
@@ -51,9 +53,9 @@ public class FormalCaregiver extends FormalCaregiverObject {
             ...
             votes[4]: cantidad de votos para el puntaje 5
      */
-    @NotNull(message = "FormalCaregiver: Clave 'votes[]' del Cuidador Formal no puede ser nulo")
+    //@NotNull(message = "FormalCaregiver: Clave 'votes[]' del Cuidador Formal no puede ser nulo")
     @Size(min = 5, max = 5, message = "FormalCaregiver: La cardinalidad de la propiedad 'votes[]' debe ser 5")
-    private int[] votes;
+    private int[] votes = new int[5];
 
     @Transient
     private double averageScore;
@@ -85,15 +87,6 @@ public class FormalCaregiver extends FormalCaregiverObject {
             message = "FormalCaregiver: El pais del Cuidador Formal no puede exceder los 15 caracteres")
     private String countryName; // Pais de residencia del Cuidador Formal
 
-    /*  Si previousScore = -1, implica que no hay un puntaje previo asignado.
-        Si previousScore = [1..5], implica hay un puntaje previo en el ordinal previousScore - 1 y debe restarse.
-        currentScore: es el puntaje que debe sumarse en el ordinal currentScore - 1.
-     */
-    /*public void updateVote(int previousScore, int currentScore){
-        if (previousScore != -1)
-            votes[previousScore-1] = votes[previousScore-1] - 1;
-        votes[currentScore-1] = votes[currentScore-1] + 1;
-    }*/
     public double getAverageScore(){
         int votesCount = 0, votesByScore = 0;
         double votesSum = 0;

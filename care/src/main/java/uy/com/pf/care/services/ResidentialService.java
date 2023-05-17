@@ -38,7 +38,7 @@ public class ResidentialService implements IResidentialService{
         Optional<Residential> residential = this.findId(id);
         if (residential.isPresent()) {
             residential.get().setDeleted(isDeleted);
-            this.save(residential.get());
+            residentialRepo.save(residential.get());
             return true;
         }
         return false;
