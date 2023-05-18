@@ -25,4 +25,6 @@ public class VolunteerPerson extends PersonObject {
     @Valid
     private List<DayTimeRangeObject> dayTimeRanges = new ArrayList<>(); // Rangos de dias y horarios disponibles
 
+    private byte[] photo;
+
 }

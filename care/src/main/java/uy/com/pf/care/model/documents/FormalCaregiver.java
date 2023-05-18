@@ -55,6 +55,7 @@ public class FormalCaregiver extends FormalCaregiverObject {
      */
     //@NotNull(message = "FormalCaregiver: Clave 'votes[]' del Cuidador Formal no puede ser nulo")
     @Size(min = 5, max = 5, message = "FormalCaregiver: La cardinalidad de la propiedad 'votes[]' debe ser 5")
+    @Builder.Default
     private int[] votes = new int[5];
 
     @Transient
@@ -65,6 +66,8 @@ public class FormalCaregiver extends FormalCaregiverObject {
 
     @BooleanFlag
     private Boolean deleted;
+
+    private byte[] photo;
 
     /* Zonas de interés del Cuidador Formal:
          -Si interestZones=[], implica que llega a todos los Departamentos/Provincias del pais.
@@ -84,6 +87,7 @@ public class FormalCaregiver extends FormalCaregiverObject {
     @Size(max = 15,
             message = "FormalCaregiver: El pais del Cuidador Formal no puede exceder los 15 caracteres")
     private String countryName; // Pais de residencia del Cuidador Formal
+
 
     public double getAverageScore(){
         int votesCount = 0, votesByScore = 0;
