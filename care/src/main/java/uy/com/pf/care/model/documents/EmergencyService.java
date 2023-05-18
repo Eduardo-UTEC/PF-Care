@@ -37,7 +37,6 @@ public class EmergencyService {
             message = "EmergencyService: El nombre del Servicio de Emergencia no puede exceder los 25 caracteres")
     private String name;
 
-    @NotNull(message = "EmergencyService: La propiedad 'deleted' no puede ser nula")
     @BooleanFlag
     private Boolean deleted;
 

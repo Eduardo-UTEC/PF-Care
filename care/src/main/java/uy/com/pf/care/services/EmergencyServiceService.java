@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import uy.com.pf.care.exceptions.EmergencyServiceSaveException;
 import uy.com.pf.care.model.documents.EmergencyService;
+import uy.com.pf.care.model.documents.FormalCaregiver;
 import uy.com.pf.care.repos.IEmergencyServiceRepo;
 
 import java.time.LocalDateTime;
@@ -23,6 +24,7 @@ public class EmergencyServiceService implements IEmergencyServiceService{
     @Override
     public String save(EmergencyService emergencyService) {
         try{
+            this.defaultValues(emergencyService);
             String id = emergencyServiceRepo.save(emergencyService).getEmergencyServiceId();
             log.info("*** Servicio de Emergencia guardado con exito: " + LocalDateTime.now());
             return id;
@@ -35,7 +37,11 @@ public class EmergencyServiceService implements IEmergencyServiceService{
 
     @Override
     public Boolean update(EmergencyService newEmergencyService) {
-        if (emergencyServiceRepo.findById(newEmergencyService.getEmergencyServiceId()).isPresent()){
+        Optional<EmergencyService> entityFound = emergencyServiceRepo.
+                findById(newEmergencyService.getEmergencyServiceId());
+
+        if (entityFound.isPresent()){
+            this.defaultValues(entityFound.get(), newEmergencyService);
             emergencyServiceRepo.save(newEmergencyService);
             log.info("Servicio de emergencia actualizado con exito");
             return true;
@@ -99,4 +105,15 @@ public class EmergencyServiceService implements IEmergencyServiceService{
         }
         return false;
     }
+
+    // Asigna los valores por default a la entitdad
+    private void defaultValues(EmergencyService emergencyService){
+        emergencyService.setDeleted(false);
+    }
+
+    // Asigna los valores a la nueva entitdad, tomados de la vieja entidad (de la persistida)
+    private void defaultValues(EmergencyService oldEmergencyService, EmergencyService newEmergencyService){
+        newEmergencyService.setDeleted(oldEmergencyService.getDeleted());
+    }
+
 }
