@@ -1,4 +1,4 @@
-package uy.com.pf.care.infra.tools;
+/*package uy.com.pf.care.infra.tools;
 
 import edu.stanford.nlp.ling.CoreAnnotations;
 import edu.stanford.nlp.ling.CoreLabel;
@@ -80,3 +80,4 @@ public class SentimentAnalyzer {
     }
 
 }
+*/
