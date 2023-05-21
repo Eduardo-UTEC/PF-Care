@@ -6,12 +6,12 @@ import jakarta.validation.constraints.Size;
 import jdk.jfr.BooleanFlag;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.CompoundIndex;
 import org.springframework.data.mongodb.core.index.CompoundIndexes;
 import org.springframework.data.mongodb.core.mapping.Document;
+import uy.com.pf.care.model.objects.ZoneObject;
 
 import java.util.List;
 
@@ -33,7 +33,7 @@ public class User {
     @NotNull(message = "User: El nombre de usuario no puede ser nulo")
     @NotEmpty(message = "User: El nombre de usuario  no puede ser vacío")
     @Size(max = 15, message = "User: El nombre de usuario no puede exceder los 15 caracteres")
-    private String userName;
+    private Integer userName;
 
     @NotNull(message = "User: El password no puede ser nulo")
     @NotEmpty(message = "User: El password  no puede ser vacío")
@@ -42,7 +42,10 @@ public class User {
 
     @NotNull(message = "User: El usuario debe tener al menos un rol")
     @NotEmpty(message = "User: El usuario debe tener al menos un rol")
-    private List<String> rolesId; // Id de cada rol del usuario
+    private List<String> rolesId;
+
+    @NotNull(message = "User: La clave 'zone' no puede ser nula")
+    private ZoneObject zone;
 
     @BooleanFlag
     private Boolean deleted;  // Si es true, debe ser true en el documento asociado a este usuario

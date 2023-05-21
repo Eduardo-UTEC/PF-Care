@@ -2,23 +2,19 @@ package uy.com.pf.care.model.documents;
 
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
-import jdk.jfr.BooleanFlag;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.index.CompoundIndex;
 import org.springframework.data.mongodb.core.index.CompoundIndexes;
 import org.springframework.data.mongodb.core.mapping.Document;
+import uy.com.pf.care.model.enums.RoleEnum;
+import uy.com.pf.care.model.objects.VideoObject;
+import uy.com.pf.care.model.objects.ZoneObject;
 
 import java.util.List;
 
 @Document("Roles")
-
-@CompoundIndexes({
-    //@CompoundIndex(def = "{'userName':1}", unique = true)
-})
 
 //@EqualsAndHashCode(callSuper=false)
 @Data
@@ -31,10 +27,15 @@ public class Role {
 
     @NotNull(message = "Role: El nombre del rol no puede ser nulo")
     @NotEmpty(message = "Role: El nombre del rol  no puede ser vacío")
-    @Size(max = 20, message = "Role: El nombre del rol no puede exceder los 20 caracteres")
-    private String name;
+    private RoleEnum roleName;
 
-    @NotNull(message = "Role: La lista de tareas para el rol no puede ser nula")
-    private List<String> tasks;
+    //@NotNull(message = "Role: La lista de tareas para el rol no puede ser nula")
+    //private List<String> tasks;
+
+    @NotNull(message = "Role: La propiedad 'videos' no puede ser nula")
+    private List<VideoObject> videos;
+
+    @NotNull(message = "Role: La clave 'zone' no puede ser nula")
+    private ZoneObject zone;
 
 }

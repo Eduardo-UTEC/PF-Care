@@ -88,7 +88,6 @@ public class FormalCaregiver extends FormalCaregiverObject {
             message = "FormalCaregiver: El pais del Cuidador Formal no puede exceder los 15 caracteres")
     private String countryName; // Pais de residencia del Cuidador Formal
 
-
     public double getAverageScore(){
         int votesCount = 0, votesByScore = 0;
         double votesSum = 0;

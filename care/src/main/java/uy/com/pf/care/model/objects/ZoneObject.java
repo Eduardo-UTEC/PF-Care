@@ -17,17 +17,17 @@ import java.io.Serializable;
 public class ZoneObject {
 
     @NotNull(message = "ZoneObject: El barrio no puede ser nulo")
-    @NotEmpty(message = "ZoneObject: El barrio no puede ser vacio")
+    //@NotEmpty(message = "ZoneObject: El barrio no puede ser vacio")
     @Size(max = 25 , message = "ZoneObject: El barrio no puede exceder los 25 caracteres")
     private String neighborhoodName;
 
     @NotNull(message = "ZoneObject: La ciudad no puede ser nula")
-    @NotEmpty(message = "ZoneObject: La ciudad no puede ser vacia")
+    //@NotEmpty(message = "ZoneObject: La ciudad no puede ser vacia")
     @Size(max = 25 , message = "ZoneObject: La ciudad no puede exceder los 25 caracteres")
     private String cityName;
 
     @NotNull(message = "ZoneObject: El departamento no puede ser nulo")
-    @NotEmpty(message = "ZoneObject: El departamento no puede ser vacio")
+    //@NotEmpty(message = "ZoneObject: El departamento no puede ser vacio")
     @Size(max = 25 , message = "ZoneObject: El departamento no puede exceder los 25 caracteres")
     private String departmentName;
 

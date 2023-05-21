@@ -10,11 +10,12 @@ import lombok.ToString;
 @Getter
 @ToString
 public enum RoleEnum {
-    ADMIN("Administrador"),
+    WEB_ADMIN("Administrador Web"),
     PATIENT("Paciente"),
-    CARE("Cuidador"),
-    VOLUNTEER("Voluntario"),
-    COMPANY("Empresa");
+    REFERRING_CARE("Cuidador Referente"),
+    FORMAL_CARE("Cuidador Formal"),
+    VOLUNTEER_PERSON("Persona Voluntaria"),
+    VOLUNTEER_COMPANY("Compañía Voluntaria");
 
     private String name;
 }
