@@ -1,6 +1,7 @@
 package uy.com.pf.care.model.documents;
 
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jdk.jfr.BooleanFlag;
 import lombok.AllArgsConstructor;
@@ -18,19 +19,11 @@ import java.util.List;
 
 @Document("Patients")
 @CompoundIndexes({
-        @CompoundIndex(
-            def = "{'identificationDocument':1, 'zone.countryName':1}",
-            unique = true
-        ),
-        @CompoundIndex(
-                def = "{'mail':1}",
-                unique = true
-        ),
+        @CompoundIndex(def = "{'identificationDocument':1, 'zone.countryName':1}", unique = true),
+        @CompoundIndex(def = "{'mail':1}", unique = true),
         @CompoundIndex(
                 def = "{'zone.countryName':1, 'zone.departmentName':1, 'zone.cityName':1, 'zone.neighborhoodName':1, " +
-                        "'name1':1}",
-                unique = false
-        )
+                        "'name1':1}", unique = false)
 })
 @Data
 @EqualsAndHashCode(callSuper=false)

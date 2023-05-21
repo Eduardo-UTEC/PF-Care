@@ -409,15 +409,11 @@ public class FormalCaregiverService implements IFormalCaregiverService {
 
                                 return formalCaregiverRange.getTimeRange().stream().anyMatch(formalCaregiverSubRange ->
                                         searchRange.getTimeRange().stream().anyMatch(searchSubRange ->
-                                                (formalCaregiverSubRange.getStartTime().compareTo(
-                                                        searchSubRange.getStartTime()) < 0 ||
-                                                        formalCaregiverSubRange.getStartTime().compareTo(
-                                                                searchSubRange.getStartTime()) == 0)
+                                                (formalCaregiverSubRange.getStartTime().isBefore(searchSubRange.getStartTime()) ||
+                                                        formalCaregiverSubRange.getStartTime().equals(searchSubRange.getStartTime()))
                                                         &&
-                                                        (formalCaregiverSubRange.getEndTime().compareTo(
-                                                                searchSubRange.getEndTime()) > 0 ||
-                                                                formalCaregiverSubRange.getEndTime().compareTo(
-                                                                        searchSubRange.getEndTime()) == 0)
+                                                        (formalCaregiverSubRange.getEndTime().isAfter(searchSubRange.getEndTime()) ||
+                                                                formalCaregiverSubRange.getEndTime().equals(searchSubRange.getEndTime()))
                                         ));
                             }
                             return false;
