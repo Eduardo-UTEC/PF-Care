@@ -10,7 +10,8 @@ import java.util.List;
 
 @Repository
 public interface IUserRepo extends MongoRepository<User, String> {
-    User findByIdentificationDocumentAndZone_CountryName(Integer identificationDocument, String countryName);
+    //User findByIdentificationDocumentAndZone_CountryName(Integer identificationDocument, String countryName);
+    User findByUserName(String userName);
     List<User> findByZone_CountryName(String countryName);
     List<User> findByZone_CountryNameAndZone_DepartmentName(String countryName, String departmentName);
     List<User> findByZone_CountryNameAndZone_DepartmentNameAndZone_CityName(

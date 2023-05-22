@@ -10,7 +10,9 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import uy.com.pf.care.exceptions.FormalCaregiverUpdateException;
 import uy.com.pf.care.exceptions.UserSaveException;
+import uy.com.pf.care.exceptions.UserUpdateException;
 import uy.com.pf.care.model.documents.User;
+import uy.com.pf.care.model.objects.LoginObject;
 import uy.com.pf.care.services.IUserService;
 
 import java.util.List;
@@ -38,8 +40,7 @@ public class UserController {
         try {
             return ResponseEntity.ok(userService.update(newUser));
 
-        }catch(FormalCaregiverUpdateException e){
-            log.info(e.getMessage());
+        }catch(UserUpdateException e){
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
         }
     }
@@ -66,7 +67,7 @@ public class UserController {
         }
     }
 
-    @GetMapping("findIdentificationDocument/{document}/{countryName}")
+    /*@GetMapping("findIdentificationDocument/{document}/{countryName}")
     public ResponseEntity<Optional<User>> findIdentificationDocument(
             @PathVariable Integer document,
             @PathVariable String countryName) {
@@ -76,6 +77,43 @@ public class UserController {
         }catch(Exception e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
                     "Error buscando usuario con documento de identificación " + document + " (" + countryName + ")");
+
+        }
+    }*/
+
+    @GetMapping("login")
+    public ResponseEntity<User> login(@Valid @NotNull @RequestBody LoginObject loginObject) {
+        try{
+            return ResponseEntity.ok(userService.login(loginObject));
+
+        }catch(Exception e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error realizando login: " +
+                    e.getMessage());
+
+        }
+    }
+
+    @GetMapping("exist/{userName}")
+    public ResponseEntity<Boolean> exist(@PathVariable String userName) {
+        try{
+            return ResponseEntity.ok(userService.existUserName(userName));
+
+        }catch(Exception e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error buscando usuario: " +
+                    e.getMessage());
+
+        }
+    }
+
+
+    @GetMapping("findUserName/{userName}")
+    public ResponseEntity<Optional<User>> findUserName(@PathVariable String userName) {
+        try{
+            return ResponseEntity.ok(userService.findUserName(userName));
+
+        }catch(Exception e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
+                    "Error buscando usuario con userName: " + userName);
 
         }
     }

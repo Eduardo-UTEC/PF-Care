@@ -5,11 +5,14 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.CompoundIndex;
 import org.springframework.data.mongodb.core.index.CompoundIndexes;
 import org.springframework.data.mongodb.core.mapping.Document;
+import uy.com.pf.care.model.objects.LoginObject;
+import uy.com.pf.care.model.objects.RoleObject;
 import uy.com.pf.care.model.objects.ZoneObject;
 
 import java.util.List;
@@ -17,28 +20,21 @@ import java.util.List;
 @Document("Users")
 
 @CompoundIndexes({
-    @CompoundIndex(def = "{'identificationDocument':1, 'zone.countryName':1}", unique = true)
+    @CompoundIndex(def = "{'userName':1}", unique = true)
 })
 
-//@EqualsAndHashCode(callSuper=false)
 @Data
+@EqualsAndHashCode(callSuper=false)
 @AllArgsConstructor
 @NoArgsConstructor
-public class User {
+public class User extends LoginObject {
 
     @Id
     private String userId;
 
-    @NotNull(message = "User: El documento de identidad no puede ser nulo")
-    private Integer identificationDocument;
-
-    @NotNull(message = "User: El password no puede ser nulo")
-    @NotEmpty(message = "User: El password  no puede ser vacío")
-    @Size(min = 8, message = "User: El password debe tener un minimo de 8 caracteres")
-    private String pass;
-
     @NotNull(message = "User: El usuario debe tener al menos un rol")
-    private List<String> rolesId;
+    @NotEmpty(message = "User: El usuario debe tener al menos un rol")
+    private List<RoleObject> roles;
 
     @NotNull(message = "User: La clave 'zone' no puede ser nula")
     private ZoneObject zone;

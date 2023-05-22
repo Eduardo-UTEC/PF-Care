@@ -4,7 +4,9 @@ import lombok.extern.java.Log;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import uy.com.pf.care.exceptions.UserSaveException;
+import uy.com.pf.care.exceptions.UserUpdateException;
 import uy.com.pf.care.model.documents.User;
+import uy.com.pf.care.model.objects.LoginObject;
 import uy.com.pf.care.repos.IUserRepo;
 
 import java.time.LocalDateTime;
@@ -34,31 +36,46 @@ public class UserService implements IUserService{
 
     @Override
     public Boolean update(User newUser) {
-        Optional<User> entityFound = userRepo.findById(newUser.getUserId());
-        if (entityFound.isPresent()){            
-            userRepo.save(newUser);
-            log.info("Usuario actualizado con exito");
-            return true;
+        try{
+            Optional<User> entityFound = userRepo.findById(newUser.getUserId());
+            if (entityFound.isPresent()){
+                userRepo.save(newUser);
+                log.info("Usuario actualizado con exito");
+                return true;
+            }
+            log.info("No se encontro el usuario con id " + newUser.getUserId());
+            return false;
+
+        }catch(Exception e){
+            log.warning("*** ERROR ACTUALIZANDO USUARIO: " + e);
+            throw new UserUpdateException(newUser);
         }
-        log.info("No se encontro el usuario con id " + newUser.getUserId());
-        return false;
+
     }
 
     @Override
-    public List<User> findAll(String countryName) {
-        return userRepo.findByZone_CountryName(countryName);
+    public List<User> findAll(String countryName) { return userRepo.findByZone_CountryName(countryName); }
+
+    @Override
+    public Optional<User> findId(String id) { return userRepo.findById(id); }
+
+    @Override
+    public User login(LoginObject loginObject) {
+        User found = userRepo.findByUserName(loginObject.getUserName());
+        return (found.getPass().equals(loginObject.getPass()) ? found : null);
     }
 
     @Override
-    public Optional<User> findId(String id) {
-        return userRepo.findById(id);
-    }
+    public Boolean existUserName(String userName) { return userRepo.findByUserName(userName) != null; }
 
+    /* @Override
+     public Optional<User> findIdentificationDocument(Integer identificationDocument, String countryName) {
+         return Optional.ofNullable(
+                 userRepo.findByIdentificationDocumentAndZone_CountryName(identificationDocument, countryName));
+     }
+ */
     @Override
-    public Optional<User> findIdentificationDocument(Integer identificationDocument, String countryName) {
-        return Optional.ofNullable(
-                userRepo.findByIdentificationDocumentAndZone_CountryName(identificationDocument, countryName));
-    }
+    public Optional<User> findUserName(String userName) {return Optional.ofNullable(userRepo.findByUserName(userName));}
 
     @Override
     public List<User> findCity(String cityName, String departmentName, String countryName) {

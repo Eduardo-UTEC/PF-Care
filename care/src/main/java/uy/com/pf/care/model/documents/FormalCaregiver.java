@@ -31,6 +31,12 @@ public class FormalCaregiver extends FormalCaregiverObject {
     @Id
     private String formalCaregiverId;
 
+    @NotNull(message = "FormalCaregiver: El Cuidador Formal debe estar vinculado a un Usuario " +
+            "(clave 'userId' no puede ser nula)")
+    @NotEmpty(message = "FormalCaregiver: El Cuidador Formal debe estar vinculado a un Usuario " +
+            "(clave 'userId' no puede ser vacia)")
+    private String userId;
+
     @NotNull(message = "FormalCaregiver: El telefono del Cuidador Formal no puede ser nulo")
     @NotEmpty(message = "FormalCaregiver: El telefono del Cuidador Formal no puede ser vacío")
     @Size(min = 7, max = 20,
