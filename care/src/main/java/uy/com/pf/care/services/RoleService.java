@@ -29,7 +29,7 @@ public class RoleService implements IRoleService{
 
         }catch(Exception e){
             log.warning("*** ERROR GUARDANDO ROL: " + e);
-            throw new RoleSaveException(role);
+            throw new RoleSaveException("*** ERROR GUARDANDO ROL");
         }
     }
 
@@ -47,7 +47,7 @@ public class RoleService implements IRoleService{
 
         } catch(Exception e){
             log.warning("*** ERROR ACTUALIZANDO ROL: " + e);
-            throw new RoleUpdateException(newRole);
+            throw new RoleUpdateException("*** ERROR ACTUALIZANDO ROL");
         }
 
     }

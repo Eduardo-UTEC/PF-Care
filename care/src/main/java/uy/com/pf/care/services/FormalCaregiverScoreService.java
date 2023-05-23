@@ -86,7 +86,9 @@ public class FormalCaregiverScoreService implements IFormalCaregiverScoreService
                 this.physicallyDeleteScore(formalCaregiverScoreId);
 
             }catch (FormalCaregiverScorePhysicallyDeleteException e1){
-                throw new FormalCaregiverScorePhysicallyDeleteException(e.getMessage());
+                log.warning("No fue posible realizar el borrado fisico del score: " + formalCaregiverScoreId);
+                throw new FormalCaregiverScorePhysicallyDeleteException(
+                        "No fue posible realizar el borrado fisico del score");
             }
             throw new FormalCaregiverScoreUpdateVotesException(e.getMessage());
 

@@ -52,15 +52,22 @@ public class FormalCaregiverService implements IFormalCaregiverService {
 
     @Override
     public Boolean update(FormalCaregiver newFormalCaregiver) {
-        Optional<FormalCaregiver> entityFound = formalCaregiverRepo.findById(newFormalCaregiver.getFormalCaregiverId());
-        if (entityFound.isPresent()){
-            this.defaultValues(entityFound.get(), newFormalCaregiver);
-            formalCaregiverRepo.save(newFormalCaregiver);
-            log.info("Cuidador formal actualizado con exito");
-            return true;
+        try{
+            Optional<FormalCaregiver> entityFound = formalCaregiverRepo.findById(newFormalCaregiver.getFormalCaregiverId());
+            if (entityFound.isPresent()){
+                this.defaultValues(entityFound.get(), newFormalCaregiver);
+                formalCaregiverRepo.save(newFormalCaregiver);
+                log.info("Cuidador formal actualizado con exito");
+                return true;
+            }
+            log.info("No se encontro el cuidador formal con id " + newFormalCaregiver.getFormalCaregiverId());
+            return false;
+
+        }catch(Exception e){
+            log.warning("Error actualizando Cuidador Formal: " + e.getMessage());
+            throw new FormalCaregiverUpdateException("Error actualizando Cuidador Formal");
         }
-        log.info("No se encontro el cuidador formal con id " + newFormalCaregiver.getFormalCaregiverId());
-        return false;
+
     }
 
     /*  Devuelve true si la operación fue exitosa.

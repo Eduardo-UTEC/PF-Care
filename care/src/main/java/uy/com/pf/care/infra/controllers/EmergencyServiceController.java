@@ -27,18 +27,12 @@ public class EmergencyServiceController {
     private IEmergencyServiceRepo iEmergencyServiceRepo;
 
     @PostMapping("/add")
-    //public ResponseEntity<EmergencyServiceIdObject> add(@Valid @NotNull @RequestBody EmergencyService emergencyService){
     public ResponseEntity<String> add(@Valid @NotNull @RequestBody EmergencyService emergencyService){
         try{
-            /*return ResponseEntity.ok(
-                    new EmergencyServiceIdObject(
-                            emergencyServiceService.save(emergencyService).getEmergencyServiceId()));
-            */
             return ResponseEntity.ok(emergencyServiceService.save(emergencyService));
 
         }catch (EmergencyServiceSaveException e){
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
-                    "Error guardando servicio de emergencia");
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
         }
     }
 
@@ -48,8 +42,7 @@ public class EmergencyServiceController {
             return ResponseEntity.ok(emergencyServiceService.update(newEmergencyService));
 
         }catch (EmergencyServiceUpdateException e){
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
-                    "Error actualizando servicio de emergencia");
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
         }
     }
 

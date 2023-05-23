@@ -25,4 +25,14 @@ public class Video {
     @NotNull(message = "VideoObject: la url del video no puede ser nula")
     @NotEmpty(message = "VideoObject: la url del video no puede ser vacia")
     private String url;
+
+    @NotNull(message = "Video: El departamento no puede ser nulo")
+    @NotEmpty(message = "Video: El departamento no puede ser vacio")
+    @Size(max = 25 , message = "Video: El departamento no puede exceder los 25 caracteres")
+    private String departmentName;
+
+    @NotNull(message = "Video: El pais no puede ser nulo")
+    @NotEmpty(message = "Video: El pais no puede ser vacio")
+    @Size(max = 15 , message = "Video: El pais no puede exceder los 15 caracteres")
+    private String countryName;
 }

@@ -4,6 +4,7 @@ import lombok.extern.java.Log;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import uy.com.pf.care.exceptions.ResidentialSaveException;
+import uy.com.pf.care.exceptions.ResidentialUpdateException;
 import uy.com.pf.care.model.documents.Patient;
 import uy.com.pf.care.model.documents.Residential;
 import uy.com.pf.care.repos.IResidentialRepo;
@@ -31,21 +32,28 @@ public class ResidentialService implements IResidentialService{
 
         }catch(Exception e){
             log.warning("*** ERROR GUARDANDO RESIDENCIAL: " + e);
-            throw new ResidentialSaveException(residential);
+            throw new ResidentialSaveException("*** ERROR GUARDANDO RESIDENCIAL: ");
         }
     }
 
     @Override
     public Boolean update(Residential newResidential) {
-        Optional<Residential> entityFound = residentialRepo.findById(newResidential.getResidentialId());
-        if (entityFound.isPresent()){
-            this.defaultValues(entityFound.get(), newResidential);
-            residentialRepo.save(newResidential);
-            log.info("Residencial actualizado con exito");
-            return true;
+        try{
+            Optional<Residential> entityFound = residentialRepo.findById(newResidential.getResidentialId());
+            if (entityFound.isPresent()){
+                this.defaultValues(entityFound.get(), newResidential);
+                residentialRepo.save(newResidential);
+                log.info("Residencial actualizado con exito");
+                return true;
+            }
+            log.info("No se encontro el residencial con id " + newResidential.getResidentialId());
+            return false;
+
+        }catch(Exception e){
+            log.warning("*** ERROR ACTUALIZANDO RESIDENCIAL: " + e);
+            throw new ResidentialUpdateException("*** ERROR ACTUALIZANDO RESIDENCIAL: ");
         }
-        log.info("No se encontro el residencial con id " + newResidential.getResidentialId());
-        return false;
+
     }
 
     @Override

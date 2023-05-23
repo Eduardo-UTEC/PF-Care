@@ -4,6 +4,7 @@ import lombok.extern.java.Log;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import uy.com.pf.care.exceptions.EmergencyServiceSaveException;
+import uy.com.pf.care.exceptions.EmergencyServiceUpdateException;
 import uy.com.pf.care.model.documents.EmergencyService;
 import uy.com.pf.care.model.documents.FormalCaregiver;
 import uy.com.pf.care.repos.IEmergencyServiceRepo;
@@ -31,23 +32,30 @@ public class EmergencyServiceService implements IEmergencyServiceService{
 
         }catch(Exception e){
             log.warning("*** ERROR GUARDANDO SERVICIO DE EMERGENCIA: " + e);
-            throw new EmergencyServiceSaveException(emergencyService);
+            throw new EmergencyServiceSaveException("*** ERROR GUARDANDO SERVICIO DE EMERGENCIA");
         }
     }
 
     @Override
     public Boolean update(EmergencyService newEmergencyService) {
-        Optional<EmergencyService> entityFound = emergencyServiceRepo.
-                findById(newEmergencyService.getEmergencyServiceId());
+        try{
+            Optional<EmergencyService> entityFound = emergencyServiceRepo.
+                    findById(newEmergencyService.getEmergencyServiceId());
 
-        if (entityFound.isPresent()){
-            this.defaultValues(entityFound.get(), newEmergencyService);
-            emergencyServiceRepo.save(newEmergencyService);
-            log.info("Servicio de emergencia actualizado con exito");
-            return true;
+            if (entityFound.isPresent()){
+                this.defaultValues(entityFound.get(), newEmergencyService);
+                emergencyServiceRepo.save(newEmergencyService);
+                log.info("Servicio de emergencia actualizado con exito");
+                return true;
+            }
+            log.info("No se encontro el servicio de emergencia con id " + newEmergencyService.getEmergencyServiceId());
+            return false;
+
+        }catch(Exception e){
+            log.warning("*** ERROR ACTUALIZANDO SERVICIO DE EMERGENCIA: " + e);
+            throw new EmergencyServiceUpdateException("*** ERROR ACTUALIZANDO SERVICIO DE EMERGENCIA");
         }
-        log.info("No se encontro el servicio de emergencia con id " + newEmergencyService.getEmergencyServiceId());
-        return false;
+
     }
 
     @Override

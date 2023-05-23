@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import uy.com.pf.care.exceptions.FormalCaregiverUpdateException;
 import uy.com.pf.care.exceptions.PatientSaveException;
+import uy.com.pf.care.exceptions.PatientUpdateException;
 import uy.com.pf.care.model.documents.HealthProvider;
 import uy.com.pf.care.model.documents.Patient;
 import uy.com.pf.care.model.objects.PatientIdObject;
@@ -33,7 +34,7 @@ public class PatientController {
             return ResponseEntity.ok(patientService.save(patient));
 
         }catch (PatientSaveException e){
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error guardando paciente");
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
         }
     }
 
@@ -42,8 +43,7 @@ public class PatientController {
         try {
             return ResponseEntity.ok(patientService.update(newPatient));
 
-        }catch(FormalCaregiverUpdateException e){
-            log.info(e.getMessage());
+        }catch(PatientUpdateException e){
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
         }
     }

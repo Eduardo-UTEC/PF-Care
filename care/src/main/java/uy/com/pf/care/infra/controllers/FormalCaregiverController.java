@@ -30,7 +30,6 @@ public class FormalCaregiverController {
             return ResponseEntity.ok(formalCaregiverService.save(formalCaregiver));
 
         }catch(FormalCaregiverValidateVoteException | FormalCaregiverSaveException e){
-            log.info(e.getMessage());
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
         }
     }
@@ -41,7 +40,6 @@ public class FormalCaregiverController {
             return ResponseEntity.ok(formalCaregiverService.update(newFormalCaregiver));
 
         }catch(FormalCaregiverUpdateException e){
-            log.info(e.getMessage());
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
         }
     }

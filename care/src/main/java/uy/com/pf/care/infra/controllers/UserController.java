@@ -8,7 +8,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
-import uy.com.pf.care.exceptions.FormalCaregiverUpdateException;
 import uy.com.pf.care.exceptions.UserSaveException;
 import uy.com.pf.care.exceptions.UserUpdateException;
 import uy.com.pf.care.model.documents.User;
@@ -31,7 +30,7 @@ public class UserController {
             return ResponseEntity.ok(userService.save(user));
 
         }catch (UserSaveException e){
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error guardando usuario");
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
         }
     }
 

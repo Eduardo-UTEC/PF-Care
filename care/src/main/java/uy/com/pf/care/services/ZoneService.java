@@ -7,6 +7,7 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 import uy.com.pf.care.exceptions.ZoneSaveException;
+import uy.com.pf.care.exceptions.ZoneUpdateException;
 import uy.com.pf.care.model.documents.Residential;
 import uy.com.pf.care.model.documents.Zone;
 import uy.com.pf.care.model.objects.NeighborhoodObject;
@@ -39,21 +40,28 @@ public class ZoneService implements IZoneService{
 
         }catch(Exception e){
             log.warning("*** ERROR GUARDANDO ZONA: " + e);
-            throw new ZoneSaveException(zone);
+            throw new ZoneSaveException("*** ERROR GUARDANDO ZONA");
         }
     }
 
     @Override
     public Boolean update(Zone newZone) {
-        Optional<Zone> entityFound = zoneRepo.findById(newZone.getZoneId());
-        if (entityFound.isPresent()){
-            this.defaultValues(entityFound.get(), newZone);
-            zoneRepo.save(newZone);
-            log.info("Zona actualizada con exito");
-            return true;
+        try{
+            Optional<Zone> entityFound = zoneRepo.findById(newZone.getZoneId());
+            if (entityFound.isPresent()){
+                this.defaultValues(entityFound.get(), newZone);
+                zoneRepo.save(newZone);
+                log.info("Zona actualizada con exito");
+                return true;
+            }
+            log.info("No se encontro la zona con id " + newZone.getZoneId());
+            return false;
+
+        }catch(Exception e){
+            log.warning("*** ERROR  ZONA: " + e);
+            throw new ZoneUpdateException("*** ERROR ACTUALIZANDO ZONA");
         }
-        log.info("No se encontro la zona con id " + newZone.getZoneId());
-        return false;
+
     }
 
     @Override

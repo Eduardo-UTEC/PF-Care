@@ -30,7 +30,7 @@ public class UserService implements IUserService{
 
         }catch(Exception e){
             log.warning("*** ERROR GUARDANDO USUARIO: " + e);
-            throw new UserSaveException(user);
+            throw new UserSaveException("*** ERROR GUARDANDO USUARIO");
         }
     }
 
@@ -48,7 +48,7 @@ public class UserService implements IUserService{
 
         }catch(Exception e){
             log.warning("*** ERROR ACTUALIZANDO USUARIO: " + e);
-            throw new UserUpdateException(newUser);
+            throw new UserUpdateException("*** ERROR ACTUALIZANDO USUARIO");
         }
 
     }

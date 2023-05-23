@@ -4,6 +4,7 @@ import lombok.extern.java.Log;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import uy.com.pf.care.exceptions.HealthProviderSaveException;
+import uy.com.pf.care.exceptions.HealthProviderUpdateException;
 import uy.com.pf.care.model.documents.FormalCaregiver;
 import uy.com.pf.care.model.documents.HealthProvider;
 import uy.com.pf.care.repos.IHealthProviderRepo;
@@ -31,21 +32,28 @@ public class HealthProviderService implements IHealthProviderService {
 
         }catch(Exception e){
             log.warning("*** ERROR GUARDANDO PROVEEDOR DE SALUD: " + e);
-            throw new HealthProviderSaveException(healthProvider);
+            throw new HealthProviderSaveException("*** ERROR GUARDANDO PROVEEDOR DE SALUD");
         }
     }
 
     @Override
     public Boolean update(HealthProvider newHealthProvider) {
-        Optional<HealthProvider> entityFound = healthProviderRepo.findById(newHealthProvider.getHealthProviderId());
-        if (entityFound.isPresent()){
-            this.defaultValues(entityFound.get(), newHealthProvider);
-            healthProviderRepo.save(newHealthProvider);
-            log.info("Proveedor de salud actualizado con exito");
-            return true;
+        try{
+            Optional<HealthProvider> entityFound = healthProviderRepo.findById(newHealthProvider.getHealthProviderId());
+            if (entityFound.isPresent()){
+                this.defaultValues(entityFound.get(), newHealthProvider);
+                healthProviderRepo.save(newHealthProvider);
+                log.info("Proveedor de salud actualizado con exito");
+                return true;
+            }
+            log.info("No se encontro el proveedor de salud con id " + newHealthProvider.getHealthProviderId());
+            return false;
+
+        }catch(Exception e){
+            log.warning("*** ERROR ACTUALIZANDO PROVEEDOR DE SALUD: " + e);
+            throw new HealthProviderUpdateException("*** ERROR ACTUALIZANDO PROVEEDOR DE SALUD");
         }
-        log.info("No se encontro el proveedor de salud con id " + newHealthProvider.getHealthProviderId());
-        return false;
+
     }
 
     @Override

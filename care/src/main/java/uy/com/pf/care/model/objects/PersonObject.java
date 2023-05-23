@@ -50,7 +50,6 @@ public class PersonObject {
 
     @NotNull(message = "PersonObject: La clave 'identificationDocument' no puede ser nula")
     @Positive(message = "PersonObject: La clave 'identificationDocument' debe contener dígitos")
-    @Size(max = 15, message = "PersonObject: El documento de identidad no puede exceder los 15 caracteres")
     private Integer identificationDocument;
 
     @NotNull(message = "PersonObject: La clave 'dateBirth' no puede ser nula")

@@ -30,7 +30,7 @@ public class HealthProviderController {
             return ResponseEntity.ok(healthProviderService.save(healthProvider));
 
         }catch (HealthProviderSaveException e){
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error guardando proveedor de salud");
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
         }
     }
 

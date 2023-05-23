@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import uy.com.pf.care.exceptions.FormalCaregiverUpdateException;
 import uy.com.pf.care.exceptions.ResidentialSaveException;
+import uy.com.pf.care.exceptions.ResidentialUpdateException;
 import uy.com.pf.care.model.documents.Patient;
 import uy.com.pf.care.model.documents.Residential;
 import uy.com.pf.care.model.objects.ResidentialIdObject;
@@ -27,14 +28,12 @@ public class ResidentialController {
     private IResidentialService residentialService;
 
     @PostMapping("/add")
-    //public ResponseEntity<ResidentialIdObject> add(@Valid @NotNull @RequestBody Residential residential){
     public ResponseEntity<String> add(@Valid @NotNull @RequestBody Residential residential){
         try{
-            //return ResponseEntity.ok(new ResidentialIdObject(residentialService.save(residential).getResidentialId()));
             return ResponseEntity.ok(residentialService.save(residential));
 
         }catch (ResidentialSaveException e){
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error guardando residencial");
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
         }
     }
 
@@ -43,8 +42,7 @@ public class ResidentialController {
         try {
             return ResponseEntity.ok(residentialService.update(newResidential));
 
-        }catch(FormalCaregiverUpdateException e){
-            log.info(e.getMessage());
+        }catch(ResidentialUpdateException e){
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
         }
     }

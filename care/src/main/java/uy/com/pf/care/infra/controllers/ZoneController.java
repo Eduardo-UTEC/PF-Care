@@ -28,14 +28,12 @@ public class ZoneController {
     private IZoneService zoneService;
 
     @PostMapping("/add")
-    //public ResponseEntity<ZoneIdObject> add(@Valid @NotNull @RequestBody Zone zone){
     public ResponseEntity<String> add(@Valid @NotNull @RequestBody Zone zone){
         try{
-            //return ResponseEntity.ok(new ZoneIdObject(zoneService.save(zone).getZoneId()));
             return ResponseEntity.ok(zoneService.save(zone));
 
         }catch (ZoneSaveException e){
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error guardando zona");
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
         }
     }
 
@@ -45,7 +43,6 @@ public class ZoneController {
             return ResponseEntity.ok(zoneService.update(newZone));
 
         }catch(FormalCaregiverUpdateException e){
-            log.info(e.getMessage());
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
         }
     }

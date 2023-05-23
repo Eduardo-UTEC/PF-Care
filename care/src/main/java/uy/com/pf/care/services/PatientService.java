@@ -4,6 +4,7 @@ import lombok.extern.java.Log;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import uy.com.pf.care.exceptions.PatientSaveException;
+import uy.com.pf.care.exceptions.PatientUpdateException;
 import uy.com.pf.care.model.documents.FormalCaregiver;
 import uy.com.pf.care.model.documents.Patient;
 import uy.com.pf.care.repos.IPatientRepo;
@@ -31,21 +32,27 @@ public class PatientService implements IPatientService{
 
         }catch(Exception e){
             log.warning("*** ERROR GUARDANDO PACIENTE: " + e);
-            throw new PatientSaveException(patient);
+            throw new PatientSaveException("*** ERROR GUARDANDO PACIENTE");
         }
     }
 
     @Override
     public Boolean update(Patient newPatient) {
-        Optional<Patient> entityFound = patientRepo.findById(newPatient.getPatientId());
-        if (entityFound.isPresent()){
-            this.defaultValues(entityFound.get(), newPatient);
-            patientRepo.save(newPatient);
-            log.info("Paciente actualizado con exito");
-            return true;
+        try{
+            Optional<Patient> entityFound = patientRepo.findById(newPatient.getPatientId());
+            if (entityFound.isPresent()){
+                this.defaultValues(entityFound.get(), newPatient);
+                patientRepo.save(newPatient);
+                log.info("Paciente actualizado con exito");
+                return true;
+            }
+            log.info("No se encontro el paciente con id " + newPatient.getPatientId());
+            return false;
+
+        }catch(Exception e){
+            log.warning("*** ERROR ACTUALIZANDO PACIENTE: " + e);
+            throw new PatientUpdateException("*** ERROR ACTUALIZANDO PACIENTE");
         }
-        log.info("No se encontro el paciente con id " + newPatient.getPatientId());
-        return false;
     }
 
     @Override
