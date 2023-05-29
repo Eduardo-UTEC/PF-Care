@@ -5,10 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import uy.com.pf.care.exceptions.VolunteerActivitySaveException;
 import uy.com.pf.care.exceptions.VolunteerActivityUpdateException;
-import uy.com.pf.care.exceptions.volunteerActivitySaveException;
-import uy.com.pf.care.exceptions.volunteerActivityUpdateException;
 import uy.com.pf.care.model.documents.VolunteerActivity;
-import uy.com.pf.care.model.documents.volunteerActivity;
 import uy.com.pf.care.repos.IVolunteerActivityRepo;
 
 import java.time.LocalDateTime;
