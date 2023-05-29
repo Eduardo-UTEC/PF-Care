@@ -18,21 +18,25 @@ import uy.com.pf.care.model.objects.ZoneObject;
 @EqualsAndHashCode(callSuper=false)
 @AllArgsConstructor
 @NoArgsConstructor
-public class VolunteerActivity extends ZoneObject {
+public class VolunteerActivity{
 
     @Id
     private String volunteerActivityId;
 
     @NotNull(message = "VolunteerActivity: El nombre de la actividad del voluntario no puede ser nulo")
     @NotEmpty(message = "VolunteerActivity: El nombre de la actividad del voluntario no puede ser vacio")
-    @Size(max = 15 ,
-            message = "VolunteerActivity: El nombre de la actividad del voluntario no puede exceder los 15 caracteres")
+    @Size(max = 30 ,
+            message = "VolunteerActivity: El nombre de la actividad del voluntario no puede exceder los 30 caracteres")
     private String name;
 
     @NotNull(message = "VolunteerActivity: La descripcion de la actividad del voluntario no puede ser nula")
     @Size(max = 100 , message =
             "VolunteerActivity: La descripcion de la actividad del voluntario no puede exceder los 100 caracteres")
     private String description;
+
+    @NotNull(message = "VolunteerActivity: La propiedad 'deleted' de la actividad del voluntario no puede ser nula")
+    @BooleanFlag
+    private Boolean deleted;
 
     @NotNull(message = "VolunteerActivity: El departamento no puede ser nulo")
     @NotEmpty(message = "VolunteerActivity: El departamento no puede ser vacio")
@@ -44,7 +48,4 @@ public class VolunteerActivity extends ZoneObject {
     @Size(max = 15 , message = "VolunteerActivity: El pais no puede exceder los 15 caracteres")
     private String countryName;
 
-    @NotNull(message = "VolunteerActivity: La propiedad 'deleted' de la actividad del voluntario no puede ser nula")
-    @BooleanFlag
-    private Boolean deleted;
 }

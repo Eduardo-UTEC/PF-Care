@@ -56,23 +56,36 @@ public class VolunteerActivityService implements IVolunteerActivityService{
     @Override
     public List<VolunteerActivity> findAll(Boolean includeDeleted, String countryName) {
         if (includeDeleted)
-            return volunteerActivityRepo.findByCountryName(countryName);
-        return volunteerActivityRepo.findByCountryNameAndDeletedFalse(countryName);
+            return volunteerActivityRepo.findByCountryNameOrderByName(countryName);
+        return volunteerActivityRepo.findByCountryNameAndDeletedFalseOrderByName(countryName);
     }
 
     @Override
     public List<VolunteerActivity> findDepartment(Boolean includeDeleted, String countryName, String departmentName) {
         if (includeDeleted)
-            return volunteerActivityRepo.findByCountryNameAndDepartmentName(countryName, departmentName);
-        return volunteerActivityRepo.findByCountryNameAndDepartmentNameAndDeletedFalse(countryName, departmentName);
+            return volunteerActivityRepo.findByCountryNameAndDepartmentNameOrderByName(countryName, departmentName);
+        return volunteerActivityRepo.
+                findByCountryNameAndDepartmentNameAndDeletedFalseOrderByName(countryName, departmentName);
     }
 
     @Override
     public Boolean setDeletion(String id, Boolean isDeleted) {
-        return null;
+        Optional<VolunteerActivity> volunteerActivity = this.findId(id);
+        if (volunteerActivity.isPresent()) {
+            volunteerActivity.get().setDeleted(isDeleted);
+            volunteerActivityRepo.save(volunteerActivity.get());
+            return true;
+        }
+        return false;
     }
 
     @Override
     public Optional<VolunteerActivity> findId(String id) {return volunteerActivityRepo.findById(id);}
+
+    @Override
+    public Boolean exist(String name, String departmentName, String countryName) {
+        return volunteerActivityRepo.findByCountryNameAndDepartmentNameAndName(
+                countryName, departmentName, name).isPresent();
+    }
 
 }

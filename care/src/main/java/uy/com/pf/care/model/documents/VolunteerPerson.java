@@ -14,7 +14,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Document("VolunteersPersons")
+
 @Data
+@Builder
 @EqualsAndHashCode(callSuper=false)
 @AllArgsConstructor
 @NoArgsConstructor
