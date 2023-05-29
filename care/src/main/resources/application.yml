@@ -4,9 +4,9 @@ spring:
       #uri: mongodb://localhost:27017/care
       uri: mongodb+srv://edumongo:rrTwCtNqLp77pV5j@cluster0.t9vac.mongodb.net/care
       auto-index-creation: true
-      socketTimeout: 60000    #  tiempo máximo que una operación puede tardar en la base de datos, en milisegundos.
-      connectTimeout: 15000   # tiempo maximo para establecer una conexion con la bbdd, en milisegundos.
-      maxWaitTime: 120000     # tiempo maximo que la app espera para obtener un hilo de la bbdd, en milisegundos.
+      socketTimeout: 120000    #  tiempo máximo que una operación puede tardar en la base de datos, en milisegundos.
+      connectTimeout: 120000   # tiempo maximo para establecer una conexion con la bbdd, en milisegundos.
+      maxWaitTime: 200000     # tiempo maximo que la app espera para obtener un hilo de la bbdd, en milisegundos.
 
 server:
   error:

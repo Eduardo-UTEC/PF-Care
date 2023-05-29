@@ -10,13 +10,15 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
+import uy.com.pf.care.model.objects.ZoneObject;
 
 @Document("VolunteerActivities")
+
 @Data
 @EqualsAndHashCode(callSuper=false)
 @AllArgsConstructor
 @NoArgsConstructor
-public class VolunteerActivity {
+public class VolunteerActivity extends ZoneObject {
 
     @Id
     private String volunteerActivityId;
@@ -26,6 +28,21 @@ public class VolunteerActivity {
     @Size(max = 15 ,
             message = "VolunteerActivity: El nombre de la actividad del voluntario no puede exceder los 15 caracteres")
     private String name;
+
+    @NotNull(message = "VolunteerActivity: La descripcion de la actividad del voluntario no puede ser nula")
+    @Size(max = 100 , message =
+            "VolunteerActivity: La descripcion de la actividad del voluntario no puede exceder los 100 caracteres")
+    private String description;
+
+    @NotNull(message = "VolunteerActivity: El departamento no puede ser nulo")
+    @NotEmpty(message = "VolunteerActivity: El departamento no puede ser vacio")
+    @Size(max = 25 , message = "VolunteerActivity: El departamento no puede exceder los 25 caracteres")
+    private String departmentName;
+
+    @NotNull(message = "VolunteerActivity: El pais no puede ser nulo")
+    @NotEmpty(message = "VolunteerActivity: El pais no puede ser vacio")
+    @Size(max = 15 , message = "VolunteerActivity: El pais no puede exceder los 15 caracteres")
+    private String countryName;
 
     @NotNull(message = "VolunteerActivity: La propiedad 'deleted' de la actividad del voluntario no puede ser nula")
     @BooleanFlag
