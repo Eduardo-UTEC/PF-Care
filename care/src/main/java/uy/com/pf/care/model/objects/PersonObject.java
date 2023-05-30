@@ -21,6 +21,7 @@ public class PersonObject {
     @Size(max = 15, message = "PersonObject: La clave 'name1' no puede exceder los 15 caracteres")
     private String name1;
 
+    @NotNull(message = "PersonObject: La clave 'name2' no puede ser nula")
     @Size(max = 15, message = "PersonObject: La clave 'name2' no puede exceder los 15 caracteres")
     private String name2;
 
@@ -29,6 +30,7 @@ public class PersonObject {
     @Size(max = 15, message = "PersonObject: La clave 'surname1' no puede exceder los 15 caracteres")
     private String surname1;
 
+    @NotNull(message = "PersonObject: La clave 'surname2' no puede ser nula")
     @Size(max = 15, message = "PersonObject: La clave 'surname2' no puede exceder los 15 caracteres")
     private String surname2;
 

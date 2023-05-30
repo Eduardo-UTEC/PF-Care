@@ -246,7 +246,7 @@ public class FormalCaregiverService implements IFormalCaregiverService {
                     Arrays.stream(neighborhoods).anyMatch(neighborhoodObject ->
                             neighborhoodObject.getNeighborhoodName().equals(interestNeighborhoodName))){
 
-                // TODO: Testear cual de los dos filtros previos es el mas eficiente (tomando por ciudad o findAll)
+                //TODO: Testear cual de los dos filtros previos es el mas eficiente (tomando por ciudad o findAll)
                 //listReturn = this.findInterestZones_City(
                 //        false, includeDeleted, interestCityName, interestDepartmentName, countryName)
                 //        .stream().filter(
@@ -325,7 +325,10 @@ public class FormalCaregiverService implements IFormalCaregiverService {
 
     @Override
     public List<FormalCaregiver> findInterestZones_Department(
-            Boolean validateInterestDepartment, Boolean includeDeleted, String interestDepartmentName, String countryName) {
+            Boolean validateInterestDepartment,
+            Boolean includeDeleted,
+            String interestDepartmentName,
+            String countryName) {
 
         try{
             RestTemplate restTemplate = new RestTemplate();
