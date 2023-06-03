@@ -8,7 +8,6 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 import uy.com.pf.care.exceptions.ZoneSaveException;
 import uy.com.pf.care.exceptions.ZoneUpdateException;
-import uy.com.pf.care.model.documents.Residential;
 import uy.com.pf.care.model.documents.Zone;
 import uy.com.pf.care.model.objects.NeighborhoodObject;
 import uy.com.pf.care.repos.IZoneRepo;
@@ -16,7 +15,7 @@ import uy.com.pf.care.repos.IZoneRepo;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
+import java.util.regex.Pattern;
 
 @Service
 @Log
@@ -67,9 +66,9 @@ public class ZoneService implements IZoneService{
     @Override
     public List<Zone> findAll(Boolean includeDeleted, String countryName) {
         if (includeDeleted)
-            return zoneRepo.findByCountryName(countryName);
+            return zoneRepo.findByCountryNameIgnoreCase(countryName);
 
-        return zoneRepo.findByCountryNameAndDeletedFalse(countryName);
+        return zoneRepo.findByCountryNameIgnoreCaseAndDeletedFalse(countryName);
     }
 
     @Override
@@ -103,9 +102,20 @@ public class ZoneService implements IZoneService{
     public List<NeighborhoodObject> findNeighborhoods(
             Boolean includeDeleted, String cityName, String departmentName, String countryName) {
 
-        Query query = new Query(Criteria.where("cityName").is(cityName)
+        /*Query query = new Query(Criteria.where("cityName").is(cityName)
                 .and("departmentName").is(departmentName)
                 .and("countryName").is(countryName));
+
+        if (! includeDeleted)
+            query.addCriteria(Criteria.where("deleted").is(false));
+*/
+        String cityNameRegex = "^" + Pattern.quote(cityName) + "$";
+        String departmentNameRegex = "^" + Pattern.quote(departmentName) + "$";
+        String countryNameRegex = "^" + Pattern.quote(countryName) + "$";
+
+        Query query = new Query(Criteria.where("cityName").regex(cityNameRegex, "i")
+                .and("departmentName").regex(departmentNameRegex, "i")
+                .and("countryName").regex(countryNameRegex, "i"));
 
         if (! includeDeleted)
             query.addCriteria(Criteria.where("deleted").is(false));
@@ -115,8 +125,15 @@ public class ZoneService implements IZoneService{
 
     @Override
     public List<String> findCities(Boolean includeDeleted, String departmentName, String countryName) {
-        Query query = new Query(Criteria.where("departmentName").is(departmentName).
+        /*Query query = new Query(Criteria.where("departmentName").is(departmentName).
                 and("countryName").is(countryName));
+        */
+        String departmentNameRegex = "^" + Pattern.quote(departmentName) + "$";
+        String countryNameRegex = "^" + Pattern.quote(countryName) + "$";
+
+        Query query = new Query(Criteria.where("departmentName").regex(departmentNameRegex, "i").
+                and("countryName").regex(countryNameRegex, "i"));
+
         if (! includeDeleted)
             query.addCriteria(Criteria.where("deleted").is(false));
 
@@ -125,7 +142,11 @@ public class ZoneService implements IZoneService{
 
     @Override
     public List<String> findDepartments(Boolean includeDeleted, String countryName) {
-        Query query = new Query(Criteria.where("countryName").is(countryName));
+        //Query query = new Query(Criteria.where("countryName").is(countryName));
+        String countryNameRegex = "^" + Pattern.quote(countryName) + "$";
+
+        Query query = new Query(Criteria.where("countryName").regex(countryNameRegex, "i"));
+
         if (! includeDeleted)
             query.addCriteria(Criteria.where("deleted").is(false));
 

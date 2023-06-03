@@ -156,9 +156,9 @@ public class FormalCaregiverService implements IFormalCaregiverService {
     public List<FormalCaregiver> findAll(Boolean includeDeleted, String countryName) {
         try{
             if (includeDeleted)
-                return formalCaregiverRepo.findByCountryName(countryName);
+                return formalCaregiverRepo.findByCountryNameIgnoreCase(countryName);
 
-            return formalCaregiverRepo.findByCountryNameAndDeletedFalse(countryName);
+            return formalCaregiverRepo.findByCountryNameIgnoreCaseAndDeletedFalse(countryName);
 
         }catch (Exception e){
             log.warning("Error buscando todos los cuidadores formales de " + countryName + ". " + e.getMessage());
@@ -180,7 +180,7 @@ public class FormalCaregiverService implements IFormalCaregiverService {
     @Override
     public FormalCaregiver findMail(String mail) {
         try{
-            return formalCaregiverRepo.findByMail(mail);
+            return formalCaregiverRepo.findByMailIgnoreCase(mail);
 
         }catch(Exception e){
             log.warning("Error buscando cuidador formal con mail: " + mail + ". " + e.getMessage());
@@ -193,9 +193,9 @@ public class FormalCaregiverService implements IFormalCaregiverService {
 
         try{
             if (includeDeleted)
-                return formalCaregiverRepo.findByCountryNameAndName(countryName, name);
+                return formalCaregiverRepo.findByCountryNameIgnoreCaseAndNameIgnoreCase(countryName, name);
 
-            return formalCaregiverRepo.findByCountryNameAndNameAndDeletedFalse(
+            return formalCaregiverRepo.findByCountryNameIgnoreCaseAndNameIgnoreCaseAndDeletedFalse(
                     countryName, name);
 
         }catch(Exception e){
@@ -210,10 +210,10 @@ public class FormalCaregiverService implements IFormalCaregiverService {
     public List<FormalCaregiver> findNameLike(Boolean includeDeleted, String countryName, String name) {
         try{
             if (includeDeleted)
-                return formalCaregiverRepo.findByCountryNameAndNameLike(
+                return formalCaregiverRepo.findByCountryNameIgnoreCaseAndNameLikeIgnoreCase(
                         countryName, name);
 
-            return formalCaregiverRepo.findByCountryNameAndNameLikeAndDeletedFalse(
+            return formalCaregiverRepo.findByCountryNameIgnoreCaseAndNameLikeIgnoreCaseAndDeletedFalse(
                     countryName, name);
 
         }catch(Exception e){
@@ -244,7 +244,7 @@ public class FormalCaregiverService implements IFormalCaregiverService {
             if (neighborhoods != null &&
                     neighborhoods.length > 0 &&
                     Arrays.stream(neighborhoods).anyMatch(neighborhoodObject ->
-                            neighborhoodObject.getNeighborhoodName().equals(interestNeighborhoodName))){
+                            neighborhoodObject.getNeighborhoodName().equalsIgnoreCase(interestNeighborhoodName))){
 
                 //TODO: Testear cual de los dos filtros previos es el mas eficiente (tomando por ciudad o findAll)
                 //listReturn = this.findInterestZones_City(
@@ -253,13 +253,16 @@ public class FormalCaregiverService implements IFormalCaregiverService {
                 listReturn = this.findAll(includeDeleted, countryName).stream().filter(
                         formalCaregiver -> formalCaregiver.getInterestZones().isEmpty() ||
                                 !formalCaregiver.getInterestZones().stream().filter(interestZonesObject ->
-                                        interestZonesObject.getDepartmentName().equals(interestDepartmentName) &&
+                                        interestZonesObject.getDepartmentName().equalsIgnoreCase(interestDepartmentName) &&
                                                 (interestZonesObject.getCities().isEmpty() ||
                                                         !interestZonesObject.getCities().stream().filter(cityObject ->
-                                                                cityObject.getCityName().equals(interestCityName) &&
+                                                                cityObject.getCityName().equalsIgnoreCase(interestCityName) &&
                                                                         (cityObject.getNeighborhoodNames().isEmpty() ||
-                                                                                cityObject.getNeighborhoodNames().contains(
-                                                                                        interestNeighborhoodName))
+                                                                                //cityObject.getNeighborhoodNames().contains(
+                                                                                //        interestNeighborhoodName))
+                                                                                cityObject.getNeighborhoodNames().stream()
+                                                                                        .anyMatch(name ->
+                                                                                                name.equalsIgnoreCase(interestNeighborhoodName))                                                                        )
                                                         ).toList().isEmpty())
                                 ).toList().isEmpty()
                 ).toList();
@@ -448,8 +451,8 @@ public class FormalCaregiverService implements IFormalCaregiverService {
                //"zones/findNeighborhoods/false/" + // Se incluyen barrios que no estén eliminados
                 "zones/findNeighborhoods/" + includeDeleted.toString() + "/" +
                 cityName + "/" +
-               departmentName + "/" +
-               countryName;
+                departmentName + "/" +
+                countryName;
     }
 
     private String getUrlCities(Boolean includeDeleted, String departmentName, String countryName){

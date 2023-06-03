@@ -6,7 +6,6 @@ import org.springframework.stereotype.Service;
 import uy.com.pf.care.exceptions.EmergencyServiceSaveException;
 import uy.com.pf.care.exceptions.EmergencyServiceUpdateException;
 import uy.com.pf.care.model.documents.EmergencyService;
-import uy.com.pf.care.model.documents.FormalCaregiver;
 import uy.com.pf.care.repos.IEmergencyServiceRepo;
 
 import java.time.LocalDateTime;
@@ -61,9 +60,9 @@ public class EmergencyServiceService implements IEmergencyServiceService{
     @Override
     public List<EmergencyService> findAll(Boolean includeDeleted, String countryName) {
         if (includeDeleted)
-            return emergencyServiceRepo.findByCountryNameOrderByName(countryName);
+            return emergencyServiceRepo.findByCountryNameIgnoreCaseOrderByName(countryName);
         else
-            return emergencyServiceRepo.findByCountryNameAndDeletedFalseOrderByName(countryName);
+            return emergencyServiceRepo.findByCountryNameIgnoreCaseAndDeletedFalseOrderByName(countryName);
     }
 
     @Override
@@ -76,19 +75,24 @@ public class EmergencyServiceService implements IEmergencyServiceService{
             Boolean includeDeleted, String cityName, String departmentName, String countryName) {
 
         if (includeDeleted)
-            return emergencyServiceRepo.findByCountryNameAndDepartmentNameAndCityNameOrderByName(
+            return emergencyServiceRepo.
+                    findByCountryNameIgnoreCaseAndDepartmentNameIgnoreCaseAndCityNameIgnoreCaseOrderByName(
                     countryName, departmentName, cityName);
         else
-            return emergencyServiceRepo.findByCountryNameAndDepartmentNameAndCityNameAndDeletedFalseOrderByName(
+            return emergencyServiceRepo.
+                    findByCountryNameIgnoreCaseAndDepartmentNameIgnoreCaseAndCityNameIgnoreCaseAndDeletedFalseOrderByName(
                     countryName, departmentName, cityName);
     }
 
     @Override
     public List<EmergencyService> findByDepartment(Boolean includeDeleted, String departmentName, String countryName) {
         if (includeDeleted)
-            return emergencyServiceRepo.findByCountryNameAndDepartmentNameOrderByName(countryName, departmentName);
+            return emergencyServiceRepo.
+                    findByCountryNameIgnoreCaseAndDepartmentNameIgnoreCaseOrderByName(countryName, departmentName);
         else
-            return emergencyServiceRepo.findByCountryNameAndDepartmentNameAndDeletedFalseOrderByName(countryName, departmentName);
+            return emergencyServiceRepo.
+                    findByCountryNameIgnoreCaseAndDepartmentNameIgnoreCaseAndDeletedFalseOrderByName(
+                            countryName, departmentName);
     }
 
     @Override
@@ -96,10 +100,12 @@ public class EmergencyServiceService implements IEmergencyServiceService{
             Boolean includeDeleted, String name, String cityName, String departmentName, String countryName) {
 
         if (includeDeleted)
-            return emergencyServiceRepo.findByCountryNameAndDepartmentNameAndCityNameAndName(
+            return emergencyServiceRepo.
+                    findByCountryNameIgnoreCaseAndDepartmentNameIgnoreCaseAndCityNameIgnoreCaseAndNameIgnoreCase(
                     countryName, departmentName, cityName, name);
         else
-            return emergencyServiceRepo.findByCountryNameAndDepartmentNameAndCityNameAndNameAndDeletedFalse(
+            return emergencyServiceRepo.
+                    findByCountryNameIgnoreCaseAndDepartmentNameIgnoreCaseAndCityNameIgnoreCaseAndNameIgnoreCaseAndDeletedFalse(
                     countryName, departmentName, cityName, name);
     }
 

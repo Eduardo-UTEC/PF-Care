@@ -1,8 +1,6 @@
 package uy.com.pf.care.repos;
 
 import org.springframework.data.mongodb.repository.MongoRepository;
-import org.springframework.data.mongodb.repository.Query;
-import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import uy.com.pf.care.model.documents.Zone;
 
@@ -21,6 +19,6 @@ public interface IZoneRepo extends MongoRepository<Zone, String> {
      */
 
 
-    List<Zone> findByCountryName(String countryName);
-    List<Zone> findByCountryNameAndDeletedFalse(String countryName);
+    List<Zone> findByCountryNameIgnoreCase(String countryName);
+    List<Zone> findByCountryNameIgnoreCaseAndDeletedFalse(String countryName);
 }
