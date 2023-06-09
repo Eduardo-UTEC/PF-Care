@@ -17,9 +17,9 @@ public interface IResidentialRepo extends MongoRepository<Residential, String> {
             String countryName,  String departmentName, String cityName);
     List<Residential> findByCountryNameAndDepartmentNameAndCityNameAndDeletedFalse(
             String countryName,  String departmentName, String cityName);
-    List<Residential> findByCountryNameAndDepartmentNameAndCityNameAndName(
+    List<Residential> findByCountryNameAndDepartmentNameAndCityNameAndNameIgnoreCase(
             String countryName,  String departmentName, String cityName, String name);
-    List<Residential> findByCountryNameAndDepartmentNameAndCityNameAndNameAndDeletedFalse(
+    List<Residential> findByCountryNameAndDepartmentNameAndCityNameAndNameIgnoreCaseAndDeletedFalse(
             String countryName,  String departmentName, String cityName, String name);
 
     /*

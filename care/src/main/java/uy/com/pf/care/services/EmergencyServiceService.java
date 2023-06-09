@@ -60,9 +60,9 @@ public class EmergencyServiceService implements IEmergencyServiceService{
     @Override
     public List<EmergencyService> findAll(Boolean includeDeleted, String countryName) {
         if (includeDeleted)
-            return emergencyServiceRepo.findByCountryNameIgnoreCaseOrderByName(countryName);
+            return emergencyServiceRepo.findByCountryName(countryName);
         else
-            return emergencyServiceRepo.findByCountryNameIgnoreCaseAndDeletedFalseOrderByName(countryName);
+            return emergencyServiceRepo.findByCountryNameAndDeletedFalse(countryName);
     }
 
     @Override
@@ -76,11 +76,11 @@ public class EmergencyServiceService implements IEmergencyServiceService{
 
         if (includeDeleted)
             return emergencyServiceRepo.
-                    findByCountryNameIgnoreCaseAndDepartmentNameIgnoreCaseAndCityNameIgnoreCaseOrderByName(
+                    findByCountryNameAndDepartmentNameAndCityName(
                     countryName, departmentName, cityName);
         else
             return emergencyServiceRepo.
-                    findByCountryNameIgnoreCaseAndDepartmentNameIgnoreCaseAndCityNameIgnoreCaseAndDeletedFalseOrderByName(
+                    findByCountryNameAndDepartmentNameAndCityNameAndDeletedFalse(
                     countryName, departmentName, cityName);
     }
 
@@ -88,10 +88,10 @@ public class EmergencyServiceService implements IEmergencyServiceService{
     public List<EmergencyService> findByDepartment(Boolean includeDeleted, String departmentName, String countryName) {
         if (includeDeleted)
             return emergencyServiceRepo.
-                    findByCountryNameIgnoreCaseAndDepartmentNameIgnoreCaseOrderByName(countryName, departmentName);
+                    findByCountryNameAndDepartmentName(countryName, departmentName);
         else
             return emergencyServiceRepo.
-                    findByCountryNameIgnoreCaseAndDepartmentNameIgnoreCaseAndDeletedFalseOrderByName(
+                    findByCountryNameAndDepartmentNameAndDeletedFalse(
                             countryName, departmentName);
     }
 
@@ -101,11 +101,11 @@ public class EmergencyServiceService implements IEmergencyServiceService{
 
         if (includeDeleted)
             return emergencyServiceRepo.
-                    findByCountryNameIgnoreCaseAndDepartmentNameIgnoreCaseAndCityNameIgnoreCaseAndNameIgnoreCase(
+                    findByCountryNameAndDepartmentNameAndCityNameAndNameIgnoreCase(
                     countryName, departmentName, cityName, name);
         else
             return emergencyServiceRepo.
-                    findByCountryNameIgnoreCaseAndDepartmentNameIgnoreCaseAndCityNameIgnoreCaseAndNameIgnoreCaseAndDeletedFalse(
+                    findByCountryNameAndDepartmentNameAndCityNameAndNameIgnoreCaseAndDeletedFalse(
                     countryName, departmentName, cityName, name);
     }
 

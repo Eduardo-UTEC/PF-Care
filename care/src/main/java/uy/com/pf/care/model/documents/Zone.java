@@ -16,11 +16,7 @@ import uy.com.pf.care.model.objects.ZoneObject;
 @Document("Zones")
 @CompoundIndexes({
         @CompoundIndex(
-                def = "{'countryName':1, " +
-                        "'departmentName':1, " +
-                        "'cityName':1, " +
-                        "'neighborhoodName':1}",
-                name = "country_department_city_neighborhood",
+                def = "{'countryName':1, 'departmentName':1, 'cityName':1, 'neighborhoodName':1}",
                 unique = true
         )
 })

@@ -2,8 +2,6 @@ package uy.com.pf.care.repos;
 
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
-import uy.com.pf.care.model.documents.FormalCaregiver;
-import uy.com.pf.care.model.documents.VolunteerActivity;
 import uy.com.pf.care.model.documents.VolunteerPerson;
 
 import java.util.List;
@@ -13,12 +11,12 @@ import java.util.Optional;
 public interface IVolunteerPersonRepo extends MongoRepository<VolunteerPerson, String> {
     Optional<VolunteerPerson> findByCountryNameAndIdentificationDocument(
             String countryName, String identificationDocument);
-    Optional<VolunteerPerson> findByMail(String mail);
+    Optional<VolunteerPerson> findByMailIgnoreCase(String mail);
     List<VolunteerPerson> findByCountryName(String countryName);
     List<VolunteerPerson> findByCountryNameAndDeletedFalse(String countryName);
-    List<VolunteerPerson> findByCountryNameAndName1(String countryName, String name1);
-    List<VolunteerPerson> findByCountryNameAndName1AndDeletedFalse(String countryName, String name1);
-    List<VolunteerPerson> findByCountryNameAndName1Like(String countryName, String name1);
-    List<VolunteerPerson> findByCountryNameAndName1LikeAndDeletedFalse(String countryName, String name1);
+    List<VolunteerPerson> findByCountryNameAndName1IgnoreCase(String countryName, String name1);
+    List<VolunteerPerson> findByCountryNameAndName1IgnoreCaseAndDeletedFalse(String countryName, String name1);
+    List<VolunteerPerson> findByCountryNameAndName1LikeIgnoreCase(String countryName, String name1);
+    List<VolunteerPerson> findByCountryNameAndName1LikeIgnoreCaseAndDeletedFalse(String countryName, String name1);
 
 }

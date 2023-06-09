@@ -5,7 +5,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import uy.com.pf.care.exceptions.ResidentialSaveException;
 import uy.com.pf.care.exceptions.ResidentialUpdateException;
-import uy.com.pf.care.model.documents.Patient;
 import uy.com.pf.care.model.documents.Residential;
 import uy.com.pf.care.repos.IResidentialRepo;
 
@@ -104,10 +103,10 @@ public class ResidentialService implements IResidentialService{
             Boolean includeDeleted, String countryName, String departmentName, String cityName, String name) {
 
         if(includeDeleted)
-            return residentialRepo.findByCountryNameAndDepartmentNameAndCityNameAndName(
+            return residentialRepo.findByCountryNameAndDepartmentNameAndCityNameAndNameIgnoreCase(
                     countryName, departmentName, cityName, name);
 
-        return residentialRepo.findByCountryNameAndDepartmentNameAndCityNameAndNameAndDeletedFalse(
+        return residentialRepo.findByCountryNameAndDepartmentNameAndCityNameAndNameIgnoreCaseAndDeletedFalse(
                 countryName, departmentName, cityName, name);
     }
 

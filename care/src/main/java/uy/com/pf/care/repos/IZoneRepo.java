@@ -19,6 +19,6 @@ public interface IZoneRepo extends MongoRepository<Zone, String> {
      */
 
 
-    List<Zone> findByCountryNameIgnoreCase(String countryName);
-    List<Zone> findByCountryNameIgnoreCaseAndDeletedFalse(String countryName);
+    List<Zone> findByCountryName(String countryName);
+    List<Zone> findByCountryNameAndDeletedFalse(String countryName);
 }

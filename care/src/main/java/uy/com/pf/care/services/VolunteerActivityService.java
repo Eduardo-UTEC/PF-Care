@@ -84,7 +84,7 @@ public class VolunteerActivityService implements IVolunteerActivityService{
 
     @Override
     public Boolean exist(String name, String departmentName, String countryName) {
-        return volunteerActivityRepo.findByCountryNameAndDepartmentNameAndName(
+        return volunteerActivityRepo.findByCountryNameAndDepartmentNameAndNameIgnoreCase(
                 countryName, departmentName, name).isPresent();
     }
 

@@ -5,7 +5,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import uy.com.pf.care.exceptions.PatientSaveException;
 import uy.com.pf.care.exceptions.PatientUpdateException;
-import uy.com.pf.care.model.documents.FormalCaregiver;
 import uy.com.pf.care.model.documents.Patient;
 import uy.com.pf.care.repos.IPatientRepo;
 
@@ -86,7 +85,7 @@ public class PatientService implements IPatientService{
 
     @Override
     public Optional<Patient> findMail(String mail) {
-        return patientRepo.findByMail(mail);
+        return patientRepo.findByMailIgnoreCase(mail);
     }
 
     @Override
@@ -95,10 +94,10 @@ public class PatientService implements IPatientService{
 
         if (neighborhoodName == null)
             return patientRepo.
-                    findByZone_CountryNameAndZone_DepartmentNameAndZone_CityNameAndName1AndDeletedFalseOrderByName1(
+                    findByZone_CountryNameAndZone_DepartmentNameAndZone_CityNameAndName1IgnoreCaseAndDeletedFalseOrderByName1(
                             countryName, departmentName, cityName, name1);
         return patientRepo.
-                findByZone_CountryNameAndZone_DepartmentNameAndZone_CityNameAndZone_NeighborhoodNameAndName1AndDeletedFalseOrderByName1(
+                findByZone_CountryNameAndZone_DepartmentNameAndZone_CityNameAndZone_NeighborhoodNameAndName1IgnoreCaseAndDeletedFalse(
                         countryName, departmentName, cityName, neighborhoodName, name1);
     }
 

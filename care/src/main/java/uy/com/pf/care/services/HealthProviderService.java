@@ -5,7 +5,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import uy.com.pf.care.exceptions.HealthProviderSaveException;
 import uy.com.pf.care.exceptions.HealthProviderUpdateException;
-import uy.com.pf.care.model.documents.FormalCaregiver;
 import uy.com.pf.care.model.documents.HealthProvider;
 import uy.com.pf.care.repos.IHealthProviderRepo;
 
@@ -71,7 +70,7 @@ public class HealthProviderService implements IHealthProviderService {
 
     @Override
     public HealthProvider findByName(String cityName, String departmentName, String countryName, String name) {
-        return healthProviderRepo.findByCountryNameAndDepartmentNameAndCityNameAndNameAndDeletedFalseOrderByName(
+        return healthProviderRepo.findByCountryNameAndDepartmentNameAndCityNameAndNameAndDeletedFalse(
                     countryName, departmentName, cityName, name);
     }
 
@@ -80,10 +79,10 @@ public class HealthProviderService implements IHealthProviderService {
             Boolean includeDeleted, String cityName, String departmentName, String countryName) {
 
         if (includeDeleted)
-            return healthProviderRepo.findByCountryNameAndDepartmentNameAndCityNameOrderByName(
+            return healthProviderRepo.findByCountryNameAndDepartmentNameAndCityName(
                 countryName, departmentName, cityName);
         else
-            return healthProviderRepo.findByCountryNameAndDepartmentNameAndCityNameAndDeletedFalseOrderByName(
+            return healthProviderRepo.findByCountryNameAndDepartmentNameAndCityNameAndDeletedFalse(
                     countryName, departmentName, cityName);
     }
 

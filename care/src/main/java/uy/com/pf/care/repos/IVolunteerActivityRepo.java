@@ -9,11 +9,12 @@ import java.util.Optional;
 
 @Repository
 public interface IVolunteerActivityRepo extends MongoRepository<VolunteerActivity, String> {
-    Optional<VolunteerActivity> findByCountryNameAndDepartmentNameAndName(
+    Optional<VolunteerActivity> findByCountryNameAndDepartmentNameAndNameIgnoreCase(
             String countryName, String departmentName, String name);
     List<VolunteerActivity> findByCountryNameOrderByName(String countryName);
     List<VolunteerActivity> findByCountryNameAndDeletedFalseOrderByName(String countryName);
-    List<VolunteerActivity> findByCountryNameAndDepartmentNameOrderByName(String countryName, String departmentName);
+    List<VolunteerActivity> findByCountryNameAndDepartmentNameOrderByName(
+            String countryName, String departmentName);
     List<VolunteerActivity> findByCountryNameAndDepartmentNameAndDeletedFalseOrderByName(
             String countryName, String departmentName);
 }

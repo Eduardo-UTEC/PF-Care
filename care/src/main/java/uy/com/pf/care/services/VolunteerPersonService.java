@@ -76,20 +76,20 @@ public class VolunteerPersonService implements IVolunteerPersonService{
     }
 
     @Override
-    public Optional<VolunteerPerson> findMail(String mail) {return volunteerPersonRepo.findByMail(mail);}
+    public Optional<VolunteerPerson> findMail(String mail) {return volunteerPersonRepo.findByMailIgnoreCase(mail);}
 
     @Override
     public List<VolunteerPerson> findName(Boolean includeDeleted, String countryName, String name1) {
         if (includeDeleted)
-            return volunteerPersonRepo.findByCountryNameAndName1(countryName, name1);
-        return volunteerPersonRepo.findByCountryNameAndName1AndDeletedFalse(countryName, name1);
+            return volunteerPersonRepo.findByCountryNameAndName1IgnoreCase(countryName, name1);
+        return volunteerPersonRepo.findByCountryNameAndName1IgnoreCaseAndDeletedFalse(countryName, name1);
     }
 
     @Override
     public List<VolunteerPerson> findNameLike(Boolean includeDeleted, String countryName, String name1) {
         if (includeDeleted)
-            return volunteerPersonRepo.findByCountryNameAndName1Like(countryName, name1);
-        return volunteerPersonRepo.findByCountryNameAndName1LikeAndDeletedFalse(countryName, name1);
+            return volunteerPersonRepo.findByCountryNameAndName1LikeIgnoreCase(countryName, name1);
+        return volunteerPersonRepo.findByCountryNameAndName1LikeIgnoreCaseAndDeletedFalse(countryName, name1);
     }
 
     @Override
@@ -126,8 +126,8 @@ public class VolunteerPersonService implements IVolunteerPersonService{
                                                         !interestZonesObject.getCities().stream().filter(cityObject ->
                                                                 cityObject.getCityName().equals(interestCityName) &&
                                                                         (cityObject.getNeighborhoodNames().isEmpty() ||
-                                                                                cityObject.getNeighborhoodNames().contains(
-                                                                                        interestNeighborhoodName))
+                                                                                cityObject.getNeighborhoodNames().
+                                                                                        contains(interestNeighborhoodName))
                                                         ).toList().isEmpty())
                                 ).toList().isEmpty()
                 ).toList();
@@ -265,7 +265,6 @@ public class VolunteerPersonService implements IVolunteerPersonService{
                             if (volunteerPersonRange.getDay().ordinal() ==  searchRange.getDay().ordinal()){
                                 if (volunteerPersonRange.getTimeRange().isEmpty())
                                     return true;
-
                                 return volunteerPersonRange.getTimeRange().stream().anyMatch(VolunteerPersonSubRange ->
                                         searchRange.getTimeRange().stream().anyMatch(searchSubRange ->
                                                 (VolunteerPersonSubRange.

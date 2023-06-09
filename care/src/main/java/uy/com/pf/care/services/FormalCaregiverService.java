@@ -156,9 +156,9 @@ public class FormalCaregiverService implements IFormalCaregiverService {
     public List<FormalCaregiver> findAll(Boolean includeDeleted, String countryName) {
         try{
             if (includeDeleted)
-                return formalCaregiverRepo.findByCountryNameIgnoreCase(countryName);
+                return formalCaregiverRepo.findByCountryName(countryName);
 
-            return formalCaregiverRepo.findByCountryNameIgnoreCaseAndDeletedFalse(countryName);
+            return formalCaregiverRepo.findByCountryNameAndDeletedFalse(countryName);
 
         }catch (Exception e){
             log.warning("Error buscando todos los cuidadores formales de " + countryName + ". " + e.getMessage());
@@ -193,9 +193,9 @@ public class FormalCaregiverService implements IFormalCaregiverService {
 
         try{
             if (includeDeleted)
-                return formalCaregiverRepo.findByCountryNameIgnoreCaseAndNameIgnoreCase(countryName, name);
+                return formalCaregiverRepo.findByCountryNameAndNameIgnoreCase(countryName, name);
 
-            return formalCaregiverRepo.findByCountryNameIgnoreCaseAndNameIgnoreCaseAndDeletedFalse(
+            return formalCaregiverRepo.findByCountryNameAndNameIgnoreCaseAndDeletedFalse(
                     countryName, name);
 
         }catch(Exception e){
@@ -210,10 +210,10 @@ public class FormalCaregiverService implements IFormalCaregiverService {
     public List<FormalCaregiver> findNameLike(Boolean includeDeleted, String countryName, String name) {
         try{
             if (includeDeleted)
-                return formalCaregiverRepo.findByCountryNameIgnoreCaseAndNameLikeIgnoreCase(
+                return formalCaregiverRepo.findByCountryNameAndNameLikeIgnoreCase(
                         countryName, name);
 
-            return formalCaregiverRepo.findByCountryNameIgnoreCaseAndNameLikeIgnoreCaseAndDeletedFalse(
+            return formalCaregiverRepo.findByCountryNameAndNameLikeIgnoreCaseAndDeletedFalse(
                     countryName, name);
 
         }catch(Exception e){
@@ -244,7 +244,7 @@ public class FormalCaregiverService implements IFormalCaregiverService {
             if (neighborhoods != null &&
                     neighborhoods.length > 0 &&
                     Arrays.stream(neighborhoods).anyMatch(neighborhoodObject ->
-                            neighborhoodObject.getNeighborhoodName().equalsIgnoreCase(interestNeighborhoodName))){
+                            neighborhoodObject.getNeighborhoodName().equals(interestNeighborhoodName))){
 
                 //TODO: Testear cual de los dos filtros previos es el mas eficiente (tomando por ciudad o findAll)
                 //listReturn = this.findInterestZones_City(
@@ -253,16 +253,16 @@ public class FormalCaregiverService implements IFormalCaregiverService {
                 listReturn = this.findAll(includeDeleted, countryName).stream().filter(
                         formalCaregiver -> formalCaregiver.getInterestZones().isEmpty() ||
                                 !formalCaregiver.getInterestZones().stream().filter(interestZonesObject ->
-                                        interestZonesObject.getDepartmentName().equalsIgnoreCase(interestDepartmentName) &&
+                                        interestZonesObject.getDepartmentName().equals(interestDepartmentName) &&
                                                 (interestZonesObject.getCities().isEmpty() ||
                                                         !interestZonesObject.getCities().stream().filter(cityObject ->
-                                                                cityObject.getCityName().equalsIgnoreCase(interestCityName) &&
+                                                                cityObject.getCityName().equals(interestCityName) &&
                                                                         (cityObject.getNeighborhoodNames().isEmpty() ||
-                                                                                //cityObject.getNeighborhoodNames().contains(
-                                                                                //        interestNeighborhoodName))
-                                                                                cityObject.getNeighborhoodNames().stream()
-                                                                                        .anyMatch(name ->
-                                                                                                name.equalsIgnoreCase(interestNeighborhoodName))                                                                        )
+                                                                                cityObject.getNeighborhoodNames().
+                                                                                        contains(interestNeighborhoodName))
+                                                                                //cityObject.getNeighborhoodNames().stream()
+                                                                                //        .anyMatch(name ->
+                                                                                //                name.equalsIgnoreCase(interestNeighborhoodName))                                                                        )
                                                         ).toList().isEmpty())
                                 ).toList().isEmpty()
                 ).toList();
@@ -419,7 +419,6 @@ public class FormalCaregiverService implements IFormalCaregiverService {
                             if (formalCaregiverRange.getDay().ordinal() ==  searchRange.getDay().ordinal()){
                                 if (formalCaregiverRange.getTimeRange().isEmpty())
                                     return true;
-
                                 return formalCaregiverRange.getTimeRange().stream().anyMatch(formalCaregiverSubRange ->
                                         searchRange.getTimeRange().stream().anyMatch(searchSubRange ->
                                                 (formalCaregiverSubRange.getStartTime().isBefore(searchSubRange.getStartTime()) ||

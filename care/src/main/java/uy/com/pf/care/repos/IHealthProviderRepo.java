@@ -12,11 +12,11 @@ public interface IHealthProviderRepo extends MongoRepository<HealthProvider, Str
     List<HealthProvider> findByCountryNameAndDepartmentNameOrderByName(String countryName, String departmentName);
     List<HealthProvider> findByCountryNameAndDepartmentNameAndDeletedFalseOrderByName(
             String countryName, String departmentName);
-    List<HealthProvider> findByCountryNameAndDepartmentNameAndCityNameOrderByName(
+    List<HealthProvider> findByCountryNameAndDepartmentNameAndCityName(
             String countryName, String departmentName, String cityName);
-    List<HealthProvider> findByCountryNameAndDepartmentNameAndCityNameAndDeletedFalseOrderByName(
+    List<HealthProvider> findByCountryNameAndDepartmentNameAndCityNameAndDeletedFalse(
             String countryName, String departmentName, String cityName);
-    HealthProvider findByCountryNameAndDepartmentNameAndCityNameAndNameAndDeletedFalseOrderByName(
+    HealthProvider findByCountryNameAndDepartmentNameAndCityNameAndNameAndDeletedFalse(
             String countryName, String departmentName, String cityName, String name);
 
 }

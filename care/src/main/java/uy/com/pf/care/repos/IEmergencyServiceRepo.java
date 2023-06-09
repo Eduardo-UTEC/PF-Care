@@ -9,31 +9,31 @@ import java.util.List;
 @Repository
 public interface IEmergencyServiceRepo extends MongoRepository<EmergencyService, String> {
 
-    EmergencyService findByCountryNameIgnoreCaseAndDepartmentNameIgnoreCaseAndCityNameIgnoreCaseAndNameIgnoreCase(
+    EmergencyService findByCountryNameAndDepartmentNameAndCityNameAndNameIgnoreCase(
             String countryName,
             String departmentName,
             String cityName,
             String name);
-    EmergencyService findByCountryNameIgnoreCaseAndDepartmentNameIgnoreCaseAndCityNameIgnoreCaseAndNameIgnoreCaseAndDeletedFalse(
+    EmergencyService findByCountryNameAndDepartmentNameAndCityNameAndNameIgnoreCaseAndDeletedFalse(
             String countryName,
             String departmentName,
             String cityName,
             String name);
     //
-    List<EmergencyService> findByCountryNameIgnoreCaseAndDepartmentNameIgnoreCaseAndCityNameIgnoreCaseOrderByName(
+    List<EmergencyService> findByCountryNameAndDepartmentNameAndCityName(
             String countryName,
             String departmentName,
             String cityName);
-    List<EmergencyService> findByCountryNameIgnoreCaseAndDepartmentNameIgnoreCaseAndCityNameIgnoreCaseAndDeletedFalseOrderByName(
+    List<EmergencyService> findByCountryNameAndDepartmentNameAndCityNameAndDeletedFalse(
             String countryName,
             String departmentName,
             String cityName);
     //
-    List<EmergencyService> findByCountryNameIgnoreCaseAndDepartmentNameIgnoreCaseOrderByName(String countryName, String departmentName);
-    List<EmergencyService> findByCountryNameIgnoreCaseAndDepartmentNameIgnoreCaseAndDeletedFalseOrderByName(
+    List<EmergencyService> findByCountryNameAndDepartmentName(String countryName, String departmentName);
+    List<EmergencyService> findByCountryNameAndDepartmentNameAndDeletedFalse(
             String countryName, String departmentName);
     //
-    List<EmergencyService> findByCountryNameIgnoreCaseOrderByName(String countryName);
-    List<EmergencyService> findByCountryNameIgnoreCaseAndDeletedFalseOrderByName(String countryName);
+    List<EmergencyService> findByCountryName(String countryName);
+    List<EmergencyService> findByCountryNameAndDeletedFalse(String countryName);
 
 }

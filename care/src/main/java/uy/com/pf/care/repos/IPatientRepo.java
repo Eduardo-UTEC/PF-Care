@@ -11,7 +11,7 @@ import java.util.Optional;
 public interface IPatientRepo extends MongoRepository<Patient, String> {
 
     Optional<Patient> findByIdentificationDocumentAndZone_CountryName(Integer identificationDocument, String countryName);
-    Optional<Patient> findByMail(String mail);
+    Optional<Patient> findByMailIgnoreCase(String mail);
     List<Patient> findByZone_CountryNameOrderByName1(String countryName);
     List<Patient> findByZone_CountryNameAndDeletedFalseOrderByName1(String countryName);
     List<Patient> findByZone_CountryNameAndZone_DepartmentNameOrderByName1(
@@ -22,9 +22,9 @@ public interface IPatientRepo extends MongoRepository<Patient, String> {
             String countryName, String departmentName, String cityName);
     List<Patient> findByZone_CountryNameAndZone_DepartmentNameAndZone_CityNameAndDeletedFalseOrderByName1(
             String countryName, String departmentName, String cityName);
-    List<Patient> findByZone_CountryNameAndZone_DepartmentNameAndZone_CityNameAndName1AndDeletedFalseOrderByName1(
+    List<Patient> findByZone_CountryNameAndZone_DepartmentNameAndZone_CityNameAndName1IgnoreCaseAndDeletedFalseOrderByName1(
             String countryName, String departmentName, String cityName, String name1);
-    List<Patient> findByZone_CountryNameAndZone_DepartmentNameAndZone_CityNameAndZone_NeighborhoodNameAndName1AndDeletedFalseOrderByName1(
+    List<Patient> findByZone_CountryNameAndZone_DepartmentNameAndZone_CityNameAndZone_NeighborhoodNameAndName1IgnoreCaseAndDeletedFalse(
             String countryName, String departmentName, String cityName, String neighborhoodName, String name1);
 
 
