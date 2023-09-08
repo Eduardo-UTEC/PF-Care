@@ -33,6 +33,13 @@ dependencies {
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 }
 
+jar {
+	manifest {
+		attributes 'Main-Class': 'uy.com.pf.care.CareApplication'
+	}
+	from sourceSets.main.output
+}
+
 tasks.named('test') {
 	useJUnitPlatform()
 }
