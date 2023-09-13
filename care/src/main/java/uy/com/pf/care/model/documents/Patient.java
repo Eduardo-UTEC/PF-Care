@@ -60,5 +60,8 @@ public class Patient extends PersonObject {
     private ResidentialObject residential;
 
     @BooleanFlag
+    private Boolean validate;
+
+    @BooleanFlag
     private Boolean deleted;
 }
