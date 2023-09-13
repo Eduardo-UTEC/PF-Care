@@ -54,7 +54,7 @@ public class UserService implements IUserService{
     }
 
     @Override
-    public List<User> findAll(String countryName) { return userRepo.findByZone_CountryName(countryName); }
+    public List<User> findAll(String countryName) { return userRepo.findByResidenceZone_CountryName(countryName); }
 
     @Override
     public Optional<User> findId(String id) { return userRepo.findById(id); }
@@ -79,13 +79,13 @@ public class UserService implements IUserService{
 
     @Override
     public List<User> findCity(String cityName, String departmentName, String countryName) {
-        return userRepo.findByZone_CountryNameAndZone_DepartmentNameAndZone_CityName(
+        return userRepo.findByResidenceZone_CountryNameAndResidenceZone_DepartmentNameAndResidenceZone_CityName(
                 countryName, departmentName, cityName);
     }
 
     @Override
     public List<User> findDepartment(String departmentName, String countryName) {
-        return userRepo.findByZone_CountryNameAndZone_DepartmentName(countryName, departmentName);
+        return userRepo.findByResidenceZone_CountryNameAndResidenceZone_DepartmentName(countryName, departmentName);
     }
 
 }

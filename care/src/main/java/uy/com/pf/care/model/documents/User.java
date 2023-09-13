@@ -2,7 +2,6 @@ package uy.com.pf.care.model.documents;
 
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -36,7 +35,8 @@ public class User extends LoginObject {
     @NotEmpty(message = "User: El usuario debe tener al menos un rol")
     private List<RoleObject> roles;
 
-    //@NotNull(message = "User: La clave 'zone' no puede ser nula")
-    //private ZoneObject zone;
+    //Zona donde vive el usuario (si es empresa, es la zona donde está ubicada)
+    @NotNull(message = "User: La clave 'zone' no puede ser nula")
+    private ZoneObject residenceZone;
 
 }
