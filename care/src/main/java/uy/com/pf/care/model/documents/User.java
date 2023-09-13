@@ -36,7 +36,7 @@ public class User extends LoginObject {
     @NotEmpty(message = "User: El usuario debe tener al menos un rol")
     private List<RoleObject> roles;
 
-    @NotNull(message = "User: La clave 'zone' no puede ser nula")
-    private ZoneObject zone;
+    //@NotNull(message = "User: La clave 'zone' no puede ser nula")
+    //private ZoneObject zone;
 
 }
