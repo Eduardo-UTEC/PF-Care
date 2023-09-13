@@ -15,7 +15,7 @@ public class LoginObject {
 
     @NotNull(message = "User: La clave 'userName' no puede ser nula")
     @NotEmpty(message = "User: La clave 'userName' no puede ser vacia")
-    @Size(min = 5, max = 15, message = "User: La clave 'userName' debe contener entre 5 y 15 caracteres")
+    @Size(min = 5, max = 30, message = "User: La clave 'userName' debe contener entre 5 y 30 caracteres")
     private String userName;
 
     @NotNull(message = "User: El password no puede ser nulo")

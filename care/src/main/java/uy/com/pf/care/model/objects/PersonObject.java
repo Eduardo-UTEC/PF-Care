@@ -42,7 +42,7 @@ public class PersonObject {
 
     @NotNull(message = "PersonObject: La clave 'telephone' no puede ser nula")
     @NotEmpty(message = "PersonObject: La clave 'telephone' no puede ser vacía")
-    @Size(max = 20, message = "PersonObject: La clave 'telephone' no puede exceder los 20 caracteres")
+    @Size(min = 7, max = 20, message = "PersonObject: La clave 'telephone' debe contener entre 7 y 20 caracteres")
     private String  telephone;
 
     @NotNull(message = "PersonObject: La clave 'mail' no puede ser nula")
