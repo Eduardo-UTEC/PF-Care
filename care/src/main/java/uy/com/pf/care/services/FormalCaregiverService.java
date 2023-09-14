@@ -12,7 +12,6 @@ import org.springframework.web.client.RestTemplate;
 import uy.com.pf.care.exceptions.*;
 import uy.com.pf.care.infra.config.ParamConfig;
 import uy.com.pf.care.model.documents.FormalCaregiver;
-import uy.com.pf.care.model.documents.Patient;
 import uy.com.pf.care.model.objects.DayTimeRangeObject;
 import uy.com.pf.care.model.objects.NeighborhoodObject;
 import uy.com.pf.care.repos.IFormalCaregiverRepo;
@@ -168,9 +167,9 @@ public class FormalCaregiverService implements IFormalCaregiverService {
     public List<FormalCaregiver> findAll(Boolean includeDeleted, String countryName) {
         try{
             if (includeDeleted)
-                return formalCaregiverRepo.findByCountryName(countryName);
+                return formalCaregiverRepo.findByCountryNameAndValidateTrue(countryName);
 
-            return formalCaregiverRepo.findByCountryNameAndDeletedFalse(countryName);
+            return formalCaregiverRepo.findByCountryNameAndValidateTrueDeletedFalse(countryName);
 
         }catch (Exception e){
             log.warning("Error buscando todos los cuidadores formales de " + countryName + ". " + e.getMessage());
@@ -205,9 +204,9 @@ public class FormalCaregiverService implements IFormalCaregiverService {
 
         try{
             if (includeDeleted)
-                return formalCaregiverRepo.findByCountryNameAndNameIgnoreCase(countryName, name);
+                return formalCaregiverRepo.findByCountryNameAndValidateTrueAndNameIgnoreCase(countryName, name);
 
-            return formalCaregiverRepo.findByCountryNameAndNameIgnoreCaseAndDeletedFalse(
+            return formalCaregiverRepo.findByCountryNameAndNameIgnoreCaseAndValidateTrueAndDeletedFalse(
                     countryName, name);
 
         }catch(Exception e){
@@ -222,10 +221,10 @@ public class FormalCaregiverService implements IFormalCaregiverService {
     public List<FormalCaregiver> findNameLike(Boolean includeDeleted, String countryName, String name) {
         try{
             if (includeDeleted)
-                return formalCaregiverRepo.findByCountryNameAndNameLikeIgnoreCase(
+                return formalCaregiverRepo.findByCountryNameAndNameLikeIgnoreCaseAndValidateTrue(
                         countryName, name);
 
-            return formalCaregiverRepo.findByCountryNameAndNameLikeIgnoreCaseAndDeletedFalse(
+            return formalCaregiverRepo.findByCountryNameAndNameLikeIgnoreCaseAndValidateTrueAndDeletedFalse(
                     countryName, name);
 
         }catch(Exception e){

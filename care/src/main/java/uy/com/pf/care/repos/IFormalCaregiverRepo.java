@@ -8,22 +8,12 @@ import java.util.List;
 
 @Repository
 public interface IFormalCaregiverRepo extends MongoRepository<FormalCaregiver, String> {
-
-    /*
-        Busqueda por rangos... ejemplo:
-          List<User> findByAgeBetween(Integer startAge, Integer endAge);
-
-        Contar:
-             Long countByLastname(String lastname);
-     */
-
-
     FormalCaregiver findByMailIgnoreCase(String mail);
-    List<FormalCaregiver> findByCountryName(String countryName);
-    List<FormalCaregiver> findByCountryNameAndDeletedFalse(String countryName);
-    List<FormalCaregiver> findByCountryNameAndNameIgnoreCase(String countryName, String name);
-    List<FormalCaregiver> findByCountryNameAndNameIgnoreCaseAndDeletedFalse(String countryName, String name);
-    List<FormalCaregiver> findByCountryNameAndNameLikeIgnoreCase(String countryName, String name);
-    List<FormalCaregiver> findByCountryNameAndNameLikeIgnoreCaseAndDeletedFalse(String countryName, String name);
-
+    List<FormalCaregiver> findByCountryNameAndValidateTrue(String countryName);
+    List<FormalCaregiver> findByCountryNameAndValidateTrueDeletedFalse(String countryName);
+    List<FormalCaregiver> findByCountryNameAndValidateFalseAndDeletedFalse(String countryName);
+    List<FormalCaregiver> findByCountryNameAndValidateTrueAndNameIgnoreCase(String countryName, String name);
+    List<FormalCaregiver> findByCountryNameAndNameIgnoreCaseAndValidateTrueAndDeletedFalse(String countryName, String name);
+    List<FormalCaregiver> findByCountryNameAndNameLikeIgnoreCaseAndValidateTrue(String countryName, String name);
+    List<FormalCaregiver> findByCountryNameAndNameLikeIgnoreCaseAndValidateTrueAndDeletedFalse(String countryName, String name);
 }
