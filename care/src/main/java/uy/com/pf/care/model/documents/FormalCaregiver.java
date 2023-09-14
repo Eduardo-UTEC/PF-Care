@@ -71,6 +71,9 @@ public class FormalCaregiver extends FormalCaregiverObject {
     private Boolean available;  // Si es False, implica que sus servicios no estan disponibles momentáneamente
 
     @BooleanFlag
+    private Boolean validate;
+
+    @BooleanFlag
     private Boolean deleted;
 
     private byte[] photo;

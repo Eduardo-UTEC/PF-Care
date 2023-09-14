@@ -10,6 +10,7 @@ public interface IFormalCaregiverService {
     String save(FormalCaregiver formalCaregiver);
     Boolean update(FormalCaregiver newFormalCaregiver);
     Boolean setAvailability(String id, Boolean isAvailable);
+    Boolean setValidation(String id, Boolean isValidated);
     Boolean setDeletion(String id, Boolean isDeleted);
     Boolean updateVotes(String formalCaregiverId, int previousScore, int currentScore);
     Optional<FormalCaregiver> findId(String id);

@@ -133,6 +133,17 @@ public class FormalCaregiverController {
     }
 
     // Devuelve true si la operación fue exitosa
+    @PutMapping("setValidation/{id}/{isValidated}")
+    public ResponseEntity<Boolean> setValidate(@PathVariable String id, @PathVariable Boolean isValidated) {
+        try{
+            return ResponseEntity.ok(formalCaregiverService.setValidation(id, isValidated));
+
+        }catch(FormalCaregiverSetValidationException e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
+        }
+    }
+
+    // Devuelve true si la operación fue exitosa
     @PutMapping("setDeletion/{id}/{isDeleted}")
     public ResponseEntity<Boolean> setDeletion(@PathVariable String id, @PathVariable Boolean isDeleted) {
         try{

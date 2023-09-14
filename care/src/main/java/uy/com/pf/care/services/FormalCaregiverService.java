@@ -12,6 +12,7 @@ import org.springframework.web.client.RestTemplate;
 import uy.com.pf.care.exceptions.*;
 import uy.com.pf.care.infra.config.ParamConfig;
 import uy.com.pf.care.model.documents.FormalCaregiver;
+import uy.com.pf.care.model.documents.Patient;
 import uy.com.pf.care.model.objects.DayTimeRangeObject;
 import uy.com.pf.care.model.objects.NeighborhoodObject;
 import uy.com.pf.care.repos.IFormalCaregiverRepo;
@@ -91,6 +92,17 @@ public class FormalCaregiverService implements IFormalCaregiverService {
             throw new FormalCaregiverSetAvailabilityException("No se pudo setear la disponibilidad del cuidador formal con id: "
                     + id + ". ");
         }
+    }
+
+    @Override
+    public Boolean setValidation(String id, Boolean isValidated) {
+        Optional<FormalCaregiver> formalCaregiverFound = this.findId(id);
+        if (formalCaregiverFound.isPresent()) {
+            formalCaregiverFound.get().setValidate(isValidated);
+            formalCaregiverRepo.save(formalCaregiverFound.get());
+            return true;
+        }
+        return false;
     }
 
     /*  Devuelve true si la operación fue exitosa.
