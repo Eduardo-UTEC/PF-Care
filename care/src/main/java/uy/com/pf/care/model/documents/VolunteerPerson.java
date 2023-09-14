@@ -67,6 +67,9 @@ public class VolunteerPerson extends PersonObject {
     private Boolean available;  // Si es False, implica que sus servicios no estan disponibles momentáneamente
 
     @BooleanFlag
+    private Boolean validate;
+
+    @BooleanFlag
     private Boolean deleted;
 
     @NotNull(message = "VolunteerPerson: El país de la persona voluntaria no puede ser nulo")

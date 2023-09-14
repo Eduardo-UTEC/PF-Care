@@ -41,6 +41,7 @@ public interface IVolunteerPersonService {
             String interestDepartmentName,
             String countryName);
     Boolean setAvailability(String id, Boolean isAvailable);
+    Boolean setValidation(String id, Boolean isValidated);
     Boolean setDeletion(String id, Boolean isDeleted);
 
 }

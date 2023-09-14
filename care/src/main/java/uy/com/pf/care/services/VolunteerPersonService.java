@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import uy.com.pf.care.exceptions.*;
 import uy.com.pf.care.infra.config.ParamConfig;
+import uy.com.pf.care.model.documents.Patient;
 import uy.com.pf.care.model.documents.VolunteerPerson;
 import uy.com.pf.care.model.objects.DayTimeRangeObject;
 import uy.com.pf.care.model.objects.NeighborhoodObject;
@@ -306,6 +307,17 @@ public class VolunteerPersonService implements IVolunteerPersonService{
             throw new VolunteerPersonSetAvailabilityException(
                     "No se pudo setear la disponibilidad de la persona voluntaria con id: " + id + ". ");
         }
+    }
+
+    @Override
+    public Boolean setValidation(String id, Boolean isValidated) {
+        Optional<VolunteerPerson> volunteerPersonFound = this.findId(id);
+        if (volunteerPersonFound.isPresent()) {
+            volunteerPersonFound.get().setValidate(isValidated);
+            volunteerPersonRepo.save(volunteerPersonFound.get());
+            return true;
+        }
+        return false;
     }
 
     /*  Devuelve true si la operación fue exitosa.
