@@ -8,12 +8,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
-import uy.com.pf.care.exceptions.FormalCaregiverUpdateException;
-import uy.com.pf.care.exceptions.PatientSaveException;
-import uy.com.pf.care.exceptions.PatientUpdateException;
-import uy.com.pf.care.model.documents.HealthProvider;
+import uy.com.pf.care.exceptions.*;
 import uy.com.pf.care.model.documents.Patient;
-import uy.com.pf.care.model.objects.PatientIdObject;
 import uy.com.pf.care.services.IPatientService;
 
 import java.util.List;
@@ -151,14 +147,13 @@ public class PatientController {
     }
 
     // Devuelve true si la operación fue exitosa
-    @PutMapping("setValidate/{id}/{isValidated}")
+    @PutMapping("setValidation/{id}/{isValidated}")
     public ResponseEntity<Boolean> setValidate(@PathVariable String id, @PathVariable Boolean isValidated) {
         try{
-            return ResponseEntity.ok(patientService.setValidate(id, isValidated));
+            return ResponseEntity.ok(patientService.setValidation(id, isValidated));
 
-        }catch(Exception e) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
-                    "No se pudo setear la validación del paciente con id " + id);
+        }catch(PatientSetValidationException e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
         }
     }
 
@@ -168,9 +163,8 @@ public class PatientController {
         try{
             return ResponseEntity.ok(patientService.setDeletion(id, isDeleted));
 
-        }catch(Exception e) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
-                    "No se pudo setear el borrado lógico del paciente con id " + id);
+        }catch(PatientSetDeletionException e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
         }
     }
 

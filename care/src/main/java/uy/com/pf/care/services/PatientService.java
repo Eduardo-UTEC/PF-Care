@@ -56,7 +56,7 @@ public class PatientService implements IPatientService{
     }
 
     @Override
-    public Boolean setValidate(String id, Boolean isValidated) {
+    public Boolean setValidation(String id, Boolean isValidated) {
         Optional<Patient> patient = this.findId(id);
         if (patient.isPresent()) {
             patient.get().setValidate(isValidated);
