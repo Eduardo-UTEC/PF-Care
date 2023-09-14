@@ -151,6 +151,18 @@ public class PatientController {
     }
 
     // Devuelve true si la operación fue exitosa
+    @PutMapping("setValidate/{id}/{isValidated}")
+    public ResponseEntity<Boolean> setValidate(@PathVariable String id, @PathVariable Boolean isValidated) {
+        try{
+            return ResponseEntity.ok(patientService.setValidate(id, isValidated));
+
+        }catch(Exception e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
+                    "No se pudo setear la validación del paciente con id " + id);
+        }
+    }
+
+    // Devuelve true si la operación fue exitosa
     @PutMapping("setDeletion/{id}/{isDeleted}")
     public ResponseEntity<Boolean> setDeletion(@PathVariable String id, @PathVariable Boolean isDeleted) {
         try{

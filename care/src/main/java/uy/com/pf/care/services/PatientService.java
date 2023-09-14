@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import uy.com.pf.care.exceptions.PatientSaveException;
 import uy.com.pf.care.exceptions.PatientUpdateException;
 import uy.com.pf.care.model.documents.Patient;
+import uy.com.pf.care.model.documents.User;
 import uy.com.pf.care.repos.IPatientRepo;
 
 import java.time.LocalDateTime;
@@ -52,6 +53,17 @@ public class PatientService implements IPatientService{
             log.warning("*** ERROR ACTUALIZANDO PACIENTE: " + e);
             throw new PatientUpdateException("*** ERROR ACTUALIZANDO PACIENTE");
         }
+    }
+
+    @Override
+    public Boolean setValidate(String id, Boolean isValidated) {
+        Optional<Patient> patient = this.findId(id);
+        if (patient.isPresent()) {
+            patient.get().setValidate(isValidated);
+            patientRepo.save(patient.get());
+            return true;
+        }
+        return false;
     }
 
     @Override

@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import uy.com.pf.care.exceptions.UserSaveException;
 import uy.com.pf.care.exceptions.UserUpdateException;
+import uy.com.pf.care.model.documents.Patient;
 import uy.com.pf.care.model.documents.User;
 import uy.com.pf.care.model.objects.LoginObject;
 import uy.com.pf.care.repos.IUserRepo;

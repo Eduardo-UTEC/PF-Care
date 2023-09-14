@@ -36,7 +36,7 @@ public class User extends LoginObject {
     private List<RoleObject> roles;
 
     //Zona donde vive el usuario (si es empresa, es la zona donde está ubicada)
-    @NotNull(message = "User: La clave 'zone' no puede ser nula")
+    @NotNull(message = "User: La clave 'residenceZone' no puede ser nula")
     private ZoneObject residenceZone;
 
 }

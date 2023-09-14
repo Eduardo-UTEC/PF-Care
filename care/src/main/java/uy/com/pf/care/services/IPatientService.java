@@ -8,6 +8,7 @@ import java.util.Optional;
 public interface IPatientService {
     String save(Patient patient);
     Boolean update(Patient newPatient);
+    Boolean setValidate(String id, Boolean isValidated);
     Boolean setDeletion(String id, Boolean isDeleted);
     Optional<Patient> findId(String id);
     Optional<Patient> findIdentificationDocument(Integer identificationDocument, String countryName);
