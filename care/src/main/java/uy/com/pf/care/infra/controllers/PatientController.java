@@ -55,6 +55,17 @@ public class PatientController {
         }
     }
 
+    @GetMapping("findAllWithoutValidating/{countryName}")
+    public ResponseEntity<List<Patient>> findAllWithoutValidating(@PathVariable String countryName){
+        try{
+            return ResponseEntity.ok(patientService.findAllWithoutValidating(countryName));
+
+        }catch(Exception e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
+                    "Error buscando todos los pacientes sin validar de " + countryName);
+        }
+    }
+
     @GetMapping("findId/{id}")
     public ResponseEntity<Optional<Patient>> findId(@PathVariable String id) {
         try{
@@ -121,6 +132,21 @@ public class PatientController {
         }
     }
 
+    @GetMapping("findCityWithoutValidating/{cityName}/{departmentName}/{countryName}")
+    public ResponseEntity<List<Patient>> findCityWithoutValidating(
+                                                  @PathVariable String cityName,
+                                                  @PathVariable String departmentName,
+                                                  @PathVariable String countryName) {
+        try{
+            return ResponseEntity.ok(patientService.findCityWithoutValidating(cityName, departmentName,countryName));
+
+        }catch(Exception e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
+                    "Error buscando pacientes sin validar en ciudad/localidad: " +
+                            cityName + " (" + departmentName + ", " + countryName + ")");
+        }
+    }
+
     @GetMapping("findDepartment/{includeDeleted}/{departmentName}/{countryName}")
     public ResponseEntity<List<Patient>> findDepartment(@PathVariable Boolean includeDeleted,
                                                         @PathVariable String departmentName,
@@ -135,6 +161,19 @@ public class PatientController {
         }
     }
 
+    @GetMapping("findDepartmentWithoutValidating/{departmentName}/{countryName}")
+    public ResponseEntity<List<Patient>> findDepartmentWithoutValidating(
+                                                        @PathVariable String departmentName,
+                                                        @PathVariable String countryName) {
+        try{
+            return ResponseEntity.ok(patientService.findDepartmentWithoutValidating(departmentName,countryName));
+
+        }catch(Exception e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
+                    "Error buscando pacientes sin validar en departamento/provincia: " +
+                            departmentName + " (" + countryName + ")");
+        }
+    }
     @GetMapping("findMail/{mail}")
     public ResponseEntity<Optional<Patient>> findMail(@PathVariable String mail) {
         try{
@@ -148,7 +187,7 @@ public class PatientController {
 
     // Devuelve true si la operación fue exitosa
     @PutMapping("setValidation/{id}/{isValidated}")
-    public ResponseEntity<Boolean> setValidate(@PathVariable String id, @PathVariable Boolean isValidated) {
+    public ResponseEntity<Boolean> setValidation(@PathVariable String id, @PathVariable Boolean isValidated) {
         try{
             return ResponseEntity.ok(patientService.setValidation(id, isValidated));
 

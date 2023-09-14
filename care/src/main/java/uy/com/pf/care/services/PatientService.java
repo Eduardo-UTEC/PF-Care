@@ -6,7 +6,6 @@ import org.springframework.stereotype.Service;
 import uy.com.pf.care.exceptions.PatientSaveException;
 import uy.com.pf.care.exceptions.PatientUpdateException;
 import uy.com.pf.care.model.documents.Patient;
-import uy.com.pf.care.model.documents.User;
 import uy.com.pf.care.repos.IPatientRepo;
 
 import java.time.LocalDateTime;
@@ -80,9 +79,14 @@ public class PatientService implements IPatientService{
     @Override
     public List<Patient> findAll(Boolean includeDeleted, String countryName) {
         if (includeDeleted)
-            return patientRepo.findByZone_CountryNameOrderByName1(countryName);
+            return patientRepo.findByZone_CountryNameAndValidateTrueOrderByName1(countryName);
 
-        return patientRepo.findByZone_CountryNameAndDeletedFalseOrderByName1(countryName);
+        return patientRepo.findByZone_CountryNameAndValidateTrueAndDeletedFalseOrderByName1(countryName);
+    }
+
+    @Override
+    public List<Patient> findAllWithoutValidating(String countryName) {
+        return patientRepo.findByZone_CountryNameAndValidateFalseAndDeletedFalseOrderByName1(countryName);
     }
 
     @Override
@@ -106,30 +110,42 @@ public class PatientService implements IPatientService{
 
         if (neighborhoodName == null)
             return patientRepo.
-                    findByZone_CountryNameAndZone_DepartmentNameAndZone_CityNameAndName1IgnoreCaseAndDeletedFalseOrderByName1(
+                    findByZone_CountryNameAndZone_DepartmentNameAndZone_CityNameAndName1IgnoreCaseAndValidateTrueAndDeletedFalseOrderByName1(
                             countryName, departmentName, cityName, name1);
         return patientRepo.
-                findByZone_CountryNameAndZone_DepartmentNameAndZone_CityNameAndZone_NeighborhoodNameAndName1IgnoreCaseAndDeletedFalse(
+                findByZone_CountryNameAndZone_DepartmentNameAndZone_CityNameAndZone_NeighborhoodNameAndName1IgnoreCaseAndValidateTrueAndDeletedFalse(
                         countryName, departmentName, cityName, neighborhoodName, name1);
     }
 
     @Override
     public List<Patient> findCity(Boolean includeDeleted, String cityName, String departmentName, String countryName) {
         if (includeDeleted)
-            return patientRepo.findByZone_CountryNameAndZone_DepartmentNameAndZone_CityNameOrderByName1(
+            return patientRepo.findByZone_CountryNameAndZone_DepartmentNameAndZone_CityNameAndValidateTrueOrderByName1(
                     countryName, departmentName, cityName);
 
-        return patientRepo.findByZone_CountryNameAndZone_DepartmentNameAndZone_CityNameAndDeletedFalseOrderByName1(
+        return patientRepo.findByZone_CountryNameAndZone_DepartmentNameAndZone_CityNameAndValidateTrueAndDeletedFalseOrderByName1(
+                countryName, departmentName, cityName);
+    }
+
+    @Override
+    public List<Patient> findCityWithoutValidating(String cityName, String departmentName, String countryName) {
+        return patientRepo.findByZone_CountryNameAndZone_DepartmentNameAndZone_CityNameAndValidateFalseAndDeletedFalseOrderByName1(
                 countryName, departmentName, cityName);
     }
 
     @Override
     public List<Patient> findDepartment(Boolean includeDeleted, String departmentName, String countryName) {
         if (includeDeleted)
-            return patientRepo.findByZone_CountryNameAndZone_DepartmentNameOrderByName1(countryName, departmentName);
+            return patientRepo.findByZone_CountryNameAndZone_DepartmentNameAndValidateTrueOrderByName1(countryName, departmentName);
 
-        return patientRepo.findByZone_CountryNameAndZone_DepartmentNameAndDeletedFalseOrderByName1(
+        return patientRepo.findByZone_CountryNameAndZone_DepartmentNameAndValidateTrueAndDeletedFalseOrderByName1(
                     countryName, departmentName);
+    }
+
+    @Override
+    public List<Patient> findDepartmentWithoutValidating(String departmentName, String countryName) {
+        return patientRepo.findByZone_CountryNameAndZone_DepartmentNameAndValidateFalseAndDeletedFalseOrderByName1(
+                countryName, departmentName);
     }
 
 /*
@@ -165,13 +181,15 @@ public class PatientService implements IPatientService{
     }
 */
 
-    // Asigna los valores por default a la entitdad
+    // Asigna los valores por default a la entidad
     private void defaultValues(Patient patient){
+        patient.setValidate(false);
         patient.setDeleted(false);
     }
 
     // Asigna los valores a la nueva entitdad, tomados de la vieja entidad (de la persistida)
     private void defaultValues(Patient oldPatient, Patient newPatient){
+        newPatient.setValidate(oldPatient.getValidate());
         newPatient.setDeleted(oldPatient.getDeleted());
     }
 
