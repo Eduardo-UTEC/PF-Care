@@ -14,13 +14,21 @@ public interface IPatientService {
     Optional<Patient> findIdentificationDocument(Integer identificationDocument, String countryName);
     Optional<Patient> findMail(String mail);
     List<Patient> findName1(
-            String name1, String neighborhoodName, String cityName, String departmentName, String countryName);
-    List<Patient> findCity(Boolean includeDeleted, String cityName, String departmentName, String countryName);
-    List<Patient> findCityWithoutValidating(String cityName, String departmentName, String countryName);
-    List<Patient> findDepartment(Boolean includeDeleted, String departmentName, String countryName);
-    List<Patient> findDepartmentWithoutValidating(String departmentName, String countryName);
-    List<Patient> findAll(Boolean includeDeleted, String countryName);
-    List<Patient> findAllWithoutValidating(String countryName);
+            String name1,
+            Boolean withoutValidate,
+            Boolean includeDeleted,
+            String neighborhoodName,
+            String cityName,
+            String departmentName,
+            String countryName);
+    List<Patient> findCity(
+            Boolean withoutValidate,
+            Boolean includeDeleted,
+            String cityName,
+            String departmentName,
+            String countryName);
+    List<Patient> findDepartment(Boolean withoutValidate, Boolean includeDeleted, String departmentName, String countryName);
+    List<Patient> findAll(Boolean withoutValidate, Boolean includeDeleted, String countryName);
 
 //    Optional<Patient> findIdentificationDocument(Integer identificationDocument, String countryName);
 //    List<Patient> findName1Like(String name1, String cityName, String departmentName, String countryName);

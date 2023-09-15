@@ -77,16 +77,25 @@ public class PatientService implements IPatientService{
     }
 
     @Override
-    public List<Patient> findAll(Boolean includeDeleted, String countryName) {
-        if (includeDeleted)
+    public List<Patient> findAll(Boolean withoutValidate, Boolean includeDeleted, String countryName) {
+        /*if (includeDeleted)
             return patientRepo.findByZone_CountryNameAndValidateTrueOrderByName1(countryName);
 
         return patientRepo.findByZone_CountryNameAndValidateTrueAndDeletedFalseOrderByName1(countryName);
-    }
 
-    @Override
-    public List<Patient> findAllWithoutValidating(String countryName) {
-        return patientRepo.findByZone_CountryNameAndValidateFalseAndDeletedFalseOrderByName1(countryName);
+         */
+        if (withoutValidate) {
+            if (includeDeleted)
+                return patientRepo.findByZone_CountryNameAndValidateFalseOrderByName1(countryName);
+
+            return patientRepo.findByZone_CountryNameAndValidateFalseAndDeletedFalseOrderByName1(countryName);
+        } else {
+            //solo los validados
+            if (includeDeleted)
+                return patientRepo.findByZone_CountryNameAndValidateTrueOrderByName1(countryName);
+
+            return patientRepo.findByZone_CountryNameAndValidateTrueAndDeletedFalseOrderByName1(countryName);
+        }
     }
 
     @Override
@@ -106,46 +115,106 @@ public class PatientService implements IPatientService{
 
     @Override
     public List<Patient> findName1(
-            String name1, String neighborhoodName, String cityName, String departmentName, String countryName) {
+            String name1,
+            Boolean withoutValidate,
+            Boolean includeDeleted,
+            String neighborhoodName,
+            String cityName,
+            String departmentName,
+            String countryName) {
 
-        if (neighborhoodName == null)
+        /*if (neighborhoodName == null)
             return patientRepo.
                     findByZone_CountryNameAndZone_DepartmentNameAndZone_CityNameAndName1IgnoreCaseAndValidateTrueAndDeletedFalseOrderByName1(
                             countryName, departmentName, cityName, name1);
         return patientRepo.
                 findByZone_CountryNameAndZone_DepartmentNameAndZone_CityNameAndZone_NeighborhoodNameAndName1IgnoreCaseAndValidateTrueAndDeletedFalse(
                         countryName, departmentName, cityName, neighborhoodName, name1);
+        */
+
+        if (withoutValidate) {
+            if (includeDeleted)
+                if (neighborhoodName == null)
+                    return patientRepo.
+                            findByZone_CountryNameAndZone_DepartmentNameAndZone_CityNameAndName1IgnoreCaseAndValidateFalseOrderByName1(
+                                    countryName, departmentName, cityName, name1);
+                else
+                    return patientRepo.
+                            findByZone_CountryNameAndZone_DepartmentNameAndZone_CityNameAndZone_NeighborhoodNameAndName1IgnoreCaseAndValidateFalse(
+                                    countryName, departmentName, cityName, neighborhoodName, name1);
+            else
+                if (neighborhoodName == null)
+                    return patientRepo.
+                            findByZone_CountryNameAndZone_DepartmentNameAndZone_CityNameAndName1IgnoreCaseAndValidateFalseAndDeletedFalse(
+                                countryName, departmentName, cityName, name1);
+                else
+                    return patientRepo.
+                            findByZone_CountryNameAndZone_DepartmentNameAndZone_CityNameAndZone_NeighborhoodNameAndName1IgnoreCaseAndValidateFalseAndDeletedFalse(
+                                countryName, departmentName, cityName, neighborhoodName, name1);
+        }
+        // solo los validados
+        if (includeDeleted) {
+            if (neighborhoodName == null)
+                return patientRepo.
+                        findByZone_CountryNameAndZone_DepartmentNameAndZone_CityNameAndName1IgnoreCaseAndValidateTrueOrderByName1(
+                                countryName, departmentName, cityName, name1);
+        }
+        else if (neighborhoodName == null)
+                return patientRepo.
+                    findByZone_CountryNameAndZone_DepartmentNameAndZone_CityNameAndName1IgnoreCaseAndValidateTrueAndDeletedFalseOrderByName1(
+                            countryName, departmentName, cityName, name1);
+
+        return patientRepo.
+                findByZone_CountryNameAndZone_DepartmentNameAndZone_CityNameAndZone_NeighborhoodNameAndName1IgnoreCaseAndValidateTrueAndDeletedFalse(
+                        countryName, departmentName, cityName, neighborhoodName, name1);
     }
 
     @Override
-    public List<Patient> findCity(Boolean includeDeleted, String cityName, String departmentName, String countryName) {
-        if (includeDeleted)
-            return patientRepo.findByZone_CountryNameAndZone_DepartmentNameAndZone_CityNameAndValidateTrueOrderByName1(
+    public List<Patient> findCity(Boolean withoutValidate, Boolean includeDeleted, String cityName, String departmentName, String countryName) {
+        if (withoutValidate) {
+            if (includeDeleted)
+                return patientRepo.findByZone_CountryNameAndZone_DepartmentNameAndZone_CityNameAndValidateFalseOrderByName1(
+                        countryName, departmentName, cityName);
+
+            return patientRepo.findByZone_CountryNameAndZone_DepartmentNameAndZone_CityNameAndValidateFalseAndDeletedFalseOrderByName1(
                     countryName, departmentName, cityName);
+        } else {
+            //solo validados
+            if (includeDeleted)
+                return patientRepo.findByZone_CountryNameAndZone_DepartmentNameAndZone_CityNameAndValidateTrueOrderByName1(
+                        countryName, departmentName, cityName);
 
-        return patientRepo.findByZone_CountryNameAndZone_DepartmentNameAndZone_CityNameAndValidateTrueAndDeletedFalseOrderByName1(
-                countryName, departmentName, cityName);
+            return patientRepo.findByZone_CountryNameAndZone_DepartmentNameAndZone_CityNameAndValidateTrueAndDeletedFalseOrderByName1(
+                    countryName, departmentName, cityName);
+        }
     }
 
     @Override
-    public List<Patient> findCityWithoutValidating(String cityName, String departmentName, String countryName) {
-        return patientRepo.findByZone_CountryNameAndZone_DepartmentNameAndZone_CityNameAndValidateFalseAndDeletedFalseOrderByName1(
-                countryName, departmentName, cityName);
-    }
-
-    @Override
-    public List<Patient> findDepartment(Boolean includeDeleted, String departmentName, String countryName) {
-        if (includeDeleted)
+    public List<Patient> findDepartment(Boolean withoutValidate, Boolean includeDeleted, String departmentName, String countryName) {
+        /*if (includeDeleted)
             return patientRepo.findByZone_CountryNameAndZone_DepartmentNameAndValidateTrueOrderByName1(countryName, departmentName);
 
         return patientRepo.findByZone_CountryNameAndZone_DepartmentNameAndValidateTrueAndDeletedFalseOrderByName1(
                     countryName, departmentName);
-    }
 
-    @Override
-    public List<Patient> findDepartmentWithoutValidating(String departmentName, String countryName) {
-        return patientRepo.findByZone_CountryNameAndZone_DepartmentNameAndValidateFalseAndDeletedFalseOrderByName1(
-                countryName, departmentName);
+         */
+        if (withoutValidate) {
+            if (includeDeleted)
+                return patientRepo.findByZone_CountryNameAndZone_DepartmentNameAndValidateFalseOrderByName1(
+                        countryName, departmentName);
+
+            return patientRepo.findByZone_CountryNameAndZone_DepartmentNameAndValidateFalseAndDeletedFalseOrderByName1(
+                    countryName, departmentName);
+        } else {
+            //solo validados
+            if (includeDeleted)
+                return patientRepo.findByZone_CountryNameAndZone_DepartmentNameAndValidateTrueOrderByName1(
+                        countryName, departmentName);
+
+            return patientRepo.findByZone_CountryNameAndZone_DepartmentNameAndValidateTrueAndDeletedFalseOrderByName1(
+                    countryName, departmentName);
+        }
+
     }
 
 /*

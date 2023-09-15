@@ -15,11 +15,14 @@ public interface IPatientRepo extends MongoRepository<Patient, String> {
     List<Patient> findByZone_CountryNameAndValidateTrueOrderByName1(String countryName);
     List<Patient> findByZone_CountryNameAndValidateTrueAndDeletedFalseOrderByName1(String countryName);
     List<Patient> findByZone_CountryNameAndValidateFalseAndDeletedFalseOrderByName1(String countryName);
+    List<Patient> findByZone_CountryNameAndValidateFalseOrderByName1(String countryName);
     List<Patient> findByZone_CountryNameAndZone_DepartmentNameAndValidateTrueOrderByName1(
             String countryName, String departmentName);
     List<Patient> findByZone_CountryNameAndZone_DepartmentNameAndValidateTrueAndDeletedFalseOrderByName1(
             String countryName, String departmentName);
     List<Patient> findByZone_CountryNameAndZone_DepartmentNameAndValidateFalseAndDeletedFalseOrderByName1(
+            String countryName, String departmentName);
+    List<Patient> findByZone_CountryNameAndZone_DepartmentNameAndValidateFalseOrderByName1(
             String countryName, String departmentName);
     List<Patient> findByZone_CountryNameAndZone_DepartmentNameAndZone_CityNameAndValidateTrueOrderByName1(
             String countryName, String departmentName, String cityName);
@@ -27,14 +30,24 @@ public interface IPatientRepo extends MongoRepository<Patient, String> {
             String countryName, String departmentName, String cityName);
     List<Patient> findByZone_CountryNameAndZone_DepartmentNameAndZone_CityNameAndValidateFalseAndDeletedFalseOrderByName1(
             String countryName, String departmentName, String cityName);
+    List<Patient> findByZone_CountryNameAndZone_DepartmentNameAndZone_CityNameAndValidateFalseOrderByName1(
+            String countryName, String departmentName, String cityName);
     List<Patient> findByZone_CountryNameAndZone_DepartmentNameAndZone_CityNameAndName1IgnoreCaseAndValidateTrueAndDeletedFalseOrderByName1(
             String countryName, String departmentName, String cityName, String name1);
-    List<Patient> findByZone_CountryNameAndZone_DepartmentNameAndZone_CityNameAndName1IgnoreCaseAndValidateFalseAndDeletedFalseOrderByName1(
-            String countryName, String departmentName, String cityName, String name1);
+    //List<Patient> findByZone_CountryNameAndZone_DepartmentNameAndZone_CityNameAndName1IgnoreCaseAndValidateFalseAndDeletedFalseOrderByName1(
+    //        String countryName, String departmentName, String cityName, String name1);
     List<Patient> findByZone_CountryNameAndZone_DepartmentNameAndZone_CityNameAndZone_NeighborhoodNameAndName1IgnoreCaseAndValidateTrueAndDeletedFalse(
             String countryName, String departmentName, String cityName, String neighborhoodName, String name1);
     List<Patient> findByZone_CountryNameAndZone_DepartmentNameAndZone_CityNameAndZone_NeighborhoodNameAndName1IgnoreCaseAndValidateFalseAndDeletedFalse(
             String countryName, String departmentName, String cityName, String neighborhoodName, String name1);
+    List<Patient> findByZone_CountryNameAndZone_DepartmentNameAndZone_CityNameAndName1IgnoreCaseAndValidateFalseOrderByName1(
+            String countryName, String departmentName, String cityName, String name1);
+    List<Patient> findByZone_CountryNameAndZone_DepartmentNameAndZone_CityNameAndZone_NeighborhoodNameAndName1IgnoreCaseAndValidateFalse(
+            String countryName, String departmentName, String cityName, String neighborhoodName, String name1);
+    List<Patient> findByZone_CountryNameAndZone_DepartmentNameAndZone_CityNameAndName1IgnoreCaseAndValidateFalseAndDeletedFalse(
+            String countryName, String departmentName, String cityName, String name1);
+    List<Patient> findByZone_CountryNameAndZone_DepartmentNameAndZone_CityNameAndName1IgnoreCaseAndValidateTrueOrderByName1(
+            String countryName, String departmentName, String cityName, String name1);
 
 
 // Busqueda exacta por documento de identidad (indice activo: documento+pais)
