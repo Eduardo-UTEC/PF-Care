@@ -44,13 +44,14 @@ public class FormalCaregiverController {
         }
     }
 
-    @GetMapping("findAll/{includeDeleted}/{countryName}")
+    @GetMapping("findAll/{withoutValidate}/{includeDeleted}/{countryName}")
     public ResponseEntity<List<FormalCaregiver>> findAll(
+            @PathVariable Boolean withoutValidate,
             @PathVariable Boolean includeDeleted,
             @PathVariable String countryName){
 
         try {
-            return ResponseEntity.ok(formalCaregiverService.findAll(includeDeleted, countryName));
+            return ResponseEntity.ok(formalCaregiverService.findAll(withoutValidate, includeDeleted, countryName));
 
         }catch(FormalCaregiverFindAllException e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
@@ -77,28 +78,30 @@ public class FormalCaregiverController {
         }
     }
 
-    @GetMapping("findName/{includeDeleted}/{name}/{countryName}")
+    @GetMapping("findName/{withoutValidate}/{includeDeleted}/{name}/{countryName}")
     public ResponseEntity<List<FormalCaregiver>> findName(
+            @PathVariable Boolean withoutValidate,
             @PathVariable Boolean includeDeleted,
             @PathVariable String name,
             @PathVariable String countryName){
 
         try{
-            return ResponseEntity.ok(formalCaregiverService.findName(includeDeleted, countryName, name));
+            return ResponseEntity.ok(formalCaregiverService.findName(withoutValidate, includeDeleted, countryName, name));
 
         }catch(FormalCaregiverFindNameException e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
         }
     }
 
-    @GetMapping("findNameLike/{includeDeleted}/{name}/{countryName}")
+    @GetMapping("findNameLike/{withoutValidate}/{includeDeleted}/{name}/{countryName}")
     public ResponseEntity<List<FormalCaregiver>> findNameLike(
+            @PathVariable Boolean withoutValidate,
             @PathVariable Boolean includeDeleted,
             @PathVariable String name,
             @PathVariable String countryName){
 
         try{
-            return ResponseEntity.ok(formalCaregiverService.findNameLike(includeDeleted, countryName, name));
+            return ResponseEntity.ok(formalCaregiverService.findNameLike(withoutValidate, includeDeleted, countryName, name));
 
         }catch(FormalCaregiverFindNameLikeException e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
@@ -156,12 +159,14 @@ public class FormalCaregiverController {
 
     @GetMapping(
             "findInterestZones_Neighborhood/" +
+            "{withoutValidate}/" +
             "{includeDeleted}/" +
             "{interestNeighborhoodName}/" +
             "{interestCityName}/" +
             "{interestDepartmentName}/" +
             "{countryName}")
     public ResponseEntity<List<FormalCaregiver>> findInterestZones_Neighborhood(
+            @PathVariable Boolean withoutValidate,
             @PathVariable Boolean includeDeleted,
             @PathVariable String interestNeighborhoodName,
             @PathVariable String interestCityName,
@@ -170,6 +175,7 @@ public class FormalCaregiverController {
 
         try{
             return ResponseEntity.ok(formalCaregiverService.findInterestZones_Neighborhood(
+                    withoutValidate,
                     includeDeleted,
                     interestNeighborhoodName,
                     interestCityName,
@@ -180,29 +186,31 @@ public class FormalCaregiverController {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
         }
     }
-    @GetMapping("findInterestZones_City/{includeDeleted}/{interestCityName}/{interestDepartmentName}/{countryName}")
+    @GetMapping("findInterestZones_City/{withoutValidate}/{includeDeleted}/{interestCityName}/{interestDepartmentName}/{countryName}")
     public ResponseEntity<List<FormalCaregiver>> findInterestZones_City(
+            @PathVariable Boolean withoutValidate,
             @PathVariable Boolean includeDeleted,
             @PathVariable String interestCityName,
             @PathVariable String interestDepartmentName,
             @PathVariable String countryName){
         try{
             return ResponseEntity.ok(formalCaregiverService.findInterestZones_City(
-                    true, includeDeleted, interestCityName, interestDepartmentName, countryName));
+                    true, withoutValidate, includeDeleted, interestCityName, interestDepartmentName, countryName));
 
         }catch(FormalCaregiverFindInterestZones_CityException e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
         }
     }
-    @GetMapping("findInterestZones_Department/{includeDeleted}/{interestDepartmentName}/{countryName}")
+    @GetMapping("findInterestZones_Department/{withoutValidate}/{includeDeleted}/{interestDepartmentName}/{countryName}")
     public ResponseEntity<List<FormalCaregiver>> findInterestZones_Department(
+            @PathVariable Boolean withoutValidate,
             @PathVariable Boolean includeDeleted,
             @PathVariable String interestDepartmentName,
             @PathVariable String countryName){
 
         try{
             return ResponseEntity.ok(formalCaregiverService.findInterestZones_Department(
-                    true, includeDeleted, interestDepartmentName, countryName));
+                     true, withoutValidate, includeDeleted, interestDepartmentName, countryName));
 
         }catch(FormalCaregiverFindInterestZones_DepartmentException e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());

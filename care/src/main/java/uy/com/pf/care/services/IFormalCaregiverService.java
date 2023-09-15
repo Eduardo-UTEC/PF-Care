@@ -14,11 +14,12 @@ public interface IFormalCaregiverService {
     Boolean setDeletion(String id, Boolean isDeleted);
     Boolean updateVotes(String formalCaregiverId, int previousScore, int currentScore);
     Optional<FormalCaregiver> findId(String id);
-    List<FormalCaregiver> findAll(Boolean includeDeleted, String countryName);
+    List<FormalCaregiver> findAll(Boolean withoutValidate, Boolean includeDeleted, String countryName);
     FormalCaregiver findMail(String mail);
-    List<FormalCaregiver> findName(Boolean includeDeleted, String countryName, String name);
-    List<FormalCaregiver> findNameLike(Boolean includeDeleted, String countryName, String name);
+    List<FormalCaregiver> findName(Boolean withoutValidate, Boolean includeDeleted, String countryName, String name);
+    List<FormalCaregiver> findNameLike(Boolean withoutValidate, Boolean includeDeleted, String countryName, String name);
     List<FormalCaregiver> findInterestZones_Neighborhood(
+            Boolean withoutValidate,
             Boolean includeDeleted,
             String interestNeighborhoodName,
             String interestCityName,
@@ -26,12 +27,14 @@ public interface IFormalCaregiverService {
             String countryName);
     List<FormalCaregiver> findInterestZones_City(
             Boolean validateCity,
+            Boolean withoutValidate,
             Boolean includeDeleted,
             String interestCityName,
             String interestDepartmentName,
             String countryName);
     List<FormalCaregiver> findInterestZones_Department(
             Boolean validateInterestDepartment,
+            Boolean withoutValidate,
             Boolean includeDeleted,
             String interestDepartmentName,
             String countryName);
