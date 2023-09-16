@@ -11,7 +11,7 @@ import org.springframework.data.mongodb.core.index.CompoundIndex;
 import org.springframework.data.mongodb.core.index.CompoundIndexes;
 import org.springframework.data.mongodb.core.mapping.Document;
 import uy.com.pf.care.model.objects.LoginObject;
-import uy.com.pf.care.model.objects.RoleObject;
+import uy.com.pf.care.model.objects.UserObject;
 import uy.com.pf.care.model.objects.ZoneObject;
 
 import java.util.List;
@@ -33,7 +33,7 @@ public class User extends LoginObject {
 
     @NotNull(message = "User: El usuario debe tener al menos un rol")
     @NotEmpty(message = "User: El usuario debe tener al menos un rol")
-    private List<RoleObject> roles;
+    private List<UserObject> roles;
 
     //Zona donde vive el usuario (si es empresa, es la zona donde está ubicada)
     @NotNull(message = "User: La clave 'residenceZone' no puede ser nula")

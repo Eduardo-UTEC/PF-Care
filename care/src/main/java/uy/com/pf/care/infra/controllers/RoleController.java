@@ -8,10 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
-import uy.com.pf.care.exceptions.FormalCaregiverUpdateException;
-import uy.com.pf.care.exceptions.RoleSaveException;
-import uy.com.pf.care.exceptions.RoleUpdateException;
-import uy.com.pf.care.exceptions.UserSaveException;
+import uy.com.pf.care.exceptions.*;
 import uy.com.pf.care.model.documents.Role;
 import uy.com.pf.care.services.IRoleService;
 
@@ -64,6 +61,16 @@ public class RoleController {
         }catch(Exception e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
                     "Error buscando rol con id " + id);
+        }
+    }
+
+    @PutMapping("/updateVideos")
+    public ResponseEntity<Boolean> updateVideos(@Valid @NotNull @RequestBody List<String> videosId){
+        try {
+            return ResponseEntity.ok(roleService.updateVideos(videosId));
+
+        }catch(RoleUpdateVideosIdException e){
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
         }
     }
 

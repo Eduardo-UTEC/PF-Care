@@ -58,6 +58,12 @@ public class RoleService implements IRoleService{
     }
 
     @Override
+    public Boolean updateVideos(List<String> videosId) {
+        //TODO: implementar...
+        return null;
+    }
+
+    @Override
     public Optional<Role> findId(String id) {return roleRepo.findById(id);}
 
 }

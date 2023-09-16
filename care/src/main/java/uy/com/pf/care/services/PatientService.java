@@ -252,7 +252,7 @@ public class PatientService implements IPatientService{
 
     // Asigna los valores por default a la entidad
     private void defaultValues(Patient patient){
-        patient.setValidate(false);
+        if (patient.getValidate() == null) patient.setValidate(false);
         patient.setDeleted(false);
     }
 

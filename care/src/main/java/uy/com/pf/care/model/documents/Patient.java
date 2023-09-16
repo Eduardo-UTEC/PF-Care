@@ -41,22 +41,22 @@ public class Patient extends PersonObject {
     @NotNull(message = "Patient: La clave 'zone' no puede ser nula")
     private ZoneObject zone;
 
-    @NotNull(message = "Patient: La clave 'referenceCaregiver' no puede ser nula")
+    //@NotNull(message = "Patient: La clave 'referenceCaregiver' no puede ser nula")
     private ReferenceCaregiverObject referenceCaregiver;
 
-    @Valid
+    //@Valid
     private List<FormalCaregiverOthersObject> formalCaregivers = new ArrayList<>();
 
-    @Valid
+    //@Valid
     private List<InformalCaregiverObject> informalCaregivers = new ArrayList<>();
 
-    @NotNull(message = "Patient: La clave 'healthProvider' no puede ser nula")
+    //@NotNull(message = "Patient: La clave 'healthProvider' no puede ser nula")
     private HealthProviderObject healthProvider;
 
-    @NotNull(message = "Patient: La clave 'emergencyService' no puede ser nula")
+    //@NotNull(message = "Patient: La clave 'emergencyService' no puede ser nula")
     private EmergencyServiceObject emergencyService;
 
-    @NotNull(message = "Patient: La clave 'residential' no puede ser nula")
+    //@NotNull(message = "Patient: La clave 'residential' no puede ser nula")
     private ResidentialObject residential;
 
     @BooleanFlag

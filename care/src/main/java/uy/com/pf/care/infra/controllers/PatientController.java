@@ -29,6 +29,8 @@ public class PatientController {
             //return ResponseEntity.ok(new PatientIdObject(patientService.save(patient).getPatientId()));
             return ResponseEntity.ok(patientService.save(patient));
 
+            //TODO: copiar el patientId a Users (objectId)
+
         }catch (PatientSaveException e){
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
         }
