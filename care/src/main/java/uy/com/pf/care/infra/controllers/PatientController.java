@@ -23,15 +23,11 @@ public class PatientController {
     private IPatientService patientService;
 
     @PostMapping("/add")
-    //public ResponseEntity<PatientIdObject> add(@Valid @NotNull @RequestBody Patient patient){
     public ResponseEntity<String> add(@Valid @NotNull @RequestBody Patient patient){
-        try{
-            //return ResponseEntity.ok(new PatientIdObject(patientService.save(patient).getPatientId()));
+        try {
             return ResponseEntity.ok(patientService.save(patient));
 
-            //TODO: copiar el patientId a Users (objectId)
-
-        }catch (PatientSaveException e){
+        }catch (UserUpdateEntityIdInRolesListException | PatientSaveException e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
         }
     }
@@ -41,6 +37,8 @@ public class PatientController {
         try {
             return ResponseEntity.ok(patientService.update(newPatient));
 
+        }catch (PatientNotFoundException e){
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         }catch(PatientUpdateException e){
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
         }
@@ -56,8 +54,9 @@ public class PatientController {
             return ResponseEntity.ok(patientService.findAll(withoutValidate, includeDeleted, countryName));
 
         }catch(Exception e) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
-                    "Error buscando todos los pacientes de " + countryName);
+            String msg = "Error buscando todos los pacientes de " + countryName;
+            log.warning(msg);
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, msg);
         }
     }
 
@@ -67,8 +66,9 @@ public class PatientController {
             return ResponseEntity.ok(patientService.findId(id));
 
         }catch(Exception e) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
-                    "Error buscando paciente con id " + id);
+            String msg = "Error buscando paciente con id " + id;
+            log.warning(msg);
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, msg);
         }
     }
 
@@ -80,9 +80,9 @@ public class PatientController {
             return ResponseEntity.ok(patientService.findIdentificationDocument(document, countryName));
 
         }catch(Exception e) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
-                    "Error buscando paciente con documento de identificación " + document + " (" + countryName + ")");
-
+            String msg = "Error buscando paciente con documento de identificación " + document + " (" + countryName + ")";
+            log.warning(msg);
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, msg);
         }
     }
 
@@ -113,13 +113,14 @@ public class PatientController {
             );
 
         }catch(Exception e) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
+            String msg =
                     "Error buscando los pacientes de " + cityName +
                     " cuyo 1er nombre sea " + name1 +
                     " (" + (neighborhoodName != null ? neighborhoodName + ", " : "") +
                     departmentName + ", " +
-                    countryName + ")"
-            );
+                    countryName + ")";
+            log.warning(msg);
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, msg);
         }
     }
 
@@ -136,9 +137,10 @@ public class PatientController {
                     withoutValidate, includeDeleted, cityName, departmentName,countryName));
 
         }catch(Exception e) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
-                    "Error buscando pacientes en ciudad/localidad: " +
-                            cityName + " (" + departmentName + ", " + countryName + ")");
+            String msg = "Error buscando pacientes en ciudad/localidad: " +
+                    cityName + " (" + departmentName + ", " + countryName + ")";
+            log.warning(msg);
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, msg);
         }
     }
 
@@ -154,9 +156,10 @@ public class PatientController {
                     withoutValidate, includeDeleted, departmentName,countryName));
 
         }catch(Exception e) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
-                    "Error buscando pacientes en departamento/provincia: " +
-                            departmentName + " (" + countryName + ")");
+            String msg = "Error buscando pacientes en departamento/provincia: " +
+                    departmentName + " (" + countryName + ")";
+            log.warning(msg);
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, msg);
         }
     }
 
@@ -166,8 +169,9 @@ public class PatientController {
             return ResponseEntity.ok(patientService.findMail(mail));
 
         }catch(Exception e) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
-                    "Error buscando por indice el paciente con mail: " + mail);
+            String msg = "Error buscando por indice el paciente con mail: " + mail;
+            log.warning(msg);
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, msg);
         }
     }
 
@@ -177,8 +181,10 @@ public class PatientController {
         try{
             return ResponseEntity.ok(patientService.setValidation(id, isValidated));
 
-        }catch(PatientSetValidationException e) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
+        }catch(Exception e) {
+            String msg = "Error seteando validación del paciente con id " + id;
+            log.warning(msg + ": " + e.getMessage());
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, msg);
         }
     }
 
@@ -188,8 +194,10 @@ public class PatientController {
         try{
             return ResponseEntity.ok(patientService.setDeletion(id, isDeleted));
 
-        }catch(PatientSetDeletionException e) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
+        }catch(Exception e) {
+            String msg = "Error seteando borrado lógico de paciente con id " + id;
+            log.warning(msg + ": " + e.getMessage());
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, msg);
         }
     }
 

@@ -6,12 +6,11 @@ import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.ToString;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class LoginObject {
+public class LoginObjectRegister {
 
     @NotNull(message = "User: La clave 'userName' no puede ser nula")
     @NotEmpty(message = "User: La clave 'userName' no puede ser vacia")

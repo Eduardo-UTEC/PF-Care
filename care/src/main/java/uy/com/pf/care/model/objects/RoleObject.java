@@ -17,11 +17,10 @@ import java.time.LocalDate;
 @NoArgsConstructor
 public class RoleObject {
 
-    @NotNull(message = "RoleObject: La clave 'rolId' no puede ser nula")
-    @NotEmpty(message = "RoleObject: La clave 'rolId' no puede ser vacía")
+    @NotNull(message = "RoleObject: La clave 'roleId' no puede ser nula")
+    @NotEmpty(message = "RoleObject: La clave 'roleId' no puede ser vacía")
     private String roleId;
 
     @NotNull(message = "RoleObject: La clave 'rolName' no puede ser nula")
-    private RoleEnum roleName;
-
+    private RoleEnum rol;
 }

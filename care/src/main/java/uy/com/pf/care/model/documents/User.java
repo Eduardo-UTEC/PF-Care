@@ -10,7 +10,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.CompoundIndex;
 import org.springframework.data.mongodb.core.index.CompoundIndexes;
 import org.springframework.data.mongodb.core.mapping.Document;
-import uy.com.pf.care.model.objects.LoginObject;
+import uy.com.pf.care.model.objects.LoginObjectRegister;
 import uy.com.pf.care.model.objects.UserObject;
 import uy.com.pf.care.model.objects.ZoneObject;
 
@@ -26,7 +26,7 @@ import java.util.List;
 @EqualsAndHashCode(callSuper=false)
 @AllArgsConstructor
 @NoArgsConstructor
-public class User extends LoginObject {
+public class User extends LoginObjectRegister {
 
     @Id
     private String userId;

@@ -10,7 +10,7 @@ import lombok.ToString;
 @NoArgsConstructor
 @ToString
 public class UserObject {
-    //Si es un paciente, objectId es el Id del paciente. Si es un cuidador formal, es el Id del cuidador formal...
-    private String objectId;
+    //Si es un paciente, entityId es el Id del paciente. Si es un cuidador formal, es el Id del cuidador formal...
+    private String entityId;
     private RoleObject role;
 }

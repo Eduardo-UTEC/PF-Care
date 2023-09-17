@@ -10,11 +10,12 @@ import lombok.NoArgsConstructor;
 @Getter
 //@ToString
 public enum ContactMethodsEnum {
-    CALL("Llamada"),
-    WHATSAPP("WhatsApp"),
-    TELEGRAM("Telegram"),
-    SMS("SMS"),
-    MAIL("e-mail");
+    CALL(0, "Llamada"),
+    WHATSAPP(1, "WhatsApp"),
+    TELEGRAM(2, "Telegram"),
+    SMS(3, "SMS"),
+    MAIL(4, "e-mail");
 
+    private int ordinal;
     private String name;
 }

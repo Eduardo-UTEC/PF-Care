@@ -8,14 +8,13 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
-import uy.com.pf.care.exceptions.UserSaveException;
-import uy.com.pf.care.exceptions.UserUpdateException;
+import uy.com.pf.care.exceptions.*;
 import uy.com.pf.care.model.documents.User;
-import uy.com.pf.care.model.objects.LoginObject;
+import uy.com.pf.care.model.enums.RoleEnum;
+import uy.com.pf.care.model.objects.LoginObjectAuthenticate;
 import uy.com.pf.care.services.IUserService;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/users")
@@ -34,35 +33,74 @@ public class UserController {
         }
     }
 
+    @PutMapping("/updateEntityId/{userId}/{roleOrdinal}/{entityId}")
+    public ResponseEntity<Boolean> updateEntityId(
+            @PathVariable String userId,
+            @PathVariable int roleOrdinal,
+            @PathVariable String entityId) {
+
+            try{
+                return ResponseEntity.ok(userService.updateEntityIdInRolesList(
+                        userId, RoleEnum.values()[roleOrdinal], entityId));
+
+            }catch(UserNotFoundException | UserRoleNotFoundException e){
+                throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+            }catch (UserUpdateEntityIdInRolesListException e){
+                throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
+            }
+    }
+
+    @PutMapping("addNewRol/{userId}/{roleId}/{roleOrdinal}")
+    public ResponseEntity<Boolean> addNewRol(
+            @PathVariable String userId,
+            @PathVariable String roleId,
+            @PathVariable int roleOrdinal) {
+
+        try{
+            return ResponseEntity.ok(userService.addNewRol(
+                    userId, roleId, RoleEnum.values()[roleOrdinal]));
+
+        }catch (UserAlreadyDefinedRolException e){
+            throw new ResponseStatusException(HttpStatus.CONFLICT, e.getMessage());
+        }catch(UserNotFoundException e){
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+        }catch (UserUpdateEntityIdInRolesListException e){
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
+        }
+    }
+
     @PutMapping("/update")
     public ResponseEntity<Boolean> update(@Valid @NotNull @RequestBody User newUser){
         try {
             return ResponseEntity.ok(userService.update(newUser));
 
+        }catch (UserNotFoundException e){
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         }catch(UserUpdateException e){
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
         }
     }
+
 
     @GetMapping("findAll/{countryName}")
     public ResponseEntity<List<User>> findAll(@PathVariable String countryName){
         try{
             return ResponseEntity.ok(userService.findAll(countryName));
 
-        }catch(Exception e) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
-                    "Error buscando todos los usuarios de " + countryName);
+        }catch(UserFindAllException e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
         }
     }
 
     @GetMapping("findId/{id}")
-    public ResponseEntity<Optional<User>> findId(@PathVariable String id) {
-        try{
+    public ResponseEntity<User> findId(@PathVariable String id) {
+        try {
             return ResponseEntity.ok(userService.findId(id));
 
-        }catch(Exception e) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
-                    "Error buscando usuario con id " + id);
+        }catch (UserNotFoundException e){
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+        }catch(UserFindIdException e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
         }
     }
 
@@ -81,14 +119,14 @@ public class UserController {
     }*/
 
     @GetMapping("login")
-    public ResponseEntity<User> login(@Valid @NotNull @RequestBody LoginObject loginObject) {
+    public ResponseEntity<User> login(@Valid @NotNull @RequestBody LoginObjectAuthenticate loginObjectAuthenticate) {
         try{
-            return ResponseEntity.ok(userService.login(loginObject));
+            return ResponseEntity.ok(userService.login(loginObjectAuthenticate));
 
-        }catch(Exception e) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error realizando login: " +
-                    e.getMessage());
-
+        }catch(UserInvalidLoginException e) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, e.getMessage());
+        }catch(UserLoginException e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
         }
     }
 
@@ -97,23 +135,20 @@ public class UserController {
         try{
             return ResponseEntity.ok(userService.existUserName(userName));
 
-        }catch(Exception e) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error buscando usuario: " +
-                    e.getMessage());
-
+        }catch(UserExistUserNameException e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
         }
     }
 
-
     @GetMapping("findUserName/{userName}")
-    public ResponseEntity<Optional<User>> findUserName(@PathVariable String userName) {
+    public ResponseEntity<User> findUserName(@PathVariable String userName) {
         try{
             return ResponseEntity.ok(userService.findUserName(userName));
 
-        }catch(Exception e) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
-                    "Error buscando usuario con userName: " + userName);
-
+        }catch(UserNameNotFoundException e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+        }catch(UserFindUserNameException e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
         }
     }
 
@@ -124,10 +159,8 @@ public class UserController {
         try{
             return ResponseEntity.ok(userService.findCity(cityName, departmentName,countryName));
 
-        }catch(Exception e) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
-                    "Error buscando usuarios en ciudad/localidad: " +
-                            cityName + " (" + departmentName + ", " + countryName + ")");
+        }catch(UserFindCityException e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
         }
     }
 
@@ -137,10 +170,8 @@ public class UserController {
         try{
             return ResponseEntity.ok(userService.findDepartment(departmentName,countryName));
 
-        }catch(Exception e) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
-                    "Error buscando usuarios en departamento/provincia: " +
-                            departmentName + " (" + countryName + ")");
+        }catch(UserFindDepartmentException e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
         }
     }
 

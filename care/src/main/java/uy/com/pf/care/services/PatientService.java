@@ -2,10 +2,17 @@ package uy.com.pf.care.services;
 
 import lombok.extern.java.Log;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import uy.com.pf.care.exceptions.PatientSaveException;
-import uy.com.pf.care.exceptions.PatientUpdateException;
+import org.springframework.web.client.RestTemplate;
+import org.springframework.web.server.ResponseStatusException;
+import uy.com.pf.care.exceptions.*;
+import uy.com.pf.care.infra.config.ParamConfig;
 import uy.com.pf.care.model.documents.Patient;
+import uy.com.pf.care.model.enums.RoleEnum;
 import uy.com.pf.care.repos.IPatientRepo;
 
 import java.time.LocalDateTime;
@@ -18,39 +25,73 @@ public class PatientService implements IPatientService{
 
     @Autowired
     private IPatientRepo patientRepo;
-
-   // private static final Logger log = LoggerFactory.getLogger(CuidadosApplication.class);
+    @Autowired
+    private ParamConfig paramConfig;
 
     @Override
     public String save(Patient patient) {
+
+        //Se define aqui para controlar la excepcion, estableciendo si se debe eliminar el Paciente
+        String newPatientId = null;
+
         try{
             this.defaultValues(patient);
-            String id = patientRepo.save(patient).getPatientId();
-            log.info("*** Paciente guardado con exito: " + LocalDateTime.now());
-            return id;
+            newPatientId = patientRepo.save(patient).getPatientId();
+
+            //Actualizo el entityId del rol de usuario (documento Users) con el newPatientId de este nuevo Paciente
+
+            RestTemplate restTemplate = new RestTemplate();
+            ResponseEntity<Boolean> response = restTemplate.exchange(
+                    getUpdateEntityIdUrl(patient.getUserId(), newPatientId),
+                    HttpMethod.PUT,
+                    null,
+                    Boolean.class
+            );
+
+            if (response.getStatusCode() == HttpStatus.OK) {
+                log.info("*** Paciente guardado con exito: " + LocalDateTime.now());
+                return newPatientId;
+            }
+
+            String msg = "Error actualizando entityId en el rol Paciente, en documento Users";
+            log.warning(msg);
+            throw new UserUpdateEntityIdInRolesListException(msg);
+
+        //En caso de excepción, si el nuevo paciente fue persistido, se elimina, evitando inconsistencia de la bbdd
+        }catch (UserUpdateEntityIdInRolesListException e){
+            if (newPatientId != null)
+                patientRepo.deleteById(newPatientId);
+            throw new UserUpdateEntityIdInRolesListException(e.getMessage());
 
         }catch(Exception e){
-            log.warning("*** ERROR GUARDANDO PACIENTE: " + e);
-            throw new PatientSaveException("*** ERROR GUARDANDO PACIENTE");
+            if (newPatientId != null)
+                patientRepo.deleteById(newPatientId);
+            String msg = "*** ERROR GUARDANDO PACIENTE: " + e.getMessage();
+            log.warning(msg);
+            throw new PatientSaveException(msg);
         }
     }
 
     @Override
     public Boolean update(Patient newPatient) {
-        try{
+        try {
             Optional<Patient> entityFound = patientRepo.findById(newPatient.getPatientId());
-            if (entityFound.isPresent()){
+            if (entityFound.isPresent()) {
                 this.defaultValues(entityFound.get(), newPatient);
                 patientRepo.save(newPatient);
                 log.info("Paciente actualizado con exito");
                 return true;
             }
-            log.info("No se encontro el paciente con id " + newPatient.getPatientId());
-            return false;
+            String msg = "No se encontro el paciente con id " + newPatient.getPatientId();
+            log.info(msg);
+            throw new PatientNotFoundException(msg);
 
+        }catch (PatientNotFoundException e){
+            throw new PatientNotFoundException(e.getMessage());
         }catch(Exception e){
-            log.warning("*** ERROR ACTUALIZANDO PACIENTE: " + e);
-            throw new PatientUpdateException("*** ERROR ACTUALIZANDO PACIENTE");
+            String msg = "*** ERROR ACTUALIZANDO PACIENTE";
+            log.warning(msg +  ": " + e.getMessage());
+            throw new PatientUpdateException(msg);
         }
     }
 
@@ -78,17 +119,13 @@ public class PatientService implements IPatientService{
 
     @Override
     public List<Patient> findAll(Boolean withoutValidate, Boolean includeDeleted, String countryName) {
-        /*if (includeDeleted)
-            return patientRepo.findByZone_CountryNameAndValidateTrueOrderByName1(countryName);
 
-        return patientRepo.findByZone_CountryNameAndValidateTrueAndDeletedFalseOrderByName1(countryName);
-
-         */
         if (withoutValidate) {
             if (includeDeleted)
                 return patientRepo.findByZone_CountryNameAndValidateFalseOrderByName1(countryName);
 
             return patientRepo.findByZone_CountryNameAndValidateFalseAndDeletedFalseOrderByName1(countryName);
+
         } else {
             //solo los validados
             if (includeDeleted)
@@ -123,15 +160,6 @@ public class PatientService implements IPatientService{
             String departmentName,
             String countryName) {
 
-        /*if (neighborhoodName == null)
-            return patientRepo.
-                    findByZone_CountryNameAndZone_DepartmentNameAndZone_CityNameAndName1IgnoreCaseAndValidateTrueAndDeletedFalseOrderByName1(
-                            countryName, departmentName, cityName, name1);
-        return patientRepo.
-                findByZone_CountryNameAndZone_DepartmentNameAndZone_CityNameAndZone_NeighborhoodNameAndName1IgnoreCaseAndValidateTrueAndDeletedFalse(
-                        countryName, departmentName, cityName, neighborhoodName, name1);
-        */
-
         if (withoutValidate) {
             if (includeDeleted)
                 if (neighborhoodName == null)
@@ -152,6 +180,7 @@ public class PatientService implements IPatientService{
                             findByZone_CountryNameAndZone_DepartmentNameAndZone_CityNameAndZone_NeighborhoodNameAndName1IgnoreCaseAndValidateFalseAndDeletedFalse(
                                 countryName, departmentName, cityName, neighborhoodName, name1);
         }
+
         // solo los validados
         if (includeDeleted) {
             if (neighborhoodName == null)
@@ -171,6 +200,7 @@ public class PatientService implements IPatientService{
 
     @Override
     public List<Patient> findCity(Boolean withoutValidate, Boolean includeDeleted, String cityName, String departmentName, String countryName) {
+
         if (withoutValidate) {
             if (includeDeleted)
                 return patientRepo.findByZone_CountryNameAndZone_DepartmentNameAndZone_CityNameAndValidateFalseOrderByName1(
@@ -178,6 +208,7 @@ public class PatientService implements IPatientService{
 
             return patientRepo.findByZone_CountryNameAndZone_DepartmentNameAndZone_CityNameAndValidateFalseAndDeletedFalseOrderByName1(
                     countryName, departmentName, cityName);
+
         } else {
             //solo validados
             if (includeDeleted)
@@ -191,13 +222,7 @@ public class PatientService implements IPatientService{
 
     @Override
     public List<Patient> findDepartment(Boolean withoutValidate, Boolean includeDeleted, String departmentName, String countryName) {
-        /*if (includeDeleted)
-            return patientRepo.findByZone_CountryNameAndZone_DepartmentNameAndValidateTrueOrderByName1(countryName, departmentName);
 
-        return patientRepo.findByZone_CountryNameAndZone_DepartmentNameAndValidateTrueAndDeletedFalseOrderByName1(
-                    countryName, departmentName);
-
-         */
         if (withoutValidate) {
             if (includeDeleted)
                 return patientRepo.findByZone_CountryNameAndZone_DepartmentNameAndValidateFalseOrderByName1(
@@ -205,6 +230,7 @@ public class PatientService implements IPatientService{
 
             return patientRepo.findByZone_CountryNameAndZone_DepartmentNameAndValidateFalseAndDeletedFalseOrderByName1(
                     countryName, departmentName);
+
         } else {
             //solo validados
             if (includeDeleted)
@@ -262,4 +288,17 @@ public class PatientService implements IPatientService{
         newPatient.setDeleted(oldPatient.getDeleted());
     }
 
+    private String getStartUrl(){
+        return paramConfig.getProtocol() + "://" + paramConfig.getSocket() + "/";
+    }
+
+    private String getUpdateEntityIdUrl(String userId, String patientId){
+        return getStartUrl() +
+                "users/updateEntityId/" +
+                userId + "/" +
+                RoleEnum.PATIENT.getOrdinal() + "/" +
+                patientId;
+    }
+
 }
+
