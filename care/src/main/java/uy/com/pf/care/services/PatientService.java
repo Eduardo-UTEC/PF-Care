@@ -104,7 +104,10 @@ public class PatientService implements IPatientService{
             patientRepo.save(patient.get());
             return true;
         }
-        return false;
+
+        String msg = "No se encontro el paciente con id " + id;
+        log.warning(msg);
+        throw new PatientNotFoundException(msg);
     }
 
     @Override
@@ -115,7 +118,9 @@ public class PatientService implements IPatientService{
             patientRepo.save(patient.get());
             return true;
         }
-        return false;
+        String msg = "No se encontro el paciente con id " + id;
+        log.warning(msg);
+        throw new PatientNotFoundException(msg);
     }
 
     @Override

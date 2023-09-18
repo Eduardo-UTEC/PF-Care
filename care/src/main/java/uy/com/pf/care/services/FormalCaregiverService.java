@@ -43,7 +43,7 @@ public class FormalCaregiverService implements IFormalCaregiverService {
 
     @Override
     public String save(FormalCaregiver formalCaregiver) {
-        try{
+        try {
             this.defaultValues(formalCaregiver);
             newFormalCaregiverId = formalCaregiverRepo.save(formalCaregiver).getFormalCaregiverId();
             //log.info("Cuidador Formal guardado con exito");
@@ -63,14 +63,14 @@ public class FormalCaregiverService implements IFormalCaregiverService {
 
             //En caso de excepción, si el nuevo cuidador formal fue persistido, se elimina, evitando
             // inconsistencia de la bbdd
-        }catch (UserUpdateEntityIdInRolesListException e){
+        } catch (UserUpdateEntityIdInRolesListException e) {
             if (newFormalCaregiverId != null)
                 this.physicallyDeleteFormalCaregiver(newFormalCaregiverId);
             throw new UserUpdateEntityIdInRolesListException(e.getMessage());
-        }catch(Exception e){
+        } catch (Exception e) {
             if (newFormalCaregiverId != null)
                 this.physicallyDeleteFormalCaregiver(newFormalCaregiverId);
-            String msg = "*** ERROR GUARDANDO PACIENTE" ;
+            String msg = "*** ERROR GUARDANDO PACIENTE";
             log.warning(msg + ": " + e.getMessage());
             throw new PatientSaveException(msg);
         }
@@ -91,9 +91,9 @@ public class FormalCaregiverService implements IFormalCaregiverService {
             log.info(msg);
             throw new FormalCaregiverNotFoundException(msg);
 
-        }catch (FormalCaregiverNotFoundException e){
+        } catch (FormalCaregiverNotFoundException e) {
             throw new FormalCaregiverNotFoundException(e.getMessage());
-        }catch(Exception e){
+        } catch (Exception e) {
             String msg = "Error actualizando Cuidador Formal";
             log.warning(msg + ": " + e.getMessage());
             throw new FormalCaregiverUpdateException(msg);
@@ -106,33 +106,48 @@ public class FormalCaregiverService implements IFormalCaregiverService {
      */
     @Override
     public Boolean setAvailability(String id, Boolean isAvailable) {
-        try{
+        try {
             Optional<FormalCaregiver> formalCaregiver = this.findId(id);
-            if (formalCaregiver.isPresent() && ! formalCaregiver.get().getDeleted()) {
+            if (formalCaregiver.isPresent() && !formalCaregiver.get().getDeleted()) {
                 formalCaregiver.get().setAvailable(isAvailable);
                 formalCaregiverRepo.save(formalCaregiver.get());
                 return true;
             }
-            return false;
+            String msg = "No se encontro un cuidador formal con id " + id;
+            log.warning(msg);
+            throw new FormalCaregiverNotFoundException(msg);
 
-        }catch(Exception e){
-            log.warning("No se pudo setear la disponibilidad del cuidador formal con id: " + id + ". "
-                    + e.getMessage());
-            throw new FormalCaregiverSetAvailabilityException("No se pudo setear la disponibilidad del cuidador formal con id: "
-                    + id + ". ");
+        } catch (FormalCaregiverNotFoundException e) {
+            throw new FormalCaregiverNotFoundException(e.getMessage());
+        } catch (Exception e) {
+            String msg = "No se pudo setear la disponibilidad del cuidador formal con id: " + id;
+            log.warning(msg + ": " + e.getMessage());
+            throw new FormalCaregiverSetAvailabilityException(msg);
         }
     }
 
     @Override
     public Boolean setValidation(String id, Boolean isValidated) {
-        Optional<FormalCaregiver> formalCaregiverFound = this.findId(id);
-        if (formalCaregiverFound.isPresent()) {
-            formalCaregiverFound.get().setValidate(isValidated);
-            formalCaregiverRepo.save(formalCaregiverFound.get());
-            return true;
+        try {
+            Optional<FormalCaregiver> formalCaregiverFound = this.findId(id);
+            if (formalCaregiverFound.isPresent()) {
+                formalCaregiverFound.get().setValidate(isValidated);
+                formalCaregiverRepo.save(formalCaregiverFound.get());
+                return true;
+            }
+            String msg = "No se encontro un cuidador formal con id " + id;
+            log.warning(msg);
+            throw new FormalCaregiverNotFoundException(msg);
+
+        }catch (FormalCaregiverNotFoundException e) {
+            throw new FormalCaregiverNotFoundException(e.getMessage());
+        }catch (Exception e) {
+            String msg = "*** ERROR VALIDANDO CUIDADOR FORMAL CON ID " + id;
+            log.warning(msg + ": " + e.getMessage());
+            throw new FormalCaregiverSetValidationException(msg);
         }
-        return false;
     }
+
 
     /*  Devuelve true si la operación fue exitosa.
         1. Esta es una tarea del "administrador del sistema"
@@ -150,13 +165,16 @@ public class FormalCaregiverService implements IFormalCaregiverService {
                 formalCaregiverRepo.save(formalCaregiver.get());
                 return true;
             }
-            return false;
+            String msg = "No se encontro un cuidador formal con id " + id;
+            log.warning(msg);
+            throw new FormalCaregiverNotFoundException(msg);
 
+        }catch (FormalCaregiverNotFoundException e) {
+            throw new FormalCaregiverNotFoundException(e.getMessage());
         }catch(Exception e){
-            log.warning("No se pudo setear el borrado lógico del cuidador formal con id: " + id + ". "
-                    + e.getMessage());
-            throw new FormalCaregiverSetDeletionException(
-                    "No se pudo setear el borrado lógico del cuidador formal con id " + id);
+            String msg = "No se pudo setear el borrado lógico del cuidador formal con id: " + id;
+            log.warning( msg + ": " + e.getMessage());
+            throw new FormalCaregiverSetDeletionException(msg);
         }
     }
 
@@ -172,13 +190,16 @@ public class FormalCaregiverService implements IFormalCaregiverService {
                 UpdateResult updateResult = mongoTemplate.updateFirst(query, update, FormalCaregiver.class);
                 return updateResult.wasAcknowledged();
             }
-            return false;
+            String msg = "No se encontro un cuidador formal con id " + formalCaregiverId;
+            log.warning(msg);
+            throw new FormalCaregiverNotFoundException(msg);
 
+        }catch (FormalCaregiverNotFoundException e) {
+            throw new FormalCaregiverNotFoundException(e.getMessage());
         }catch(Exception e){
-            log.warning("No se pudo actualizar votos del cuidador formal con id: " + formalCaregiverId + ". "
-                    + e.getMessage());
-            throw new FormalCaregiverUpdateVotesException("No se pudo actualizar votos del cuidador formal con id: "
-                    + formalCaregiverId + ". " + e.getMessage());
+            String msg = "No se pudo actualizar votos del cuidador formal con id: " + formalCaregiverId;
+            log.warning(msg + ": " + e.getMessage());
+            throw new FormalCaregiverUpdateVotesException(msg);
         }
     }
 
@@ -195,16 +216,6 @@ public class FormalCaregiverService implements IFormalCaregiverService {
 
     @Override
     public List<FormalCaregiver> findAll(Boolean withoutValidate, Boolean includeDeleted, String countryName) {
-        /*try{
-            if (includeDeleted)
-                return formalCaregiverRepo.findByCountryNameAndValidateTrue(countryName);
-
-            return formalCaregiverRepo.findByCountryNameAndValidateTrueAndDeletedFalse(countryName);
-
-        }catch (Exception e){
-            log.warning("Error buscando todos los cuidadores formales de " + countryName + ". " + e.getMessage());
-            throw new FormalCaregiverFindAllException("Error buscando todos los cuidadores formales de " + countryName);
-        }*/
         try{
             if (withoutValidate) {
                 if (includeDeleted)
@@ -219,27 +230,45 @@ public class FormalCaregiverService implements IFormalCaregiverService {
             return formalCaregiverRepo.findByCountryNameAndValidateTrueAndDeletedFalse(countryName);
 
         }catch (Exception e){
-            log.warning("Error buscando todos los cuidadores formales de " + countryName + ". " + e.getMessage());
-            throw new FormalCaregiverFindAllException("Error buscando todos los cuidadores formales de " + countryName);
+            String msg = "Error buscando todos los cuidadores formales de " + countryName;
+            log.warning(msg + ": " + e.getMessage());
+            throw new FormalCaregiverFindAllException(msg);
         }
     }
 
     @Override
     public Optional<FormalCaregiver> findId(String id) {
         try{
-            return formalCaregiverRepo.findById(id);
+            Optional<FormalCaregiver> found = formalCaregiverRepo.findById(id);
+            if (found.isPresent())
+                return found;
 
+            String msg = "No se encontro un cuidador formal con id " + id;
+            log.warning(msg);
+            throw new FormalCaregiverNotFoundException(msg);
+
+        }catch (FormalCaregiverNotFoundException e) {
+            throw new FormalCaregiverNotFoundException(e.getMessage());
         }catch(Exception e){
-            log.warning("Error buscando cuidador formal con id: " + id + ". " + e.getMessage());
-            throw new FormalCaregiverFindIdException("Error buscando cuidador formal con id: " + id);
+            String msg = "Error buscando cuidador formal con id: " + id;
+            log.warning(msg + ": " + e.getMessage());
+            throw new FormalCaregiverFindIdException(msg);
         }
     }
 
     @Override
     public FormalCaregiver findMail(String mail) {
         try{
-            return formalCaregiverRepo.findByMailIgnoreCase(mail);
+            FormalCaregiver found = formalCaregiverRepo.findByMailIgnoreCase(mail);
+            if (found != null)
+                return found;
 
+            String msg = "No se encontro un cuidador formal con email " + mail;
+            log.warning(msg);
+            throw new FormalCaregiverNotFoundException(msg);
+
+        }catch (FormalCaregiverNotFoundException e) {
+            throw new FormalCaregiverNotFoundException(e.getMessage());
         }catch(Exception e){
             log.warning("Error buscando cuidador formal con mail: " + mail + ". " + e.getMessage());
             throw new FormalCaregiverFindMailException("Error buscando cuidador formal con mail: " + mail);
@@ -249,12 +278,6 @@ public class FormalCaregiverService implements IFormalCaregiverService {
     @Override
     public List<FormalCaregiver> findName(Boolean withoutValidate, Boolean includeDeleted, String countryName, String name) {
         try{
-            /*if (includeDeleted)
-                return formalCaregiverRepo.findByCountryNameAndValidateTrueAndNameIgnoreCase(countryName, name);
-
-            return formalCaregiverRepo.findByCountryNameAndNameIgnoreCaseAndValidateTrueAndDeletedFalse(
-                    countryName, name);
-            */
             if (withoutValidate) {
                 if (includeDeleted)
                     return formalCaregiverRepo.findByCountryNameAndValidateFalseAndNameIgnoreCase(countryName, name);
@@ -269,26 +292,15 @@ public class FormalCaregiverService implements IFormalCaregiverService {
             return formalCaregiverRepo.findByCountryNameAndNameIgnoreCaseAndValidateTrueAndDeletedFalse(
                     countryName, name);
 
-
-
         }catch(Exception e){
-            log.warning("Error buscando cuidador formal: " + name + " (" + countryName + ")" + ". "
-                    + e.getMessage());
-            throw new FormalCaregiverFindNameException("Error buscando cuidador formal: " + name
-                    + " (" + countryName + ")");
+            String msg = "Error buscando cuidador formal: " + name + " (" + countryName + ")";
+            log.warning(msg + ": " + e.getMessage());
+            throw new FormalCaregiverFindNameException(msg);
         }
     }
 
     @Override
     public List<FormalCaregiver> findNameLike(Boolean witoutValidate, Boolean includeDeleted, String countryName, String name) {
-        /*try{
-            if (includeDeleted)
-                return formalCaregiverRepo.findByCountryNameAndNameLikeIgnoreCaseAndValidateTrue(
-                        countryName, name);
-
-            return formalCaregiverRepo.findByCountryNameAndNameLikeIgnoreCaseAndValidateTrueAndDeletedFalse(
-                    countryName, name);
-        */
         try{
             if (witoutValidate) {
                 if (includeDeleted)
@@ -304,12 +316,10 @@ public class FormalCaregiverService implements IFormalCaregiverService {
             return formalCaregiverRepo.findByCountryNameAndNameLikeIgnoreCaseAndValidateTrueAndDeletedFalse(
                     countryName, name);
 
-
         }catch(Exception e){
-            log.warning("Error buscando cuidadores formales de nombre: " + name + " (" + countryName + ")" + ". "
-                    + e.getMessage());
-            throw new FormalCaregiverFindNameLikeException("Error buscando cuidadores formales de nombre: " + name
-                    + " (" + countryName + ")");
+            String msg = "Error buscando cuidadores formales de nombre: " + name + " (" + countryName + ")";
+            log.warning(msg + ": " + e.getMessage());
+            throw new FormalCaregiverFindNameLikeException(msg);
         }
     }
 
@@ -360,12 +370,11 @@ public class FormalCaregiverService implements IFormalCaregiverService {
             return listReturn;
 
         }catch(Exception e){
-            log.warning( "Error buscando cuidadores formales por zona de interés en barrio: "
+            String msg = "Error buscando cuidadores formales por zona de interés en barrio: "
                     + interestNeighborhoodName + " (" + interestCityName+ ", " + interestDepartmentName + ", "
-                    + countryName + ")" + ". " + e.getMessage());
-            throw new FormalCaregiverFindInterestZones_NeighborhoodException(
-                    "Error buscando cuidadores formales por zona de interés en barrio " + interestNeighborhoodName +
-                    " (" + interestCityName+ ", " + interestDepartmentName + ", " + countryName + ")");
+                    + countryName + ")";
+            log.warning( msg + ": " + e.getMessage());
+            throw new FormalCaregiverFindInterestZones_NeighborhoodException(msg);
         }
     }
 
@@ -409,11 +418,10 @@ public class FormalCaregiverService implements IFormalCaregiverService {
             return listReturn;
 
         }catch(Exception e){
-            log.warning("Error buscando cuidadores formales por zona de interés en ciudad: " + interestCityName +
-                    " (" + interestDepartmentName + ", " + countryName + ")" + ". " + e.getMessage());
-            throw new FormalCaregiverFindInterestZones_CityException(
-                    "Error buscando cuidadores formales por zona de interés en ciudad " + interestCityName + " (" +
-                            interestDepartmentName + ", " + countryName + ")");
+            String msg = "Error buscando cuidadores formales por zona de interés en ciudad: " + interestCityName +
+                    " (" + interestDepartmentName + ", " + countryName + ")";
+            log.warning(msg + ": " + e.getMessage());
+            throw new FormalCaregiverFindInterestZones_CityException(msg);
         }
     }
 
@@ -451,11 +459,10 @@ public class FormalCaregiverService implements IFormalCaregiverService {
             return listReturn;
 
         }catch(Exception e){
-            log.warning("Error buscando cuidadores formales por zona de interés en departamento/provincia: " +
-                    interestDepartmentName + " (" + countryName + ")" + ". " + e.getMessage());
-            throw new FormalCaregiverFindInterestZones_DepartmentException(
-                    "Error buscando cuidadores formales por zona de interés en departamento/provincia: " +
-                            interestDepartmentName + " (" + countryName + ")");
+            String msg = "Error buscando cuidadores formales por zona de interés en departamento/provincia: " +
+                    interestDepartmentName + " (" + countryName + ")";
+            log.warning(msg + ": " + e.getMessage());
+            throw new FormalCaregiverFindInterestZones_DepartmentException(msg);
         }
     }
 
@@ -478,9 +485,9 @@ public class FormalCaregiverService implements IFormalCaregiverService {
                     .stream().filter(formalCaregiver -> formalCaregiver.getPriceHour() <= maxPrice).toList();
 
         }catch(Exception e){
-            log.warning("Error buscando cuidadores formales por rango de precios. " + e.getMessage());
-            throw new FormalCaregiverFindPriceRangeException(
-                    "Error buscando cuidadores formales por rango de precios");
+            String msg = "Error buscando cuidadores formales por rango de precios";
+            log.warning( msg + ": " + e.getMessage());
+            throw new FormalCaregiverFindPriceRangeException(msg);
         }
     }
 
@@ -539,9 +546,9 @@ public class FormalCaregiverService implements IFormalCaregiverService {
             }).toList();
 
         }catch(Exception e){
-            log.warning("Error buscando cuidadores formales por rango de dias/horas. " + e.getMessage());
-            throw new FormalCaregiverFindDateTimeRangeException(
-                    "Error buscando cuidadores formales por rango de dias/horas");
+            String msg = "Error buscando cuidadores formales por rango de dias/horas";
+            log.warning(msg + ": " + e.getMessage());
+            throw new FormalCaregiverFindDateTimeRangeException(msg);
         }
     }
 

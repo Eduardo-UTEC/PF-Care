@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import uy.com.pf.care.exceptions.*;
 import uy.com.pf.care.model.documents.Role;
+import uy.com.pf.care.model.documents.Video;
 import uy.com.pf.care.services.IRoleService;
 
 import java.util.List;
@@ -48,30 +49,68 @@ public class RoleController {
             return ResponseEntity.ok(roleService.findAll(countryName, departmentName));
 
         }catch(Exception e) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
-                    "Error buscando todos los roles de: " + countryName + ", " + departmentName);
+            String msg = "Error buscando todos los roles de: " + countryName + ", " + departmentName;
+            log.warning(msg + ": " + e.getMessage());
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, msg);
         }
     }
 
-    @GetMapping("findId/{id}")
-    public ResponseEntity<Optional<Role>> findId(@PathVariable String id) {
-        try{
-            return ResponseEntity.ok(roleService.findId(id));
-
-        }catch(Exception e) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
-                    "Error buscando rol con id " + id);
-        }
-    }
-
-    @PutMapping("/updateVideos")
-    public ResponseEntity<Boolean> updateVideos(@Valid @NotNull @RequestBody List<String> videosId){
+    @GetMapping("findId/{roleId}")
+    public ResponseEntity<Optional<Role>> findId(@PathVariable String roleId) {
         try {
-            return ResponseEntity.ok(roleService.updateVideos(videosId));
+            return ResponseEntity.ok(roleService.findId(roleId));
 
-        }catch(RoleUpdateVideosIdException e){
+        }catch(RoleNotFoundException e){
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+        }catch(Exception e) {
+            String msg = "Error buscando rol con Id " + roleId;
+            log.warning(msg);
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, msg);
+        }
+    }
+
+    /*
+    @PutMapping("/addVideos/{roleId}")
+    public ResponseEntity<Boolean> addVideos(
+            @PathVariable String roleId,
+            @Valid @NotNull @RequestBody List<String> videosId){
+        try {
+            return ResponseEntity.ok(roleService.addVideos(roleId, videosId));
+
+        }catch(RoleNotFoundException e){
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+        }catch(RoleUpdateVideosIdException | RoleAddVideoException e){
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
         }
     }
+    */
+
+    /*
+    @PutMapping("/delVideo/{roleId}/{videoId}")
+    public ResponseEntity<Boolean> delVideo(@PathVariable String roleId, @PathVariable String videoId) {
+        try {
+            return ResponseEntity.ok(roleService.delVideo(roleId, videoId));
+
+        }catch(RoleNotFoundException | RoleVideoNotRegisteredException e){
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+        }catch(RoleUpdateVideosIdException | RoleDelVideoException e){
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
+        }
+    }
+    */
+
+    /*
+    @GetMapping("findVideos/{roleId}")
+    public ResponseEntity<List<Video>> findVideos(@PathVariable String roleId){
+        try {
+            return ResponseEntity.ok(roleService.findVideos(roleId));
+
+        }catch(RoleNotFoundException e){
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+        }catch(RoleFindVideosException e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
+        }
+    }
+    */
 
 }

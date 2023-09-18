@@ -63,6 +63,8 @@ public class FormalCaregiverController {
         try{
             return ResponseEntity.ok(formalCaregiverService.findId(id));
 
+        }catch (FormalCaregiverNotFoundException e){
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         }catch(FormalCaregiverFindIdException e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
         }
@@ -73,6 +75,8 @@ public class FormalCaregiverController {
         try{
             return ResponseEntity.ok(formalCaregiverService.findMail(mail));
 
+        }catch (FormalCaregiverNotFoundException e){
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         }catch(FormalCaregiverFindMailException e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
         }
@@ -111,9 +115,11 @@ public class FormalCaregiverController {
     //  Devuelve true si la operación fue exitosa.
     @PutMapping("setAvailability/{id}/{isAvailable}")
     public ResponseEntity<Boolean> setAvailability(@PathVariable String id, @PathVariable Boolean isAvailable) {
-        try{
+        try {
             return ResponseEntity.ok(formalCaregiverService.setAvailability(id, isAvailable));
 
+        }catch (FormalCaregiverNotFoundException e){
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         }catch(FormalCaregiverSetAvailabilityException e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
         }
@@ -130,6 +136,8 @@ public class FormalCaregiverController {
             return ResponseEntity.ok(formalCaregiverService.updateVotes(
                     formalCaregiverId, previousScore, currentScore));
 
+        }catch(FormalCaregiverNotFoundException e){
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         }catch(FormalCaregiverUpdateVotesException e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
         }
@@ -138,9 +146,11 @@ public class FormalCaregiverController {
     // Devuelve true si la operación fue exitosa
     @PutMapping("setValidation/{id}/{isValidated}")
     public ResponseEntity<Boolean> setValidate(@PathVariable String id, @PathVariable Boolean isValidated) {
-        try{
+        try {
             return ResponseEntity.ok(formalCaregiverService.setValidation(id, isValidated));
 
+        }catch(FormalCaregiverNotFoundException e){
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         }catch(FormalCaregiverSetValidationException e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
         }
@@ -152,6 +162,8 @@ public class FormalCaregiverController {
         try{
             return ResponseEntity.ok(formalCaregiverService.setDeletion(id, isDeleted));
 
+        }catch(FormalCaregiverNotFoundException e){
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         }catch(FormalCaregiverSetDeletionException e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
         }

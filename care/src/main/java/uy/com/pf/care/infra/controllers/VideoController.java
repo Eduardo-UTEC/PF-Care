@@ -8,10 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
-import uy.com.pf.care.exceptions.RoleSaveException;
-import uy.com.pf.care.exceptions.RoleUpdateException;
-import uy.com.pf.care.exceptions.VideoSaveException;
-import uy.com.pf.care.exceptions.VideoUpdateException;
+import uy.com.pf.care.exceptions.*;
 import uy.com.pf.care.model.documents.Video;
 import uy.com.pf.care.services.IVideoService;
 
@@ -40,6 +37,8 @@ public class VideoController {
         try {
             return ResponseEntity.ok(videoService.update(newVideo));
 
+        }catch(VideoNotFoundException e){
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         }catch(VideoUpdateException e){
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
         }
@@ -61,9 +60,10 @@ public class VideoController {
         try{
             return ResponseEntity.ok(videoService.findId(id));
 
-        }catch(Exception e) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
-                    "Error buscando video con id " + id);
+        }catch(VideoNotFoundException e){
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+        }catch(VideoFindIdException e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
         }
     }
 

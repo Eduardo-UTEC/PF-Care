@@ -21,8 +21,6 @@ public class UserService implements IUserService{
     @Autowired
     private IUserRepo userRepo;
 
-   // private static final Logger log = LoggerFactory.getLogger(CuidadosApplication.class);
-
     @Override
     public String save(User newUser) {
         try{
@@ -164,8 +162,6 @@ public class UserService implements IUserService{
 
     @Override
     public User login(LoginObjectAuthenticate loginObjectAuthenticate) {
-//        User found = userRepo.findByUserName(loginObject.getUserName());
-//        return (found.getPass().equals(loginObject.getPass()) ? found : null);
         try {
             User userFound = userRepo.findByUserName(loginObjectAuthenticate.getUserName());
             if (userFound != null && userFound.getPass().equals(loginObjectAuthenticate.getPass()))

@@ -178,9 +178,11 @@ public class PatientController {
     // Devuelve true si la operación fue exitosa
     @PutMapping("setValidation/{id}/{isValidated}")
     public ResponseEntity<Boolean> setValidation(@PathVariable String id, @PathVariable Boolean isValidated) {
-        try{
+        try {
             return ResponseEntity.ok(patientService.setValidation(id, isValidated));
 
+        }catch (PatientNotFoundException e){
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         }catch(Exception e) {
             String msg = "Error seteando validación del paciente con id " + id;
             log.warning(msg + ": " + e.getMessage());
@@ -194,6 +196,8 @@ public class PatientController {
         try{
             return ResponseEntity.ok(patientService.setDeletion(id, isDeleted));
 
+        }catch (PatientNotFoundException e){
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         }catch(Exception e) {
             String msg = "Error seteando borrado lógico de paciente con id " + id;
             log.warning(msg + ": " + e.getMessage());

@@ -3,6 +3,7 @@ package uy.com.pf.care.services;
 import lombok.extern.java.Log;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import uy.com.pf.care.exceptions.HealthProviderNotFoundException;
 import uy.com.pf.care.exceptions.HealthProviderSaveException;
 import uy.com.pf.care.exceptions.HealthProviderUpdateException;
 import uy.com.pf.care.model.documents.HealthProvider;
@@ -19,45 +20,55 @@ public class HealthProviderService implements IHealthProviderService {
     @Autowired
     private IHealthProviderRepo healthProviderRepo;
 
-    //private static final Logger log = LoggerFactory.getLogger(CuidadosApplication.class);
-
     @Override
     public String save(HealthProvider healthProvider) {
         try{
             this.defaultValues(healthProvider);
             String id = healthProviderRepo.save(healthProvider).getHealthProviderId();
-            log.info("*** Proveedor de Salud guardado con exito: " + LocalDateTime.now());
+            log.info("Proveedor de Salud guardado con exito: " + LocalDateTime.now());
             return id;
 
         }catch(Exception e){
-            log.warning("*** ERROR GUARDANDO PROVEEDOR DE SALUD: " + e);
-            throw new HealthProviderSaveException("*** ERROR GUARDANDO PROVEEDOR DE SALUD");
+            String msg = "*** ERROR GUARDANDO PROVEEDOR DE SALUD";
+            log.warning(msg + ": " + e.getMessage());
+            throw new HealthProviderSaveException(msg);
         }
     }
 
     @Override
     public Boolean update(HealthProvider newHealthProvider) {
-        try{
+        try {
             Optional<HealthProvider> entityFound = healthProviderRepo.findById(newHealthProvider.getHealthProviderId());
-            if (entityFound.isPresent()){
+            if (entityFound.isPresent()) {
                 this.defaultValues(entityFound.get(), newHealthProvider);
                 healthProviderRepo.save(newHealthProvider);
                 log.info("Proveedor de salud actualizado con exito");
                 return true;
             }
-            log.info("No se encontro el proveedor de salud con id " + newHealthProvider.getHealthProviderId());
-            return false;
+            String msg = "No se encontro el proveedor de salud con id " + newHealthProvider.getHealthProviderId();
+            log.info(msg);
+            throw new HealthProviderNotFoundException(msg);
 
+        }catch (HealthProviderNotFoundException e){
+            throw new HealthProviderNotFoundException(e.getMessage());
         }catch(Exception e){
-            log.warning("*** ERROR ACTUALIZANDO PROVEEDOR DE SALUD: " + e);
-            throw new HealthProviderUpdateException("*** ERROR ACTUALIZANDO PROVEEDOR DE SALUD");
+            String msg = "*** ERROR ACTUALIZANDO PROVEEDOR DE SALUD";
+            log.warning(msg + ": " + e.getMessage());
+            throw new HealthProviderUpdateException(msg);
         }
 
     }
 
     @Override
     public Optional<HealthProvider> findId(String id) {
-        return healthProviderRepo.findById(id);
+
+        Optional<HealthProvider> found = healthProviderRepo.findById(id);
+        if (found.isPresent())
+            return found;
+
+        String msg = "No se encontro un proveedor de salud con id " + id;
+        log.warning(msg);
+        throw new HealthProviderNotFoundException(msg);
     }
 
     @Override
@@ -103,7 +114,9 @@ public class HealthProviderService implements IHealthProviderService {
             healthProviderRepo.save(healthProvider.get());
             return true;
         }
-        return false;
+        String msg = "No se encontro un proveedor de salud con id " + id;
+        log.warning(msg);
+        throw new HealthProviderNotFoundException(msg);
     }
 
     // Asigna los valores por default a la entitdad

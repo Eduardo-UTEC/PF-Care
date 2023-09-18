@@ -29,8 +29,8 @@ public class Role {
     //@NotNull(message = "Role: La lista de tareas para el rol no puede ser nula")
     //private List<String> tasks;
 
-    @NotNull(message = "Role: La propiedad 'videosId' no puede ser nula")
-    private List<String> videosId;
+    //@NotNull(message = "Role: La propiedad 'videosId' no puede ser nula")
+    //private List<String> videosId;
 
     @NotNull(message = "Role: El departamento no puede ser nulo")
     @NotEmpty(message = "Role: El departamento no puede ser vacio")

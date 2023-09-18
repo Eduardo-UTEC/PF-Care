@@ -3,6 +3,8 @@ package uy.com.pf.care.services;
 import lombok.extern.java.Log;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import uy.com.pf.care.exceptions.VideoFindIdException;
+import uy.com.pf.care.exceptions.VideoNotFoundException;
 import uy.com.pf.care.exceptions.VideoSaveException;
 import uy.com.pf.care.exceptions.VideoUpdateException;
 import uy.com.pf.care.model.documents.Video;
@@ -18,36 +20,38 @@ public class VideoService implements IVideoService{
     @Autowired
     private IVideoRepo videoRepo;
 
-   // private static final Logger log = LoggerFactory.getLogger(CuidadosApplication.class);
-
     @Override
     public String save(Video video) {
         try{
             String id = videoRepo.save(video).getVideoId();
-            log.info("*** Video guardado con exito: " + LocalDateTime.now());
+            log.info("*** Video guardado con exito");
             return id;
 
         }catch(Exception e){
-            log.warning("*** ERROR GUARDANDO VIDEO: " + e);
-            throw new VideoSaveException("*** ERROR GUARDANDO VIDEO");
+            String msg = "*** ERROR GUARDANDO VIDEO";
+            log.warning(msg + ": " + e.getMessage());
+            throw new VideoSaveException(msg);
         }
     }
 
     @Override
     public Boolean update(Video newVideo) {
-        try{
+        try {
             Optional<Video> entityFound = videoRepo.findById(newVideo.getVideoId());
-            if (entityFound.isPresent()){
+            if (entityFound.isPresent()) {
                 videoRepo.save(newVideo);
                 log.info("Video actualizado con exito");
                 return true;
             }
-            log.info("No se encontro el video con id " + newVideo.getVideoId());
+            this.notFound(newVideo.getVideoId());
             return false;
 
-        } catch(Exception e){
-            log.warning("*** ERROR ACTUALIZANDO VIDEO: " + e);
-            throw new VideoUpdateException("*** ERROR ACTUALIZANDO VIDEO");
+        }catch (VideoNotFoundException e){
+            throw new VideoNotFoundException(e.getMessage());
+        }catch(Exception e){
+            String msg = "*** ERROR ACTUALIZANDO VIDEO";
+            log.warning(msg + ": " + e.getMessage());
+            throw new VideoUpdateException(msg);
         }
     }
 
@@ -57,6 +61,27 @@ public class VideoService implements IVideoService{
     }
 
     @Override
-    public Optional<Video> findId(String id) {return videoRepo.findById(id);}
+    public Optional<Video> findId(String id) {
+        try {
+            Optional<Video> found = videoRepo.findById(id);
+            if (found.isPresent())
+                return found;
 
+            this.notFound(id);
+            return Optional.empty();
+
+        }catch(VideoNotFoundException e){
+            throw new VideoNotFoundException(e.getMessage());
+        }catch(Exception e){
+            String msg = "*** ERROR BUSCANDO VIDEO POR ID";
+            log.warning(msg + ": " + e.getMessage());
+            throw new VideoFindIdException(msg);
+        }
+    }
+
+    private void notFound(String videoId){
+        String msg = "No se encontro el video con id " + videoId;
+        log.warning(msg);
+        throw new VideoNotFoundException(msg);
+    }
 }

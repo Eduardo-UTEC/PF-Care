@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import uy.com.pf.care.exceptions.FormalCaregiverUpdateException;
+import uy.com.pf.care.exceptions.HealthProviderNotFoundException;
 import uy.com.pf.care.exceptions.HealthProviderSaveException;
 import uy.com.pf.care.model.documents.HealthProvider;
 import uy.com.pf.care.services.IHealthProviderService;
@@ -39,20 +40,24 @@ public class HealthProviderController {
         try {
             return ResponseEntity.ok(healthProviderService.update(newHealthProvider));
 
+        }catch (HealthProviderNotFoundException e){
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         }catch(FormalCaregiverUpdateException e){
-            log.info(e.getMessage());
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
         }
     }
 
     @GetMapping("findId/{id}")
     public ResponseEntity<Optional<HealthProvider>> findId(@PathVariable String id) {
-        try{
+        try {
             return ResponseEntity.ok(healthProviderService.findId(id));
 
+        }catch (HealthProviderNotFoundException e){
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         }catch(Exception e) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
-                    "Error buscando proveedor de salud con id " + id);
+            String msg = "Error buscando proveedor de salud con id " + id;
+            log.warning(msg + ": " + e.getMessage());
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, msg);
         }
     }
 
@@ -65,8 +70,9 @@ public class HealthProviderController {
             return ResponseEntity.ok(healthProviderService.findAll(includeDeleted, countryName));
 
         }catch(Exception e) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
-                    "Error buscando todos los proveedores de salud de " + countryName);
+            String msg = "Error buscando todos los proveedores de salud de " + countryName;
+            log.warning(msg + ": " + e.getMessage());
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, msg);
         }
     }
 
@@ -81,8 +87,9 @@ public class HealthProviderController {
             return ResponseEntity.ok(healthProviderService.findByName(cityName, departmentName, countryName, name));
 
         }catch(Exception e) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
-                    "Error buscando proveedor de salud de nombre: " + name);
+            String msg = "Error buscando proveedor de salud de nombre: " + name;
+            log.warning(msg + ": " + e.getMessage());
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, msg);
         }
     }
 
@@ -98,9 +105,10 @@ public class HealthProviderController {
                     includeDeleted, cityName, departmentName, countryName));
 
         }catch(Exception e) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
-                    "Error buscando proveedores de salud en la ciudad/localidad de" +
-                            cityName + " (" + departmentName + ", " + countryName + ")");
+            String msg = "Error buscando proveedores de salud en la ciudad/localidad de" +
+                    cityName + " (" + departmentName + ", " + countryName + ")";
+            log.warning(msg + ": " + e.getMessage());
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, msg);
         }
     }
 
@@ -114,21 +122,25 @@ public class HealthProviderController {
             return ResponseEntity.ok(healthProviderService.findByDepartment(includeDeleted, departmentName, countryName));
 
         }catch(Exception e) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
-                    "Error buscando proveedores de salud en el departamento/provincia de " +
-                            departmentName + " (" + countryName + ")");
+            String msg = "Error buscando proveedores de salud en el departamento/provincia de " +
+                    departmentName + " (" + countryName + ")";
+            log.warning(msg + ": " + e.getMessage());
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, msg);
         }
     }
 
     // Devuelve true si la operación fue exitosa
     @PutMapping("setDeletion/{id}/{isDeleted}")
     public ResponseEntity<Boolean> setDeletion(@PathVariable String id, @PathVariable Boolean isDeleted) {
-        try{
+        try {
             return ResponseEntity.ok(healthProviderService.setDeletion(id, isDeleted));
 
+        }catch(HealthProviderNotFoundException e){
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         }catch(Exception e) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
-                    "No se pudo setear el borrado lógico del proveedor de salud con id " + id);
+            String msg = "No se pudo setear el borrado lógico del proveedor de salud con id " + id;
+            log.warning(msg + ": " + e.getMessage());
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, msg);
         }
     }
 

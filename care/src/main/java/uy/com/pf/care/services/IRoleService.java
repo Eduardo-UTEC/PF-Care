@@ -10,7 +10,9 @@ import java.util.Optional;
 public interface IRoleService {
     String save(Role role);
     Boolean update(Role newRole);
-    Optional<Role> findId(String id);
+    Optional<Role> findId(String roleId);
     List<Role> findAll(String countryName, String departmentName);
-    Boolean updateVideos(List<String> videosId);
+    //Boolean addVideos(String roleId, List<String> videosId);
+    //Boolean delVideo(String roleId, String videoId);
+    //List<Video> findVideos(String roleId);
 }

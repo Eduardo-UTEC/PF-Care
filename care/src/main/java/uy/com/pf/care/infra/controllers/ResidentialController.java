@@ -8,9 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
-import uy.com.pf.care.exceptions.FormalCaregiverUpdateException;
-import uy.com.pf.care.exceptions.ResidentialSaveException;
-import uy.com.pf.care.exceptions.ResidentialUpdateException;
+import uy.com.pf.care.exceptions.*;
 import uy.com.pf.care.model.documents.Patient;
 import uy.com.pf.care.model.documents.Residential;
 import uy.com.pf.care.model.objects.ResidentialIdObject;
@@ -42,6 +40,8 @@ public class ResidentialController {
         try {
             return ResponseEntity.ok(residentialService.update(newResidential));
 
+        }catch(ResidentialNotFoundException e){
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         }catch(ResidentialUpdateException e){
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
         }
@@ -56,8 +56,9 @@ public class ResidentialController {
             return ResponseEntity.ok(residentialService.findCountry(includeDeleted, countryName));
 
         }catch(Exception e) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
-                    "Error buscando todos los residenciales de " + countryName);
+            String msg = "Error buscando todos los residenciales de " + countryName;
+            log.warning(msg + ": " + e.getMessage());
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, msg);
         }
     }
 
@@ -66,9 +67,12 @@ public class ResidentialController {
         try{
             return ResponseEntity.ok(residentialService.findId(id));
 
+        }catch(ResidentialNotFoundException e){
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         }catch(Exception e) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
-                    "Error buscando residencial con id " + id);
+            String msg = "Error buscando residencial con id " + id;
+            log.warning(msg + ": " + e.getMessage());
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, msg);
         }
     }
 
@@ -82,9 +86,9 @@ public class ResidentialController {
             return ResponseEntity.ok(residentialService.findDepartment(includeDeleted, countryName, departmentName));
 
         }catch(Exception e) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
-                    "Error buscando pacientes en residenciales de " +
-                            departmentName + " (" + countryName + ")");
+            String msg = "Error buscando pacientes en residenciales de " +  departmentName + " (" + countryName + ")";
+            log.warning(msg + ": " + e.getMessage());
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, msg);
         }
     }
 
@@ -99,9 +103,10 @@ public class ResidentialController {
             return ResponseEntity.ok(residentialService.findCity(includeDeleted, countryName, departmentName, cityName));
 
         }catch(Exception e) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
-                    "Error buscando residenciales en la ciudad/localidad de " +
-                            cityName + " (" + departmentName + ", " + countryName + ")");
+            String msg = "Error buscando residenciales en la ciudad/localidad de " +
+                    cityName + " (" + departmentName + ", " + countryName + ")";
+            log.warning(msg + ": " + e.getMessage());
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, msg);
         }
     }
 
@@ -118,21 +123,23 @@ public class ResidentialController {
                     includeDeleted, countryName, departmentName, cityName, name));
 
         }catch(Exception e) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
-                    "Error buscando residenciales en la ciudad/localidad de " +
-                            cityName + " (" + departmentName + ", " + countryName + ")");
+            String msg = "Error buscando residenciales en la ciudad/localidad de " +
+                    cityName + " (" + departmentName + ", " + countryName + ")";
+            log.warning(msg + ": " + e.getMessage());
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, msg );
         }
     }
 
     // Devuelve true si la operación fue exitosa
     @PutMapping("setDeletion/{id}/{isDeleted}")
     public ResponseEntity<Boolean> setDeletion(@PathVariable String id, @PathVariable Boolean isDeleted) {
-        try{
+        try {
             return ResponseEntity.ok(residentialService.setDeletion(id, isDeleted));
 
-        }catch(Exception e) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
-                    "No se pudo setear el borrado lógico del residencial con id " + id);
+        }catch(ResidentialNotFoundException e){
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+        }catch(ResidentialSetDeletionException e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
         }
     }
 

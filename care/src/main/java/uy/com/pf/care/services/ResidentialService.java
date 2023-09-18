@@ -3,7 +3,9 @@ package uy.com.pf.care.services;
 import lombok.extern.java.Log;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import uy.com.pf.care.exceptions.ResidentialNotFoundException;
 import uy.com.pf.care.exceptions.ResidentialSaveException;
+import uy.com.pf.care.exceptions.ResidentialSetDeletionException;
 import uy.com.pf.care.exceptions.ResidentialUpdateException;
 import uy.com.pf.care.model.documents.Residential;
 import uy.com.pf.care.infra.repos.IResidentialRepo;
@@ -19,8 +21,6 @@ public class ResidentialService implements IResidentialService{
     @Autowired
     private IResidentialRepo residentialRepo;
 
-    //private static final Logger log = LoggerFactory.getLogger(CuidadosApplication.class);
-
     @Override
     public String save(Residential residential) {
         try{
@@ -30,45 +30,64 @@ public class ResidentialService implements IResidentialService{
             return id;
 
         }catch(Exception e){
-            log.warning("*** ERROR GUARDANDO RESIDENCIAL: " + e);
-            throw new ResidentialSaveException("*** ERROR GUARDANDO RESIDENCIAL: ");
+            String msg = "*** ERROR GUARDANDO RESIDENCIAL";
+            log.warning(msg + ": " + e.getMessage());
+            throw new ResidentialSaveException(msg);
         }
     }
 
     @Override
     public Boolean update(Residential newResidential) {
-        try{
+        try {
             Optional<Residential> entityFound = residentialRepo.findById(newResidential.getResidentialId());
-            if (entityFound.isPresent()){
+            if (entityFound.isPresent()) {
                 this.defaultValues(entityFound.get(), newResidential);
                 residentialRepo.save(newResidential);
                 log.info("Residencial actualizado con exito");
                 return true;
             }
-            log.info("No se encontro el residencial con id " + newResidential.getResidentialId());
+            this.notFound(newResidential.getResidentialId());
             return false;
 
+        }catch(ResidentialNotFoundException e){
+            throw new ResidentialNotFoundException(e.getMessage());
         }catch(Exception e){
-            log.warning("*** ERROR ACTUALIZANDO RESIDENCIAL: " + e);
-            throw new ResidentialUpdateException("*** ERROR ACTUALIZANDO RESIDENCIAL: ");
+            String msg = "*** ERROR ACTUALIZANDO RESIDENCIAL";
+            log.warning(msg + ": " + e.getMessage());
+            throw new ResidentialUpdateException(msg);
         }
 
     }
 
     @Override
     public Boolean setDeletion(String id, Boolean isDeleted) {
-        Optional<Residential> residential = this.findId(id);
-        if (residential.isPresent()) {
-            residential.get().setDeleted(isDeleted);
-            residentialRepo.save(residential.get());
-            return true;
+        try {
+            Optional<Residential> residential = this.findId(id);
+            if (residential.isPresent()) {
+                residential.get().setDeleted(isDeleted);
+                residentialRepo.save(residential.get());
+                return true;
+            }
+            this.notFound(id);
+            return false;
+
+        }catch(ResidentialNotFoundException e){
+            throw new ResidentialNotFoundException(e.getMessage());
+        }catch(Exception e){
+            String msg = "No se pudo setear el borrado lógico del residencial con id " + id;
+            log.warning(msg + ": " + e.getMessage());
+            throw new ResidentialSetDeletionException(msg);
         }
-        return false;
     }
 
     @Override
     public Optional<Residential> findId(String id) {
-        return residentialRepo.findById(id);
+        Optional<Residential> found = residentialRepo.findById(id);
+        if (found.isPresent())
+            return found;
+
+        this.notFound(id);
+        return Optional.empty();
     }
 
     @Override
@@ -120,4 +139,9 @@ public class ResidentialService implements IResidentialService{
         newResidential.setDeleted(oldResidential.getDeleted());
     }
 
+    private void notFound(String residentialId) {
+        String msg = "No se encontro el residencial con id " + residentialId;
+        log.info(msg);
+        throw new ResidentialNotFoundException(msg);
+    }
 }
