@@ -6,11 +6,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import uy.com.pf.care.exceptions.*;
 import uy.com.pf.care.infra.config.ParamConfig;
-import uy.com.pf.care.model.documents.Patient;
 import uy.com.pf.care.model.documents.VolunteerPerson;
 import uy.com.pf.care.model.objects.DayTimeRangeObject;
 import uy.com.pf.care.model.objects.NeighborhoodObject;
-import uy.com.pf.care.repos.IVolunteerPersonRepo;
+import uy.com.pf.care.infra.repos.IVolunteerPersonRepo;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;

@@ -28,8 +28,7 @@ public class FormalCaregiverScoreController {
 
         }catch (FormalCaregiverScoreDuplicateKeyException e){
             throw new ResponseStatusException(HttpStatus.CONFLICT, e.getMessage());
-
-        }catch (Exception e){
+        }catch (FormalCaregiverScorePhysicallyDeleteException | FormalCaregiverScoreSaveException e){
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
         }
     }
@@ -47,9 +46,11 @@ public class FormalCaregiverScoreController {
 
     @GetMapping("findId/{id}")
     public ResponseEntity<Optional<FormalCaregiverScore>> findId(@PathVariable String id) {
-        try{
+        try {
             return ResponseEntity.ok(formalCaregiverScoreService.findId(id));
 
+        }catch (FormalCaregiverScoreNotFoundException e){
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         }catch(Exception e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error buscando score con id " + id);
         }
@@ -79,8 +80,7 @@ public class FormalCaregiverScoreController {
 
         }catch(FormalCaregiverScoreNotFoundException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
-
-        }catch(Exception e) {
+        }catch(FormalCaregiverScoreUpdateVotesException | FormalCaregiverScoreUpdateScoreException e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
         }
     }

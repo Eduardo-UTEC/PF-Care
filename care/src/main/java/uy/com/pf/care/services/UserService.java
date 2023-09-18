@@ -9,7 +9,7 @@ import uy.com.pf.care.model.enums.RoleEnum;
 import uy.com.pf.care.model.objects.LoginObjectAuthenticate;
 import uy.com.pf.care.model.objects.RoleObject;
 import uy.com.pf.care.model.objects.UserObject;
-import uy.com.pf.care.repos.IUserRepo;
+import uy.com.pf.care.infra.repos.IUserRepo;
 
 import java.time.LocalDateTime;
 import java.util.List;

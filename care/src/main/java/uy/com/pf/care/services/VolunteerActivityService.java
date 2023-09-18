@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 import uy.com.pf.care.exceptions.VolunteerActivitySaveException;
 import uy.com.pf.care.exceptions.VolunteerActivityUpdateException;
 import uy.com.pf.care.model.documents.VolunteerActivity;
-import uy.com.pf.care.repos.IVolunteerActivityRepo;
+import uy.com.pf.care.infra.repos.IVolunteerActivityRepo;
 
 import java.time.LocalDateTime;
 import java.util.List;

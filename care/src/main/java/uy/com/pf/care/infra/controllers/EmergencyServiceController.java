@@ -7,11 +7,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
+import uy.com.pf.care.exceptions.EmergencyServiceNotFoundException;
 import uy.com.pf.care.exceptions.EmergencyServiceSaveException;
 import uy.com.pf.care.exceptions.EmergencyServiceUpdateException;
 import uy.com.pf.care.model.documents.EmergencyService;
-import uy.com.pf.care.model.objects.EmergencyServiceIdObject;
-import uy.com.pf.care.repos.IEmergencyServiceRepo;
+import uy.com.pf.care.infra.repos.IEmergencyServiceRepo;
 import uy.com.pf.care.services.IEmergencyServiceService;
 
 import java.util.List;
@@ -38,9 +38,11 @@ public class EmergencyServiceController {
 
     @PutMapping("/update")
     public ResponseEntity<Boolean> update(@Valid @NotNull @RequestBody EmergencyService newEmergencyService){
-        try{
+        try {
             return ResponseEntity.ok(emergencyServiceService.update(newEmergencyService));
 
+        }catch (EmergencyServiceNotFoundException e){
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         }catch (EmergencyServiceUpdateException e){
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
         }
@@ -62,9 +64,11 @@ public class EmergencyServiceController {
 
     @GetMapping("findId/{id}")
     public ResponseEntity<Optional<EmergencyService>> findId( @PathVariable String id) {
-        try{
+        try {
             return ResponseEntity.ok(emergencyServiceService.findId(id));
 
+        }catch (EmergencyServiceNotFoundException e){
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         }catch(Exception e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
                     "Error buscando servicio de emergencia con id " + id);
@@ -126,14 +130,15 @@ public class EmergencyServiceController {
     // Devuelve true si la operación fue exitosa
     @PutMapping("setDeletion/{id}/{isDeleted}")
     public ResponseEntity<Boolean> setDeletion(@PathVariable String id, @PathVariable Boolean isDeleted) {
-        try{
+        try {
             return ResponseEntity.ok(emergencyServiceService.setDeletion(id, isDeleted));
 
+        }catch (EmergencyServiceNotFoundException e){
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         }catch(Exception e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
                     "No se pudo setear el borrado lógico del servicio de emergencia con id " + id);
         }
     }
-
 
 }

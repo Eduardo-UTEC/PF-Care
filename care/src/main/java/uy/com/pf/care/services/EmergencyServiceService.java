@@ -3,10 +3,11 @@ package uy.com.pf.care.services;
 import lombok.extern.java.Log;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import uy.com.pf.care.exceptions.EmergencyServiceNotFoundException;
 import uy.com.pf.care.exceptions.EmergencyServiceSaveException;
 import uy.com.pf.care.exceptions.EmergencyServiceUpdateException;
 import uy.com.pf.care.model.documents.EmergencyService;
-import uy.com.pf.care.repos.IEmergencyServiceRepo;
+import uy.com.pf.care.infra.repos.IEmergencyServiceRepo;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -19,8 +20,6 @@ public class EmergencyServiceService implements IEmergencyServiceService{
     @Autowired
     private IEmergencyServiceRepo emergencyServiceRepo;
 
-    //private static final Logger log = LoggerFactory.getLogger(CuidadosApplication.class);
-
     @Override
     public String save(EmergencyService emergencyService) {
         try{
@@ -30,44 +29,55 @@ public class EmergencyServiceService implements IEmergencyServiceService{
             return id;
 
         }catch(Exception e){
-            log.warning("*** ERROR GUARDANDO SERVICIO DE EMERGENCIA: " + e);
-            throw new EmergencyServiceSaveException("*** ERROR GUARDANDO SERVICIO DE EMERGENCIA");
+            String msg = "*** ERROR GUARDANDO SERVICIO DE EMERGENCIA";
+            log.warning(msg + ": " + e.getMessage());
+            throw new EmergencyServiceSaveException(msg);
         }
     }
 
     @Override
     public Boolean update(EmergencyService newEmergencyService) {
-        try{
+        try {
             Optional<EmergencyService> entityFound = emergencyServiceRepo.
                     findById(newEmergencyService.getEmergencyServiceId());
 
-            if (entityFound.isPresent()){
+            if (entityFound.isPresent()) {
                 this.defaultValues(entityFound.get(), newEmergencyService);
                 emergencyServiceRepo.save(newEmergencyService);
                 log.info("Servicio de emergencia actualizado con exito");
                 return true;
             }
-            log.info("No se encontro el servicio de emergencia con id " + newEmergencyService.getEmergencyServiceId());
-            return false;
 
+            String msg = "No se encontro el servicio de emergencia con id: " + newEmergencyService.getEmergencyServiceId();
+            log.warning(msg);
+            throw new EmergencyServiceNotFoundException(msg);
+
+        }catch (EmergencyServiceNotFoundException e){
+            throw new EmergencyServiceNotFoundException(e.getMessage());
         }catch(Exception e){
-            log.warning("*** ERROR ACTUALIZANDO SERVICIO DE EMERGENCIA: " + e);
-            throw new EmergencyServiceUpdateException("*** ERROR ACTUALIZANDO SERVICIO DE EMERGENCIA");
+            String msg = "*** ERROR ACTUALIZANDO SERVICIO DE EMERGENCIA" ;
+            log.warning(msg+ ": " + e.getMessage());
+            throw new EmergencyServiceUpdateException(msg);
         }
-
     }
 
     @Override
     public List<EmergencyService> findAll(Boolean includeDeleted, String countryName) {
         if (includeDeleted)
             return emergencyServiceRepo.findByCountryName(countryName);
-        else
-            return emergencyServiceRepo.findByCountryNameAndDeletedFalse(countryName);
+
+        return emergencyServiceRepo.findByCountryNameAndDeletedFalse(countryName);
     }
 
     @Override
     public Optional<EmergencyService> findId(String id) {
-        return emergencyServiceRepo.findById(id);
+        Optional<EmergencyService> found = emergencyServiceRepo.findById(id);
+        if (found.isPresent())
+            return found;
+
+        String msg = "Servicio de emergencia con id '" + id + "' no encontrado";
+        log.warning(msg);
+        throw new EmergencyServiceNotFoundException(msg);
     }
 
     @Override
@@ -75,24 +85,19 @@ public class EmergencyServiceService implements IEmergencyServiceService{
             Boolean includeDeleted, String cityName, String departmentName, String countryName) {
 
         if (includeDeleted)
-            return emergencyServiceRepo.
-                    findByCountryNameAndDepartmentNameAndCityName(
+            return emergencyServiceRepo.findByCountryNameAndDepartmentNameAndCityName(
                     countryName, departmentName, cityName);
-        else
-            return emergencyServiceRepo.
-                    findByCountryNameAndDepartmentNameAndCityNameAndDeletedFalse(
-                    countryName, departmentName, cityName);
+
+        return emergencyServiceRepo.findByCountryNameAndDepartmentNameAndCityNameAndDeletedFalse(
+                countryName, departmentName, cityName);
     }
 
     @Override
     public List<EmergencyService> findByDepartment(Boolean includeDeleted, String departmentName, String countryName) {
         if (includeDeleted)
-            return emergencyServiceRepo.
-                    findByCountryNameAndDepartmentName(countryName, departmentName);
-        else
-            return emergencyServiceRepo.
-                    findByCountryNameAndDepartmentNameAndDeletedFalse(
-                            countryName, departmentName);
+            return emergencyServiceRepo.findByCountryNameAndDepartmentName(countryName, departmentName);
+
+        return emergencyServiceRepo.findByCountryNameAndDepartmentNameAndDeletedFalse(countryName, departmentName);
     }
 
     @Override
@@ -100,13 +105,11 @@ public class EmergencyServiceService implements IEmergencyServiceService{
             Boolean includeDeleted, String name, String cityName, String departmentName, String countryName) {
 
         if (includeDeleted)
-            return emergencyServiceRepo.
-                    findByCountryNameAndDepartmentNameAndCityNameAndNameIgnoreCase(
+            return emergencyServiceRepo.findByCountryNameAndDepartmentNameAndCityNameAndNameIgnoreCase(
                     countryName, departmentName, cityName, name);
-        else
-            return emergencyServiceRepo.
-                    findByCountryNameAndDepartmentNameAndCityNameAndNameIgnoreCaseAndDeletedFalse(
-                    countryName, departmentName, cityName, name);
+
+        return emergencyServiceRepo.findByCountryNameAndDepartmentNameAndCityNameAndNameIgnoreCaseAndDeletedFalse(
+                countryName, departmentName, cityName, name);
     }
 
     @Override
@@ -117,7 +120,9 @@ public class EmergencyServiceService implements IEmergencyServiceService{
             emergencyServiceRepo.save(emergencyService.get());
             return true;
         }
-        return false;
+        String msg = "No se encontro el servicio de emergencia con id: " + id;
+        log.warning(msg);
+        throw new EmergencyServiceNotFoundException(msg);
     }
 
     // Asigna los valores por default a la entitdad
@@ -125,7 +130,8 @@ public class EmergencyServiceService implements IEmergencyServiceService{
         emergencyService.setDeleted(false);
     }
 
-    // Asigna los valores a la nueva entitdad, tomados de la vieja entidad (de la persistida)
+    //Asigna los valores a la nueva entitdad, tomados de la vieja entidad (de la persistida)
+    //evitando la modificacion accidental
     private void defaultValues(EmergencyService oldEmergencyService, EmergencyService newEmergencyService){
         newEmergencyService.setDeleted(oldEmergencyService.getDeleted());
     }

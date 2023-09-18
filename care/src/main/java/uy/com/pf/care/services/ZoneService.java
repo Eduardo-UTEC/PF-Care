@@ -10,12 +10,11 @@ import uy.com.pf.care.exceptions.ZoneSaveException;
 import uy.com.pf.care.exceptions.ZoneUpdateException;
 import uy.com.pf.care.model.documents.Zone;
 import uy.com.pf.care.model.objects.NeighborhoodObject;
-import uy.com.pf.care.repos.IZoneRepo;
+import uy.com.pf.care.infra.repos.IZoneRepo;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
-import java.util.regex.Pattern;
 
 @Service
 @Log

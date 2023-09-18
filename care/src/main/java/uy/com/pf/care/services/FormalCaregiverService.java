@@ -7,16 +7,19 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import uy.com.pf.care.exceptions.*;
 import uy.com.pf.care.infra.config.ParamConfig;
 import uy.com.pf.care.model.documents.FormalCaregiver;
+import uy.com.pf.care.model.enums.RoleEnum;
+import uy.com.pf.care.model.globalFunctions.UpdateEntityId;
 import uy.com.pf.care.model.objects.DayTimeRangeObject;
 import uy.com.pf.care.model.objects.NeighborhoodObject;
-import uy.com.pf.care.repos.IFormalCaregiverRepo;
+import uy.com.pf.care.infra.repos.IFormalCaregiverRepo;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -32,41 +35,69 @@ public class FormalCaregiverService implements IFormalCaregiverService {
     MongoTemplate mongoTemplate;
     @Autowired
     private ParamConfig paramConfig;
+    @Autowired
+    UpdateEntityId updateEntityId;
 
-    //private static final Logger log = LoggerFactory.getLogger(CuidadosApplication.class);
+    //Se define aqui para controlar la excepcion, estableciendo si se debe eliminar el Cuidador Formal
+    String newFormalCaregiverId = null;
 
     @Override
     public String save(FormalCaregiver formalCaregiver) {
         try{
             this.defaultValues(formalCaregiver);
-            String id = formalCaregiverRepo.save(formalCaregiver).getFormalCaregiverId();
-            log.info("Cuidador Formal guardado con exito: " + LocalDateTime.now());
-            return id;
+            newFormalCaregiverId = formalCaregiverRepo.save(formalCaregiver).getFormalCaregiverId();
+            //log.info("Cuidador Formal guardado con exito");
+            //return newFormalCaregiverId;
 
+            ResponseEntity<Boolean> response = updateEntityId.execute(
+                    formalCaregiver.getUserId(), RoleEnum.FORMAL_CARE.getOrdinal(), newFormalCaregiverId);
+
+            if (response.getStatusCode() == HttpStatus.OK) {
+                log.info("Cuidador Formal guardado con exito");
+                return newFormalCaregiverId;
+            }
+
+            String msg = "Error actualizando entityId en el rol Cuidador Formal, en documento Users";
+            log.warning(msg);
+            throw new UserUpdateEntityIdInRolesListException(msg);
+
+            //En caso de excepción, si el nuevo cuidador formal fue persistido, se elimina, evitando
+            // inconsistencia de la bbdd
+        }catch (UserUpdateEntityIdInRolesListException e){
+            if (newFormalCaregiverId != null)
+                this.physicallyDeleteFormalCaregiver(newFormalCaregiverId);
+            throw new UserUpdateEntityIdInRolesListException(e.getMessage());
         }catch(Exception e){
-            log.warning("Error guardando Cuidador Formal: " + e.getMessage());
-            throw new FormalCaregiverSaveException("Error guardando Cuidador Formal");
+            if (newFormalCaregiverId != null)
+                this.physicallyDeleteFormalCaregiver(newFormalCaregiverId);
+            String msg = "*** ERROR GUARDANDO PACIENTE" ;
+            log.warning(msg + ": " + e.getMessage());
+            throw new PatientSaveException(msg);
         }
     }
 
     @Override
     public Boolean update(FormalCaregiver newFormalCaregiver) {
-        try{
+        try {
             Optional<FormalCaregiver> entityFound = formalCaregiverRepo.findById(newFormalCaregiver.getFormalCaregiverId());
-            if (entityFound.isPresent()){
+            if (entityFound.isPresent()) {
                 this.defaultValues(entityFound.get(), newFormalCaregiver);
                 formalCaregiverRepo.save(newFormalCaregiver);
                 log.info("Cuidador formal actualizado con exito");
                 return true;
             }
-            log.info("No se encontro el cuidador formal con id " + newFormalCaregiver.getFormalCaregiverId());
-            return false;
 
+            String msg = "No se encontro el cuidador formal con id " + newFormalCaregiver.getFormalCaregiverId();
+            log.info(msg);
+            throw new FormalCaregiverNotFoundException(msg);
+
+        }catch (FormalCaregiverNotFoundException e){
+            throw new FormalCaregiverNotFoundException(e.getMessage());
         }catch(Exception e){
-            log.warning("Error actualizando Cuidador Formal: " + e.getMessage());
-            throw new FormalCaregiverUpdateException("Error actualizando Cuidador Formal");
+            String msg = "Error actualizando Cuidador Formal";
+            log.warning(msg + ": " + e.getMessage());
+            throw new FormalCaregiverUpdateException(msg);
         }
-
     }
 
     /*  Devuelve true si la operación fue exitosa.
@@ -569,6 +600,21 @@ public class FormalCaregiverService implements IFormalCaregiverService {
         newFormalCaregiver.setVotes(oldFormalCaregiver.getVotes());
         newFormalCaregiver.setAvailable(oldFormalCaregiver.getAvailable());
         newFormalCaregiver.setDeleted(oldFormalCaregiver.getDeleted());
+    }
+
+    private void physicallyDeleteFormalCaregiver(String id){
+        try{
+            formalCaregiverRepo.deleteById(id);
+            log.warning("Se borro fisicamente el cuidador formal con id " + id);
+
+        }catch(IllegalArgumentException e){
+            log.warning("No se pudo eliminar el cuidador formal con Id: " + id + ". El cuidador formal " +
+                    "seguramente no ha quedado vinculado a un usuario (coleccion Users) con el rol FORMAL_CARE. " +
+                    "Si es asi, copie el Id del cuidador formal en la clave 'entityId' correspopndiente al rol del " +
+                    "usuario, en la coleccion Users. Alternativamente, puede eliminar el documento del cuidador formal " +
+                    "e ingresarlo nuevamente.");
+            throw new FormalCaregiverPhysicallyDeleteException("No se pudo eliminar el cuidador formal con Id: " + id);
+        }
     }
 
 

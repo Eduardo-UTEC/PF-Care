@@ -3,12 +3,10 @@ package uy.com.pf.care.services;
 import lombok.extern.java.Log;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import uy.com.pf.care.exceptions.RoleSaveException;
-import uy.com.pf.care.exceptions.RoleUpdateException;
 import uy.com.pf.care.exceptions.VideoSaveException;
 import uy.com.pf.care.exceptions.VideoUpdateException;
 import uy.com.pf.care.model.documents.Video;
-import uy.com.pf.care.repos.IVideoRepo;
+import uy.com.pf.care.infra.repos.IVideoRepo;
 
 import java.time.LocalDateTime;
 import java.util.List;

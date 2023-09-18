@@ -10,21 +10,6 @@ import java.util.List;
 @Getter
 public class ParamConfig {
 
-    /*
-    Datos de prueba
-     */
-//    @Value("${cadena1}")
-//    private String cadena;
-//
-//    @Value("${logica1}")
-//    private Boolean logica;
-//
-//    @Value("${varNum}")
-//    private Integer entero;
-//
-//    @Value("${lista}")
-//    private List<Integer> lista;
-
     @Value("${protocol}")
     private String protocol;
 

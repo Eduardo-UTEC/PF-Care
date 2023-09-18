@@ -2,20 +2,15 @@ package uy.com.pf.care.services;
 
 import lombok.extern.java.Log;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
-import org.springframework.web.server.ResponseStatusException;
 import uy.com.pf.care.exceptions.*;
-import uy.com.pf.care.infra.config.ParamConfig;
 import uy.com.pf.care.model.documents.Patient;
+import uy.com.pf.care.infra.repos.IPatientRepo;
 import uy.com.pf.care.model.enums.RoleEnum;
-import uy.com.pf.care.repos.IPatientRepo;
+import uy.com.pf.care.model.globalFunctions.UpdateEntityId;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -26,7 +21,7 @@ public class PatientService implements IPatientService{
     @Autowired
     private IPatientRepo patientRepo;
     @Autowired
-    private ParamConfig paramConfig;
+    private UpdateEntityId updateEntityId;
 
     @Override
     public String save(Patient patient) {
@@ -40,16 +35,20 @@ public class PatientService implements IPatientService{
 
             //Actualizo el entityId del rol de usuario (documento Users) con el newPatientId de este nuevo Paciente
 
-            RestTemplate restTemplate = new RestTemplate();
+            /*RestTemplate restTemplate = new RestTemplate();
             ResponseEntity<Boolean> response = restTemplate.exchange(
                     getUpdateEntityIdUrl(patient.getUserId(), newPatientId),
                     HttpMethod.PUT,
                     null,
                     Boolean.class
-            );
+            );*/
+            //UpdateEntityId updateEntityId = new UpdateEntityId();
+
+            ResponseEntity<Boolean> response = updateEntityId.execute(
+                    patient.getUserId(), RoleEnum.PATIENT.getOrdinal(), newPatientId);
 
             if (response.getStatusCode() == HttpStatus.OK) {
-                log.info("*** Paciente guardado con exito: " + LocalDateTime.now());
+                log.info("*** Paciente guardado con exito");
                 return newPatientId;
             }
 
@@ -60,12 +59,14 @@ public class PatientService implements IPatientService{
         //En caso de excepción, si el nuevo paciente fue persistido, se elimina, evitando inconsistencia de la bbdd
         }catch (UserUpdateEntityIdInRolesListException e){
             if (newPatientId != null)
-                patientRepo.deleteById(newPatientId);
+                this.physicallyDeletePatient(newPatientId);
+
             throw new UserUpdateEntityIdInRolesListException(e.getMessage());
 
         }catch(Exception e){
             if (newPatientId != null)
-                patientRepo.deleteById(newPatientId);
+                this.physicallyDeletePatient(newPatientId);
+
             String msg = "*** ERROR GUARDANDO PACIENTE: " + e.getMessage();
             log.warning(msg);
             throw new PatientSaveException(msg);
@@ -288,16 +289,19 @@ public class PatientService implements IPatientService{
         newPatient.setDeleted(oldPatient.getDeleted());
     }
 
-    private String getStartUrl(){
-        return paramConfig.getProtocol() + "://" + paramConfig.getSocket() + "/";
-    }
+    private void physicallyDeletePatient(String id){
+        try{
+            patientRepo.deleteById(id);
+            log.warning("Se borro fisicamente el paciente con id " + id);
 
-    private String getUpdateEntityIdUrl(String userId, String patientId){
-        return getStartUrl() +
-                "users/updateEntityId/" +
-                userId + "/" +
-                RoleEnum.PATIENT.getOrdinal() + "/" +
-                patientId;
+        }catch(IllegalArgumentException e){
+            log.warning("No se pudo eliminar el paciente con Id: " + id + ". El paciente seguramente no ha" +
+                    " quedado vinculado a un usuario (coleccion Users) con el rol PATIENT. Si es asi, copie el Id del" +
+                    " paciente en la clave 'entityId' correspopndiente al rol del usuario, en la coleccion Users. " +
+                    "Alternativamente, puede eliminar el documento del paciente e ingresarlo nuevamente. ");
+            throw new PatientPhysicallyDeleteException(
+                    "No se pudo eliminar el paciente con Id: " + id);
+        }
     }
 
 }

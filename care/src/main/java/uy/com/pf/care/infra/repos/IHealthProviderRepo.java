@@ -1,4 +1,4 @@
-package uy.com.pf.care.repos;
+package uy.com.pf.care.infra.repos;
 
 import org.springframework.data.mongodb.repository.MongoRepository;
 import uy.com.pf.care.model.documents.HealthProvider;

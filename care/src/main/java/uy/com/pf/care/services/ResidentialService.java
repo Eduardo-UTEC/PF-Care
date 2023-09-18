@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 import uy.com.pf.care.exceptions.ResidentialSaveException;
 import uy.com.pf.care.exceptions.ResidentialUpdateException;
 import uy.com.pf.care.model.documents.Residential;
-import uy.com.pf.care.repos.IResidentialRepo;
+import uy.com.pf.care.infra.repos.IResidentialRepo;
 
 import java.time.LocalDateTime;
 import java.util.List;

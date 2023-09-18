@@ -105,6 +105,6 @@ public class FormalCaregiver extends FormalCaregiverObject {
             votesCount += votesByScore;
             votesSum += votesByScore * score;
         }
-        return (votesCount > 0) ? (votesSum / votesCount) : 0;
+        return (votesCount > 0) ? (votesSum / votesCount) : 0.0;
     }
 }

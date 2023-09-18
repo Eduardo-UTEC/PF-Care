@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 import uy.com.pf.care.exceptions.RoleSaveException;
 import uy.com.pf.care.exceptions.RoleUpdateException;
 import uy.com.pf.care.model.documents.Role;
-import uy.com.pf.care.repos.IRoleRepo;
+import uy.com.pf.care.infra.repos.IRoleRepo;
 
 import java.time.LocalDateTime;
 import java.util.List;

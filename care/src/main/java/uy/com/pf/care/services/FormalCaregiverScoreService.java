@@ -15,7 +15,7 @@ import reactor.core.publisher.Mono;
 import uy.com.pf.care.exceptions.*;
 import uy.com.pf.care.infra.config.ParamConfig;
 import uy.com.pf.care.model.documents.FormalCaregiverScore;
-import uy.com.pf.care.repos.IFormalCaregiverScoreRepo;
+import uy.com.pf.care.infra.repos.IFormalCaregiverScoreRepo;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -31,8 +31,6 @@ public class FormalCaregiverScoreService implements IFormalCaregiverScoreService
     private MongoTemplate mongoTemplate;
     @Autowired
     private ParamConfig paramConfig;
-
-    //private static final Logger log = LoggerFactory.getLogger(CuidadosApplication.class);
 
     @Override
     public String save(FormalCaregiverScore formalCaregiverScore) {
@@ -76,8 +74,9 @@ public class FormalCaregiverScoreService implements IFormalCaregiverScoreService
 
             // el cuidador formal ya tiene un voto registrado del paciente
         } catch (DuplicateKeyException e) {
-            log.warning("DuplicateKeyException: El paciente ya habia calificado al Cuidador Formal");
-            throw new FormalCaregiverScoreDuplicateKeyException("El paciente ya había calificado al Cuidador Formal");
+            String msg = "El paciente ya habia calificado al Cuidador Formal";
+            log.warning(msg);
+            throw new FormalCaregiverScoreDuplicateKeyException(msg);
 
         }catch (FormalCaregiverScoreUpdateVotesException e){
             try{
@@ -86,16 +85,16 @@ public class FormalCaregiverScoreService implements IFormalCaregiverScoreService
                 this.physicallyDeleteScore(formalCaregiverScoreId);
 
             }catch (FormalCaregiverScorePhysicallyDeleteException e1){
-                log.warning("No fue posible realizar el borrado fisico del score: " + formalCaregiverScoreId);
-                throw new FormalCaregiverScorePhysicallyDeleteException(
-                        "No fue posible realizar el borrado fisico del score");
+                String msg = "No fue posible realizar el borrado fisico del score: " + formalCaregiverScoreId;
+                log.warning(msg);
+                throw new FormalCaregiverScorePhysicallyDeleteException(msg);
             }
             throw new FormalCaregiverScoreUpdateVotesException(e.getMessage());
 
-        } catch(Exception e1){
-            log.warning("Error guardando puntaje del cuidador formal: " + e1.getMessage() + ". "
-                    + formalCaregiverScore);
-            throw new FormalCaregiverScoreSaveException("Error guardando puntaje del cuidador formal:");
+        } catch(Exception e){
+            String msg = "Error guardando puntaje del cuidador formal.";
+            log.warning(msg + " " + formalCaregiverScore + e.getMessage());
+            throw new FormalCaregiverScoreSaveException(msg);
         }
     }
 
@@ -106,7 +105,14 @@ public class FormalCaregiverScoreService implements IFormalCaregiverScoreService
 
     @Override
     public Optional<FormalCaregiverScore> findId(String formalCaregiverScoreId) {
-        return formalCaregiverScoreRepo.findById(formalCaregiverScoreId);
+        //return formalCaregiverScoreRepo.findById(formalCaregiverScoreId);
+        Optional<FormalCaregiverScore> found = formalCaregiverScoreRepo.findById(formalCaregiverScoreId);
+        if (found.isPresent())
+            return found;
+
+        String msg = "No se encontro un score con id " + formalCaregiverScoreId;
+        log.warning(msg);
+        throw new FormalCaregiverScoreNotFoundException(msg);
     }
 
     @Override
@@ -126,8 +132,9 @@ public class FormalCaregiverScoreService implements IFormalCaregiverScoreService
         );
 
         if (formalCaregiverScoreFound == null) {
-            log.info("El cuidador formal no ha sido calificado por el paciente");
-            throw new FormalCaregiverScoreNotFoundException("El cuidador formal no ha sido calificado por el paciente");
+            String msg = "El cuidador formal no ha sido calificado por el paciente";
+            log.info(msg);
+            throw new FormalCaregiverScoreNotFoundException(msg);
         }
 
         try{
@@ -215,7 +222,7 @@ public class FormalCaregiverScoreService implements IFormalCaregiverScoreService
         return updateVotesResponse.flatMap(response -> {
             if (response) {
                 log.info("Voto actualizado con éxito del Cuidador Formal con Id " +
-                        formalCaregiverScore.getFormalCaregiverId() + ". " + LocalDateTime.now());
+                        formalCaregiverScore.getFormalCaregiverId());
                 return Mono.just(true);
             } else {
                 log.info("No se pudo actualizar el voto al Cuidador Formal con id " +

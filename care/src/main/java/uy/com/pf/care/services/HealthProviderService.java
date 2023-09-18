@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 import uy.com.pf.care.exceptions.HealthProviderSaveException;
 import uy.com.pf.care.exceptions.HealthProviderUpdateException;
 import uy.com.pf.care.model.documents.HealthProvider;
-import uy.com.pf.care.repos.IHealthProviderRepo;
+import uy.com.pf.care.infra.repos.IHealthProviderRepo;
 
 import java.time.LocalDateTime;
 import java.util.List;
