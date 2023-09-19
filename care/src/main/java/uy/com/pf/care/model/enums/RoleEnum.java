@@ -19,4 +19,5 @@ public enum RoleEnum {
 
     private int ordinal;
     private String name;
+
 }

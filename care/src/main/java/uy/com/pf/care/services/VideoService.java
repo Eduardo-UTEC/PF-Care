@@ -3,15 +3,14 @@ package uy.com.pf.care.services;
 import lombok.extern.java.Log;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import uy.com.pf.care.exceptions.VideoFindIdException;
-import uy.com.pf.care.exceptions.VideoNotFoundException;
-import uy.com.pf.care.exceptions.VideoSaveException;
-import uy.com.pf.care.exceptions.VideoUpdateException;
+import uy.com.pf.care.exceptions.*;
 import uy.com.pf.care.model.documents.Video;
 import uy.com.pf.care.infra.repos.IVideoRepo;
+import uy.com.pf.care.model.objects.VideoObject;
 
-import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -61,6 +60,27 @@ public class VideoService implements IVideoService{
     }
 
     @Override
+    public List<VideoObject> findByRole(Integer ordinalRole, String countryName, String departmentName) {
+        try {
+            List<VideoObject> videosListReturn = new ArrayList<>();
+            for (Video video : this.findAll(countryName, departmentName)) {
+                for (Integer role : video.getOrdinalRoles()) {
+                    if (Objects.equals(role, ordinalRole)) {
+                        videosListReturn.add(this.toVideoObject(video));
+                        break;
+                    }
+                }
+            }
+            return videosListReturn;
+
+        }catch(Exception e){
+            String msg = "*** ERROR BUSCANDO VIDEOS POR ROL";
+            log.warning(msg + ": " + e.getMessage());
+            throw new VideoFindByRoleException(msg);
+        }
+    }
+
+    @Override
     public Optional<Video> findId(String id) {
         try {
             Optional<Video> found = videoRepo.findById(id);
@@ -83,5 +103,9 @@ public class VideoService implements IVideoService{
         String msg = "No se encontro el video con id " + videoId;
         log.warning(msg);
         throw new VideoNotFoundException(msg);
+    }
+
+    private VideoObject toVideoObject(Video video){
+        return new VideoObject(video.getVideoId(), video.getDescription(), video.getUrl());
     }
 }

@@ -12,7 +12,4 @@ public interface IRoleService {
     Boolean update(Role newRole);
     Optional<Role> findId(String roleId);
     List<Role> findAll(String countryName, String departmentName);
-    //Boolean addVideos(String roleId, List<String> videosId);
-    //Boolean delVideo(String roleId, String videoId);
-    //List<Video> findVideos(String roleId);
 }

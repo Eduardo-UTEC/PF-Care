@@ -2,6 +2,7 @@ package uy.com.pf.care.infra.controllers;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
+import lombok.Builder;
 import lombok.extern.java.Log;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -10,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import uy.com.pf.care.exceptions.*;
 import uy.com.pf.care.model.documents.Video;
+import uy.com.pf.care.model.objects.VideoObject;
 import uy.com.pf.care.services.IVideoService;
 
 import java.util.List;
@@ -45,7 +47,7 @@ public class VideoController {
     }
 
     @GetMapping("findAll/{departmentName}/{countryName}")
-    public ResponseEntity<List<Video>> findAll(@PathVariable String countryName, @PathVariable String departmentName){
+    public ResponseEntity<List<Video>> findAll(@PathVariable String departmentName, @PathVariable String countryName){
         try{
             return ResponseEntity.ok(videoService.findAll(countryName, departmentName));
 
@@ -66,5 +68,19 @@ public class VideoController {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
         }
     }
+
+    @GetMapping("findByRole/{ordinalRole}/{departmentName}/{countryName}")
+    public ResponseEntity<List<VideoObject>> findByRole(
+            @PathVariable Integer ordinalRole,
+            @PathVariable String countryName,
+            @PathVariable String departmentName){
+        try{
+            return ResponseEntity.ok(videoService.findByRole(ordinalRole, countryName, departmentName));
+
+        }catch(VideoFindByRoleException e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
+        }
+    }
+
 
 }
