@@ -6,9 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 @AllArgsConstructor
-@NoArgsConstructor
 @Getter
-@ToString
 public enum RoleEnum {
     WEB_ADMIN(0, "Administrador Web"),
     PATIENT(1, "Paciente"),

@@ -11,6 +11,7 @@ import org.springframework.web.server.ResponseStatusException;
 import uy.com.pf.care.exceptions.*;
 import uy.com.pf.care.model.documents.Role;
 import uy.com.pf.care.model.documents.Video;
+import uy.com.pf.care.model.enums.RoleEnum;
 import uy.com.pf.care.services.IRoleService;
 
 import java.util.List;
@@ -25,10 +26,12 @@ public class RoleController {
 
     @PostMapping("/add")
     public ResponseEntity<String> add(@Valid @NotNull @RequestBody Role role){
-        try{
+        try {
             return ResponseEntity.ok(roleService.save(role));
 
-        }catch (RoleSaveException e){
+        }catch(RoleDuplicateKeyException e){
+            throw new ResponseStatusException(HttpStatus.CONFLICT, e.getMessage());
+        }catch(RoleSaveException e){
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
         }
     }

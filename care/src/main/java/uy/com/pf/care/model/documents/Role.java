@@ -17,7 +17,7 @@ import java.util.List;
 
 @CompoundIndexes({
     @CompoundIndex(
-        def = "{'countryName':1, 'departmentName':1, 'roleName.name':1}",
+        def = "{'countryName':1, 'departmentName':1, 'roleName':1}",
         unique = true
     )
 })
