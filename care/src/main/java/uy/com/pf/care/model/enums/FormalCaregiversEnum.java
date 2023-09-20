@@ -6,13 +6,12 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 @AllArgsConstructor
-@NoArgsConstructor
 @Getter
-@ToString
 public enum FormalCaregiversEnum {
-    SERVICE_OF_CAREGIVERS("Servicio de acompañantes"),
-    NURSE("Enfermero"),
-    QUALIFIED_CAREGIVER("Cuidador calificado");
+    SERVICE_OF_CAREGIVERS(0, "Servicio de acompañantes"),
+    NURSE(1, "Enfermero"),
+    QUALIFIED_CAREGIVER(2, "Cuidador calificado");
 
-    private String name;
+    private final int ordinal;
+    private final String name;
 }

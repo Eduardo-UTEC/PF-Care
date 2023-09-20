@@ -15,7 +15,7 @@ public enum RoleEnum {
     VOLUNTEER_PERSON(4, "Persona Voluntaria"),
     VOLUNTEER_COMPANY(5, "Compañía Voluntaria");
 
-    private int ordinal;
-    private String name;
+    private final int ordinal;
+    private final String name;
 
 }

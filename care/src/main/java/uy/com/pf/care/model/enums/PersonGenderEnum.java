@@ -6,15 +6,14 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 @AllArgsConstructor
-@NoArgsConstructor
 @Getter
-@ToString
 public enum PersonGenderEnum {
-    MALE("Masculino"),
-    FEMALE("Femenino"),
-    TRANS("Trans"),
-    TRANSM("Trans Masculino"),
-    TRANSF("Trans Femenino");
+    MALE(0, "Masculino"),
+    FEMALE(1, "Femenino"),
+    TRANS(2, "Trans"),
+    TRANSM(3, "Trans Masculino"),
+    TRANSF(4, "Trans Femenino");
 
-    private String name;
+    private final int ordinal;
+    private final String name;
 }

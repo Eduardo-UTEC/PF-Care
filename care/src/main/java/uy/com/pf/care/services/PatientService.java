@@ -9,6 +9,7 @@ import uy.com.pf.care.exceptions.*;
 import uy.com.pf.care.model.documents.Patient;
 import uy.com.pf.care.infra.repos.IPatientRepo;
 import uy.com.pf.care.model.enums.RoleEnum;
+import uy.com.pf.care.model.globalFunctions.ForceEnumToPatient;
 import uy.com.pf.care.model.globalFunctions.UpdateEntityId;
 
 import java.util.List;
@@ -31,18 +32,8 @@ public class PatientService implements IPatientService{
 
         try{
             this.defaultValues(patient);
+            ForceEnumToPatient.execute(patient);
             newPatientId = patientRepo.save(patient).getPatientId();
-
-            //Actualizo el entityId del rol de usuario (documento Users) con el newPatientId de este nuevo Paciente
-
-            /*RestTemplate restTemplate = new RestTemplate();
-            ResponseEntity<Boolean> response = restTemplate.exchange(
-                    getUpdateEntityIdUrl(patient.getUserId(), newPatientId),
-                    HttpMethod.PUT,
-                    null,
-                    Boolean.class
-            );*/
-            //UpdateEntityId updateEntityId = new UpdateEntityId();
 
             ResponseEntity<Boolean> response = updateEntityId.execute(
                     patient.getUserId(), RoleEnum.PATIENT.getOrdinal(), newPatientId);
@@ -79,6 +70,7 @@ public class PatientService implements IPatientService{
             Optional<Patient> entityFound = patientRepo.findById(newPatient.getPatientId());
             if (entityFound.isPresent()) {
                 this.defaultValues(entityFound.get(), newPatient);
+                ForceEnumToPatient.execute(newPatient);
                 patientRepo.save(newPatient);
                 log.info("Paciente actualizado con exito");
                 return true;

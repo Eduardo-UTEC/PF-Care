@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import uy.com.pf.care.exceptions.*;
 import uy.com.pf.care.model.documents.User;
 import uy.com.pf.care.model.enums.RoleEnum;
+import uy.com.pf.care.model.globalFunctions.ForceEnumToUser;
 import uy.com.pf.care.model.objects.LoginObjectAuthenticate;
 import uy.com.pf.care.model.objects.RoleObject;
 import uy.com.pf.care.model.objects.UserObject;
@@ -24,6 +25,7 @@ public class UserService implements IUserService{
     @Override
     public String save(User newUser) {
         try{
+            ForceEnumToUser.execute(newUser);
             String id = userRepo.save(newUser).getUserId();
             log.info("*** Usuario guardado con exito: " + LocalDateTime.now());
             return id;
@@ -40,6 +42,7 @@ public class UserService implements IUserService{
         try {
             Optional<User> oldUser = userRepo.findById(user.getUserId());
             if (oldUser.isPresent()) {
+                ForceEnumToUser.execute(user);
                 userRepo.save(user);
                 log.info("Usuario actualizado con exito");
                 return true;
@@ -75,7 +78,6 @@ public class UserService implements IUserService{
                 this.update(user.get());
                 return true;
             }
-
             String msg = "No se encontro el usuario con id: " + userId;
             log.info(msg);
             throw new UserNotFoundException(msg);

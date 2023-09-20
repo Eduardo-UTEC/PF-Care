@@ -15,6 +15,7 @@ import uy.com.pf.care.exceptions.*;
 import uy.com.pf.care.infra.config.ParamConfig;
 import uy.com.pf.care.model.documents.FormalCaregiver;
 import uy.com.pf.care.model.enums.RoleEnum;
+import uy.com.pf.care.model.globalFunctions.ForceEnumToFormalCaregivers;
 import uy.com.pf.care.model.globalFunctions.UpdateEntityId;
 import uy.com.pf.care.model.objects.DayTimeRangeObject;
 import uy.com.pf.care.model.objects.NeighborhoodObject;
@@ -45,9 +46,8 @@ public class FormalCaregiverService implements IFormalCaregiverService {
     public String save(FormalCaregiver formalCaregiver) {
         try {
             this.defaultValues(formalCaregiver);
+            ForceEnumToFormalCaregivers.execute(formalCaregiver);
             newFormalCaregiverId = formalCaregiverRepo.save(formalCaregiver).getFormalCaregiverId();
-            //log.info("Cuidador Formal guardado con exito");
-            //return newFormalCaregiverId;
 
             ResponseEntity<Boolean> response = updateEntityId.execute(
                     formalCaregiver.getUserId(), RoleEnum.FORMAL_CARE.getOrdinal(), newFormalCaregiverId);
@@ -82,6 +82,7 @@ public class FormalCaregiverService implements IFormalCaregiverService {
             Optional<FormalCaregiver> entityFound = formalCaregiverRepo.findById(newFormalCaregiver.getFormalCaregiverId());
             if (entityFound.isPresent()) {
                 this.defaultValues(entityFound.get(), newFormalCaregiver);
+                ForceEnumToFormalCaregivers.execute(newFormalCaregiver);
                 formalCaregiverRepo.save(newFormalCaregiver);
                 log.info("Cuidador formal actualizado con exito");
                 return true;
@@ -598,6 +599,7 @@ public class FormalCaregiverService implements IFormalCaregiverService {
     // Asigna los valores por default a la entitdad
     private void defaultValues(FormalCaregiver formalCaregiver){
         formalCaregiver.setVotes(new int[] {0,0,0,0,0});
+        formalCaregiver.setValidate(false);
         formalCaregiver.setAvailable(false);
         formalCaregiver.setDeleted(false);
     }
@@ -605,6 +607,7 @@ public class FormalCaregiverService implements IFormalCaregiverService {
     // Asigna los valores a la nueva entitdad, tomados de la vieja entidad (de la persistida)
     private void defaultValues(FormalCaregiver oldFormalCaregiver, FormalCaregiver newFormalCaregiver){
         newFormalCaregiver.setVotes(oldFormalCaregiver.getVotes());
+        newFormalCaregiver.setValidate(oldFormalCaregiver.getValidate());
         newFormalCaregiver.setAvailable(oldFormalCaregiver.getAvailable());
         newFormalCaregiver.setDeleted(oldFormalCaregiver.getDeleted());
     }
@@ -623,6 +626,5 @@ public class FormalCaregiverService implements IFormalCaregiverService {
             throw new FormalCaregiverPhysicallyDeleteException("No se pudo eliminar el cuidador formal con Id: " + id);
         }
     }
-
 
 }

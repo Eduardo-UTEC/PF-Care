@@ -4,11 +4,9 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-//@Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
-//@ToString
 public enum ContactMethodsEnum {
     CALL(0, "Llamada"),
     WHATSAPP(1, "WhatsApp"),
