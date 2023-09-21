@@ -11,7 +11,7 @@ import uy.com.pf.care.exceptions.RoleUpdateException;
 import uy.com.pf.care.infra.config.ParamConfig;
 import uy.com.pf.care.infra.repos.IRoleRepo;
 import uy.com.pf.care.model.documents.Role;
-import uy.com.pf.care.model.globalFunctions.ForceEnumToRole;
+import uy.com.pf.care.model.globalFunctions.ForceEnumsToRole;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -28,7 +28,7 @@ public class RoleService implements IRoleService{
     @Override
     public String save(Role role) {
         try{
-            ForceEnumToRole.execute(role);
+            ForceEnumsToRole.execute(role);
             String id = roleRepo.save(role).getRoleId();
             log.info("*** Rol guardado con exito: " + LocalDateTime.now());
             return id;

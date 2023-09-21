@@ -4,7 +4,7 @@ import uy.com.pf.care.model.documents.FormalCaregiver;
 import uy.com.pf.care.model.enums.DaysWeekEnum;
 import uy.com.pf.care.model.enums.FormalCaregiversEnum;
 
-public class ForceEnumToFormalCaregivers {
+public class ForceEnumsToFormalCaregivers {
     public static void execute(FormalCaregiver formalCaregiver){
 
         //FormalCaregiversEnum

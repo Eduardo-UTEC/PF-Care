@@ -11,6 +11,7 @@ import org.springframework.data.mongodb.core.index.CompoundIndex;
 import org.springframework.data.mongodb.core.index.CompoundIndexes;
 import org.springframework.data.mongodb.core.mapping.Document;
 import uy.com.pf.care.model.enums.ContactMethodsEnum;
+import uy.com.pf.care.model.enums.DaysWeekEnum;
 import uy.com.pf.care.model.objects.*;
 
 import java.util.ArrayList;
@@ -21,7 +22,7 @@ import java.util.List;
         @CompoundIndex(def = "{'countryName':1, 'identificationDocument':1}", unique = true),
         @CompoundIndex(def = "{'mail':1}", unique = true),
         @CompoundIndex(def = "{'telephone':1}", unique = true),
-        @CompoundIndex(def = "{'countryName':1, 'name1':1}", unique = false)
+        @CompoundIndex(def = "{'countryName':1, 'name1':1}")
 })
 
 @Data
@@ -33,6 +34,8 @@ public class VolunteerPerson extends PersonObject {
 
     @Id
     private String volunteerPersonId;
+
+    private String userId;
 
     @Builder.Default
     @Valid
@@ -77,6 +80,5 @@ public class VolunteerPerson extends PersonObject {
     @Size(max = 15,
             message = "VolunteerPerson: El pais de la persona voluntaria no puede exceder los 15 caracteres")
     private String countryName; // Pais de residencia de la persona voluntaria
-
 
 }

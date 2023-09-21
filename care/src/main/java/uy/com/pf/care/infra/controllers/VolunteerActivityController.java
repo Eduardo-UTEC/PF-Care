@@ -8,6 +8,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
+import uy.com.pf.care.exceptions.VolunteerActivityDuplicateKeyException;
+import uy.com.pf.care.exceptions.VolunteerActivityNotFoundException;
 import uy.com.pf.care.exceptions.VolunteerActivitySaveException;
 import uy.com.pf.care.exceptions.VolunteerActivityUpdateException;
 import uy.com.pf.care.model.documents.VolunteerActivity;
@@ -25,9 +27,11 @@ public class VolunteerActivityController {
 
     @PostMapping("/add")
     public ResponseEntity<String> add(@Valid @NotNull @RequestBody VolunteerActivity volunteerActivity){
-        try{
+        try {
             return ResponseEntity.ok(volunteerActivityService.save(volunteerActivity));
 
+        }catch (VolunteerActivityDuplicateKeyException e){
+            throw new ResponseStatusException(HttpStatus.CONFLICT, e.getMessage());
         }catch (VolunteerActivitySaveException e){
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
         }
@@ -38,6 +42,10 @@ public class VolunteerActivityController {
         try {
             return ResponseEntity.ok(volunteerActivityService.update(newVolunteerActivity));
 
+        }catch (VolunteerActivityNotFoundException e){
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+        }catch (VolunteerActivityDuplicateKeyException e){
+            throw new ResponseStatusException(HttpStatus.CONFLICT, e.getMessage());
         }catch(VolunteerActivityUpdateException e){
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
         }
@@ -75,9 +83,11 @@ public class VolunteerActivityController {
     public ResponseEntity<Boolean> setDeletion(
             @PathVariable String id,
             @PathVariable Boolean isDeleted) {
-        try{
+        try {
             return ResponseEntity.ok(volunteerActivityService.setDeletion(id, isDeleted));
 
+        }catch (VolunteerActivityNotFoundException e){
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         }catch(Exception e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
                     "No se pudo setear el borrado lógico de la Actividad del Voluntario con id " + id);
@@ -89,6 +99,8 @@ public class VolunteerActivityController {
         try{
             return ResponseEntity.ok(volunteerActivityService.findId(id));
 
+        }catch (VolunteerActivityNotFoundException e){
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         }catch(Exception e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
                     "Error buscando Actividad de Voluntario con id " + id);

@@ -9,7 +9,7 @@ import uy.com.pf.care.exceptions.*;
 import uy.com.pf.care.model.documents.Patient;
 import uy.com.pf.care.infra.repos.IPatientRepo;
 import uy.com.pf.care.model.enums.RoleEnum;
-import uy.com.pf.care.model.globalFunctions.ForceEnumToPatient;
+import uy.com.pf.care.model.globalFunctions.ForceEnumsToPatient;
 import uy.com.pf.care.model.globalFunctions.UpdateEntityId;
 
 import java.util.List;
@@ -32,7 +32,7 @@ public class PatientService implements IPatientService{
 
         try{
             this.defaultValues(patient);
-            ForceEnumToPatient.execute(patient);
+            ForceEnumsToPatient.execute(patient);
             newPatientId = patientRepo.save(patient).getPatientId();
 
             ResponseEntity<Boolean> response = updateEntityId.execute(
@@ -51,9 +51,7 @@ public class PatientService implements IPatientService{
         }catch (UserUpdateEntityIdInRolesListException e){
             if (newPatientId != null)
                 this.physicallyDeletePatient(newPatientId);
-
             throw new UserUpdateEntityIdInRolesListException(e.getMessage());
-
         }catch(Exception e){
             if (newPatientId != null)
                 this.physicallyDeletePatient(newPatientId);
@@ -70,7 +68,7 @@ public class PatientService implements IPatientService{
             Optional<Patient> entityFound = patientRepo.findById(newPatient.getPatientId());
             if (entityFound.isPresent()) {
                 this.defaultValues(entityFound.get(), newPatient);
-                ForceEnumToPatient.execute(newPatient);
+                ForceEnumsToPatient.execute(newPatient);
                 patientRepo.save(newPatient);
                 log.info("Paciente actualizado con exito");
                 return true;
@@ -276,12 +274,13 @@ public class PatientService implements IPatientService{
 
     // Asigna los valores por default a la entidad
     private void defaultValues(Patient patient){
-        if (patient.getValidate() == null) patient.setValidate(false);
+        patient.setValidate(false);
         patient.setDeleted(false);
     }
 
     // Asigna los valores a la nueva entitdad, tomados de la vieja entidad (de la persistida)
     private void defaultValues(Patient oldPatient, Patient newPatient){
+        newPatient.setUserId(oldPatient.getUserId());
         newPatient.setValidate(oldPatient.getValidate());
         newPatient.setDeleted(oldPatient.getDeleted());
     }

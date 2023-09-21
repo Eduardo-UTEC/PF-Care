@@ -2,7 +2,10 @@ package uy.com.pf.care.services;
 
 import lombok.extern.java.Log;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
+import uy.com.pf.care.exceptions.VolunteerActivityDuplicateKeyException;
+import uy.com.pf.care.exceptions.VolunteerActivityNotFoundException;
 import uy.com.pf.care.exceptions.VolunteerActivitySaveException;
 import uy.com.pf.care.exceptions.VolunteerActivityUpdateException;
 import uy.com.pf.care.model.documents.VolunteerActivity;
@@ -18,38 +21,50 @@ public class VolunteerActivityService implements IVolunteerActivityService{
     @Autowired
     private IVolunteerActivityRepo volunteerActivityRepo;
 
-   // private static final Logger log = LoggerFactory.getLogger(CuidadosApplication.class);
-
     @Override
     public String save(VolunteerActivity volunteerActivity) {
-        try{
+        try {
+            this.defaultValues(volunteerActivity);
             String id = volunteerActivityRepo.save(volunteerActivity).getVolunteerActivityId();
-            log.info("*** Actividad del Voluntario guardada con exito: " + LocalDateTime.now());
+            log.info("Actividad del Voluntario guardada con exito");
             return id;
 
+        }catch (DuplicateKeyException e){
+            String msg = "Error guardando Actividad del Voluntario (clave duplicada)";
+            log.warning(msg + ": " + e.getMessage());
+            throw new VolunteerActivityDuplicateKeyException(msg);
         }catch(Exception e){
-            log.warning("*** ERROR GUARDANDO ACTIVIDAD DEL VOLUNTARIO: " + e);
-            throw new VolunteerActivitySaveException("*** ERROR GUARDANDO ACTIVIDAD DEL VOLUNTARIO");
+            String msg = "*** ERROR GUARDANDO ACTIVIDAD DEL VOLUNTARIO";
+            log.warning(msg + ": " + e.getMessage());
+            throw new VolunteerActivitySaveException(msg);
         }
     }
 
     @Override
     public Boolean update(VolunteerActivity newVolunteerActivity) {
-        try{
-            Optional<VolunteerActivity> entityFound = volunteerActivityRepo.findById(newVolunteerActivity.
-                    getVolunteerActivityId());
-            if (entityFound.isPresent()){
+        try {
+            Optional<VolunteerActivity> entityFound =
+                    volunteerActivityRepo.findById(newVolunteerActivity.getVolunteerActivityId());
+            if (entityFound.isPresent()) {
+                this.defaultValues(newVolunteerActivity, entityFound.get());
                 volunteerActivityRepo.save(newVolunteerActivity);
                 log.info("Actividad del Voluntario actualizada con exito");
                 return true;
             }
-            log.info("No se encontro la Actividad del Voluntario con id " + newVolunteerActivity.
-                    getVolunteerActivityId());
-            return false;
+            String msg = "No se encontro la Actividad del Voluntario con id " + newVolunteerActivity.getVolunteerActivityId();
+            log.info(msg);
+            throw new VolunteerActivityNotFoundException(msg);
 
+        }catch (VolunteerActivityNotFoundException e){
+            throw new VolunteerActivityNotFoundException(e.getMessage());
+        }catch (DuplicateKeyException e){
+            String msg = "Error actualizando Actividad del Voluntario (clave duplicada)";
+            log.warning(msg + ": " + e.getMessage());
+            throw new VolunteerActivityDuplicateKeyException(msg);
         } catch(Exception e){
-            log.warning("*** ERROR ACTUALIZANDO ACTIVIDAD DEL VOLUNTARIO: " + e);
-            throw new VolunteerActivityUpdateException("*** ERROR ACTUALIZANDO ACTIVIDAD DEL VOLUNTARIO");
+            String msg = "*** ERROR ACTUALIZANDO ACTIVIDAD DEL VOLUNTARIO";
+            log.warning(msg + ": " + e.getMessage());
+            throw new VolunteerActivityUpdateException(msg);
         }
     }
 
@@ -76,11 +91,21 @@ public class VolunteerActivityService implements IVolunteerActivityService{
             volunteerActivityRepo.save(volunteerActivity.get());
             return true;
         }
-        return false;
+        String msg = "Actividad del voluntario no encontrada";
+        log.warning(msg);
+        throw new VolunteerActivityNotFoundException(msg);
     }
 
     @Override
-    public Optional<VolunteerActivity> findId(String id) {return volunteerActivityRepo.findById(id);}
+    public Optional<VolunteerActivity> findId(String id) {
+        Optional<VolunteerActivity> found = volunteerActivityRepo.findById(id);
+        if (found.isPresent())
+            return found;
+
+        String msg = "Actividad del voluntario no encontrada";
+        log.warning(msg);
+        throw new VolunteerActivityNotFoundException(msg);
+    }
 
     @Override
     public Boolean exist(String name, String departmentName, String countryName) {
@@ -88,4 +113,11 @@ public class VolunteerActivityService implements IVolunteerActivityService{
                 countryName, departmentName, name).isPresent();
     }
 
+    private void defaultValues(VolunteerActivity volunteerActivity){
+        volunteerActivity.setDeleted(false);
+    }
+
+    private void defaultValues(VolunteerActivity volunteerActivity, VolunteerActivity oldVolunteerActivity){
+        volunteerActivity.setDeleted(oldVolunteerActivity.getDeleted());
+    }
 }

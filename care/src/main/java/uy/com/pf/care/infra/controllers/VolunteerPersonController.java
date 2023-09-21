@@ -4,6 +4,7 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import lombok.extern.java.Log;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -29,7 +30,9 @@ public class VolunteerPersonController {
         try {
             return ResponseEntity.ok(volunteerPersonService.save(volunteerPerson));
 
-        }catch(VolunteerPersonSaveException e){
+        } catch (DuplicateKeyException e) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, e.getMessage());
+        } catch (UserUpdateEntityIdInRolesListException | VolunteerPersonSaveException e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
         }
     }
@@ -39,18 +42,23 @@ public class VolunteerPersonController {
         try {
             return ResponseEntity.ok(volunteerPersonService.update(newVolunteerPerson));
 
+        }catch (VolunteerPersonNotFoundException e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+        }catch (VolunteerActivityDuplicateKeyException e) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, e.getMessage());
         }catch(VolunteerPersonUpdateException e){
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
         }
     }
 
-    @GetMapping("findAll/{includeDeleted}/{countryName}")
+    @GetMapping("findAll/{withoutValidate}/{includeDeleted}/{countryName}")
     public ResponseEntity<List<VolunteerPerson>> findAll(
+            @PathVariable Boolean withoutValidate,
             @PathVariable Boolean includeDeleted,
             @PathVariable String countryName){
 
         try {
-            return ResponseEntity.ok(volunteerPersonService.findAll(includeDeleted, countryName));
+            return ResponseEntity.ok(volunteerPersonService.findAll(withoutValidate, includeDeleted, countryName));
 
         }catch(Exception e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
@@ -59,46 +67,68 @@ public class VolunteerPersonController {
 
     @GetMapping("findId/{id}")
     public ResponseEntity<Optional<VolunteerPerson>> findId(@PathVariable String id) {
-        try{
+        try {
             return ResponseEntity.ok(volunteerPersonService.findId(id));
 
+        }catch(VolunteerPersonNotFoundException e){
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+        }catch(Exception e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
+        }
+    }
+
+    @GetMapping("findIdentificationNumber/{identificationNumber}/{countryName}")
+    public ResponseEntity<VolunteerPerson> findIdentificationNumber(
+            @PathVariable String identificationNumber,
+            @PathVariable String countryName) {
+        try {
+            return ResponseEntity.ok(volunteerPersonService.findIdentificationNumber(identificationNumber, countryName));
+
+        }catch(VolunteerPersonNotFoundException e){
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         }catch(Exception e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
         }
     }
 
     @GetMapping("findMail/{mail}")
-    public ResponseEntity<Optional<VolunteerPerson>> findMail(@PathVariable String mail) {
+    public ResponseEntity<VolunteerPerson> findMail(@PathVariable String mail) {
         try{
             return ResponseEntity.ok(volunteerPersonService.findMail(mail));
 
+        }catch(VolunteerPersonNotFoundException e){
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         }catch(Exception e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
         }
     }
 
-    @GetMapping("findName/{includeDeleted}/{name}/{countryName}")
+    @GetMapping("findName/{withoutValidate}/{includeDeleted}/{name}/{countryName}")
     public ResponseEntity<List<VolunteerPerson>> findName(
+            @PathVariable Boolean withoutValidate,
             @PathVariable Boolean includeDeleted,
             @PathVariable String name,
             @PathVariable String countryName){
 
         try{
-            return ResponseEntity.ok(volunteerPersonService.findName(includeDeleted, countryName, name));
+            return ResponseEntity.ok(volunteerPersonService.findName(
+                    withoutValidate, includeDeleted, countryName, name));
 
         }catch(Exception e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
         }
     }
 
-    @GetMapping("findNameLike/{includeDeleted}/{name}/{countryName}")
+    @GetMapping("findNameLike/{withoutValidate}/{includeDeleted}/{name}/{countryName}")
     public ResponseEntity<List<VolunteerPerson>> findNameLike(
+            @PathVariable Boolean withoutValidate,
             @PathVariable Boolean includeDeleted,
             @PathVariable String name,
             @PathVariable String countryName){
 
         try{
-            return ResponseEntity.ok(volunteerPersonService.findNameLike(includeDeleted, countryName, name));
+            return ResponseEntity.ok(volunteerPersonService.findNameLike(
+                    withoutValidate, includeDeleted, countryName, name));
 
         }catch(Exception e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
@@ -140,12 +170,14 @@ public class VolunteerPersonController {
 
     @GetMapping(
             "findInterestZones_Neighborhood/" +
+                    "{withoutValidate}/" +
                     "{includeDeleted}/" +
                     "{interestNeighborhoodName}/" +
                     "{interestCityName}/" +
                     "{interestDepartmentName}/" +
                     "{countryName}")
     public ResponseEntity<List<VolunteerPerson>> findInterestZones_Neighborhood(
+            @PathVariable Boolean withoutValidate,
             @PathVariable Boolean includeDeleted,
             @PathVariable String interestNeighborhoodName,
             @PathVariable String interestCityName,
@@ -154,41 +186,55 @@ public class VolunteerPersonController {
 
         try{
             return ResponseEntity.ok(volunteerPersonService.findInterestZones_Neighborhood(
+                    withoutValidate,
                     includeDeleted,
                     interestNeighborhoodName,
                     interestCityName,
                     interestDepartmentName,
                     countryName));
 
-        }catch(Exception e) {
+        }catch(VolunteerPersonFindInterestZones_NeighborhoodException e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
         }
     }
-    @GetMapping("findInterestZones_City/{includeDeleted}/{interestCityName}/{interestDepartmentName}/{countryName}")
+    @GetMapping("findInterestZones_City/" +
+                "{withoutValidate}/" +
+                "{includeDeleted}/" +
+                "{interestCityName}/" +
+                "{interestDepartmentName}/" +
+                "{countryName}")
     public ResponseEntity<List<VolunteerPerson>> findInterestZones_City(
+            @PathVariable Boolean withoutValidate,
             @PathVariable Boolean includeDeleted,
             @PathVariable String interestCityName,
             @PathVariable String interestDepartmentName,
             @PathVariable String countryName){
+
         try{
             return ResponseEntity.ok(volunteerPersonService.findInterestZones_City(
-                    true, includeDeleted, interestCityName, interestDepartmentName, countryName));
+                    withoutValidate,
+                    true,
+                    includeDeleted,
+                    interestCityName,
+                    interestDepartmentName,
+                    countryName));
 
-        }catch(Exception e) {
+        }catch(VolunteerPersonFindInterestZones_CityException e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
         }
     }
-    @GetMapping("findInterestZones_Department/{includeDeleted}/{interestDepartmentName}/{countryName}")
+    @GetMapping("findInterestZones_Department/{withoutValidate}/{includeDeleted}/{interestDepartmentName}/{countryName}")
     public ResponseEntity<List<VolunteerPerson>> findInterestZones_Department(
+            @PathVariable Boolean withoutValidate,
             @PathVariable Boolean includeDeleted,
             @PathVariable String interestDepartmentName,
             @PathVariable String countryName){
 
         try{
             return ResponseEntity.ok(volunteerPersonService.findInterestZones_Department(
-                    true, includeDeleted, interestDepartmentName, countryName));
+                    true, withoutValidate, includeDeleted, interestDepartmentName, countryName));
 
-        }catch(Exception e) {
+        }catch(FormalCaregiverFindInterestZones_DepartmentException e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
         }
     }
@@ -210,7 +256,7 @@ public class VolunteerPersonController {
             return ResponseEntity.ok(volunteerPersonService.findDateTimeRange(
                     dayTimeRange, interestNeighborhoodName, interestCityName, interestDepartmentName, countryName));
 
-        }catch(Exception e) {
+        }catch(VolunteerPersonFindDateTimeRangeException e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
         }
     }

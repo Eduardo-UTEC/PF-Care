@@ -47,7 +47,7 @@ public class ZoneService implements IZoneService{
         try{
             Optional<Zone> entityFound = zoneRepo.findById(newZone.getZoneId());
             if (entityFound.isPresent()){
-                this.defaultValues(entityFound.get(), newZone);
+                this.defaultValues(newZone, entityFound.get());
                 zoneRepo.save(newZone);
                 log.info("Zona actualizada con exito");
                 return true;
@@ -175,7 +175,7 @@ public class ZoneService implements IZoneService{
     }
 
     // Asigna los valores a la nueva entitdad, tomados de la vieja entidad (de la persistida)
-    private void defaultValues(Zone oldZone, Zone newZone){
+    private void defaultValues(Zone newZone, Zone oldZone){
         newZone.setDeleted(oldZone.getDeleted());
     }
 }

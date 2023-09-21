@@ -4,7 +4,7 @@ import uy.com.pf.care.model.documents.Role;
 import uy.com.pf.care.model.enums.RoleEnum;
 
 //Fuerzo la asignación del un tipo RoleEnum válido para la key 'roleName', evitando nulos en la base de datos
-public class ForceEnumToRole {
+public class ForceEnumsToRole {
     public static void execute(Role role){
             switch (role.getRoleName()){
                 case WEB_ADMIN -> role.setRoleName(RoleEnum.WEB_ADMIN);

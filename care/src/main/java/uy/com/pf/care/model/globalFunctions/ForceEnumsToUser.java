@@ -1,11 +1,9 @@
 package uy.com.pf.care.model.globalFunctions;
 
-import uy.com.pf.care.model.documents.Patient;
 import uy.com.pf.care.model.documents.User;
-import uy.com.pf.care.model.enums.PersonGenderEnum;
 import uy.com.pf.care.model.enums.RoleEnum;
 
-public class ForceEnumToUser {
+public class ForceEnumsToUser {
     public static void execute(User user){
         user.getRoles().forEach(userObject -> {
             switch (userObject.getRole().getRol()) {

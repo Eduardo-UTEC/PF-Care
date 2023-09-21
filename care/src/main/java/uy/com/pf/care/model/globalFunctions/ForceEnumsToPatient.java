@@ -5,7 +5,7 @@ import uy.com.pf.care.model.enums.DaysWeekEnum;
 import uy.com.pf.care.model.enums.PersonGenderEnum;
 import uy.com.pf.care.model.enums.RelationshipEnum;
 
-public class ForceEnumToPatient {
+public class ForceEnumsToPatient {
     public static void execute(Patient patient){
 
         //PersonGenderEnum

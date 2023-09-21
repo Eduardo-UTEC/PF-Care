@@ -2,16 +2,21 @@ package uy.com.pf.care.services;
 
 import lombok.extern.java.Log;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DuplicateKeyException;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import uy.com.pf.care.exceptions.*;
 import uy.com.pf.care.infra.config.ParamConfig;
 import uy.com.pf.care.model.documents.VolunteerPerson;
+import uy.com.pf.care.model.enums.RoleEnum;
+import uy.com.pf.care.model.globalFunctions.ForceEnumsToVolunteerPerson;
+import uy.com.pf.care.model.globalFunctions.UpdateEntityId;
 import uy.com.pf.care.model.objects.DayTimeRangeObject;
 import uy.com.pf.care.model.objects.NeighborhoodObject;
 import uy.com.pf.care.infra.repos.IVolunteerPersonRepo;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -23,77 +28,171 @@ public class VolunteerPersonService implements IVolunteerPersonService{
     @Autowired
     private IVolunteerPersonRepo volunteerPersonRepo;
     @Autowired
+    private UpdateEntityId updateEntityId;
+    @Autowired
     private ParamConfig paramConfig;
-
-   // private static final Logger log = LoggerFactory.getLogger(CuidadosApplication.class);
 
     @Override
     public String save(VolunteerPerson volunteerPerson) {
-        try{
-            String id = volunteerPersonRepo.save(volunteerPerson).getVolunteerPersonId();
-            log.info("*** Persona Voluntaria guardada con exito: " + LocalDateTime.now());
-            return id;
+        String newVolunteerPersonId = null;
+        try {
+            this.defaultValues(volunteerPerson);
+            ForceEnumsToVolunteerPerson.execute(volunteerPerson);
+            newVolunteerPersonId = volunteerPersonRepo.save(volunteerPerson).getVolunteerPersonId();
 
-        }catch(Exception e){
-            log.warning("*** ERROR GUARDANDO PERSONA VOLUNTARIA: " + e);
-            throw new VolunteerPersonSaveException("*** ERROR GUARDANDO PERSONA VOLUNTARIA");
+            ResponseEntity<Boolean> response = updateEntityId.execute(
+                    volunteerPerson.getUserId(), RoleEnum.VOLUNTEER_PERSON.getOrdinal(), newVolunteerPersonId);
+
+            if (response.getStatusCode() == HttpStatus.OK) {
+                log.info("*** Persona Voluntaria guardada con exito");
+                return newVolunteerPersonId;
+            }
+
+            String msg = "Error actualizando entityId en el rol 'Persona Voluntaria', en documento Users";
+            log.warning(msg + ": " + response);
+            throw new UserUpdateEntityIdInRolesListException(msg);
+
+            //En caso de excepción, si el nuevo Voluntario fue persistido, se elimina, evitando inconsistencia de la bbdd
+        } catch (UserUpdateEntityIdInRolesListException e) {
+            if (newVolunteerPersonId != null)
+                this.physicallyDeleteVolunteerPerson(newVolunteerPersonId);
+            throw new UserUpdateEntityIdInRolesListException(e.getMessage());
+
+        } catch (DuplicateKeyException e){
+            String msg = "Error guardando Persona Voluntaria (clave duplicada)";
+            log.warning(msg + ": " + e.getMessage());
+            throw new VolunteerPersonDuplicateKeyException(msg);
+
+        } catch (Exception e) {
+            String msg = "*** ERROR GUARDANDO PERSONA VOLUNTARIA";
+            log.warning(msg + ": " + e.getMessage());
+            throw new VolunteerPersonSaveException(msg);
         }
     }
 
     @Override
-    public Boolean update(VolunteerPerson newVolunteerActivity) {
-        try{
-            Optional<VolunteerPerson> entityFound = volunteerPersonRepo.findById(newVolunteerActivity.
-                    getVolunteerPersonId());
-            if (entityFound.isPresent()){
-                volunteerPersonRepo.save(newVolunteerActivity);
+    public Boolean update(VolunteerPerson newVolunteerPerson) {
+        try {
+            Optional<VolunteerPerson> entityFound = volunteerPersonRepo.findById(newVolunteerPerson.getVolunteerPersonId());
+            if (entityFound.isPresent()) {
+                this.defaultValues(newVolunteerPerson, entityFound.get());
+                ForceEnumsToVolunteerPerson.execute(newVolunteerPerson);
+                volunteerPersonRepo.save(newVolunteerPerson);
                 log.info("Persona Voluntaria actualizada con exito");
                 return true;
             }
-            log.info("No se encontro la Persona Voluntaria con id " + newVolunteerActivity.getVolunteerPersonId());
-            return false;
+            String msg = "No se encontro la Persona Voluntaria con id " + newVolunteerPerson.getVolunteerPersonId();
+            log.info(msg);
+            throw new VolunteerPersonNotFoundException(msg);
 
+        } catch (VolunteerPersonNotFoundException e) {
+            throw new VolunteerPersonNotFoundException(e.getMessage());
+        } catch (DuplicateKeyException e){
+            throw new VolunteerPersonDuplicateKeyException(e.getMessage());
         } catch(Exception e){
-            log.warning("*** ERROR ACTUALIZANDO PERSONA VOLUNTARIA: " + e);
-            throw new VolunteerPersonUpdateException("*** ERROR ACTUALIZANDO PERSONA VOLUNTARIA");
+            String msg = "*** ERROR ACTUALIZANDO PERSONA VOLUNTARIA";
+            log.warning(msg + ": " + e.getMessage());
+            throw new VolunteerPersonUpdateException(msg);
         }
     }
 
     @Override
-    public Optional<VolunteerPerson> findId(String id) {return volunteerPersonRepo.findById(id);}
+    public Optional<VolunteerPerson> findId(String id) {
+        Optional<VolunteerPerson> found = volunteerPersonRepo.findById(id);
+        if (found.isPresent())
+            return found;
 
-    @Override
-    public Boolean exist(String identificationDocument, String countryName) {
-        return volunteerPersonRepo.findByCountryNameAndIdentificationDocument(identificationDocument, countryName).
-                isPresent();
+        String msg = "No se encontro la Persona Voluntaria con id " + id;
+        log.info(msg);
+        throw new VolunteerPersonNotFoundException(msg);
     }
 
     @Override
-    public List<VolunteerPerson> findAll(Boolean includeDeleted, String countryName) {
-        if (includeDeleted)
+    public VolunteerPerson findIdentificationNumber(String identificationDocument, String countryName) {
+        Optional<VolunteerPerson> found = volunteerPersonRepo.
+                findByCountryNameAndIdentificationDocument(identificationDocument, countryName);
+        if (found.isPresent())
+            return found.get();
+
+        String msg = "No se encontro la Persona Voluntaria con documento: " + identificationDocument;
+        log.info(msg);
+        throw new VolunteerPersonNotFoundException(msg);
+    }
+
+    @Override
+    public List<VolunteerPerson> findAll(Boolean withoutValidate, Boolean includeDeleted, String countryName) {
+        /*if (includeDeleted)
             return volunteerPersonRepo.findByCountryName(countryName);
         return volunteerPersonRepo.findByCountryNameAndDeletedFalse(countryName);
+
+         */
+
+        if (withoutValidate) {
+            if (includeDeleted)
+                return volunteerPersonRepo.findByCountryNameAndValidateFalseOrderByName1(countryName);
+            return volunteerPersonRepo.findByCountryNameAndValidateFalseAndDeletedFalseOrderByName1(countryName);
+
+        }else {
+            if (includeDeleted)
+                return volunteerPersonRepo.findByCountryNameAndValidateTrueOrderByName1(countryName);
+            return volunteerPersonRepo.findByCountryNameAndValidateTrueAndDeletedFalseOrderByName1(countryName);
+        }
     }
 
     @Override
-    public Optional<VolunteerPerson> findMail(String mail) {return volunteerPersonRepo.findByMailIgnoreCase(mail);}
+    public VolunteerPerson findMail(String mail) {
+        Optional<VolunteerPerson> found = volunteerPersonRepo.findByMailIgnoreCase(mail);
+        if (found.isPresent())
+            return found.get();
+
+        String msg = "No se encontro la Persona Voluntaria con mail: " + mail;
+        log.info(msg);
+        throw new VolunteerPersonNotFoundException(msg);
+    }
 
     @Override
-    public List<VolunteerPerson> findName(Boolean includeDeleted, String countryName, String name1) {
-        if (includeDeleted)
+    public List<VolunteerPerson> findName(
+            Boolean withoutValidate, Boolean includeDeleted, String countryName, String name1) {
+        /*if (includeDeleted)
             return volunteerPersonRepo.findByCountryNameAndName1IgnoreCase(countryName, name1);
         return volunteerPersonRepo.findByCountryNameAndName1IgnoreCaseAndDeletedFalse(countryName, name1);
+         */
+
+        if (withoutValidate) {
+            if (includeDeleted)
+                return volunteerPersonRepo.findByCountryNameAndValidateFalseAndName1IgnoreCase(countryName, name1);
+            return volunteerPersonRepo.findByCountryNameAndValidateFalseAndName1IgnoreCaseAndDeletedFalse(
+                    countryName, name1);
+
+        }else{
+            if (includeDeleted)
+                return volunteerPersonRepo.findByCountryNameAndValidateTrueAndName1IgnoreCase(countryName, name1);
+            return volunteerPersonRepo.findByCountryNameAndValidateTrueAndName1IgnoreCaseAndDeletedFalse(
+                    countryName, name1);
+        }
     }
 
     @Override
-    public List<VolunteerPerson> findNameLike(Boolean includeDeleted, String countryName, String name1) {
-        if (includeDeleted)
-            return volunteerPersonRepo.findByCountryNameAndName1LikeIgnoreCase(countryName, name1);
-        return volunteerPersonRepo.findByCountryNameAndName1LikeIgnoreCaseAndDeletedFalse(countryName, name1);
+    public List<VolunteerPerson> findNameLike(
+            Boolean withoutValidate, Boolean includeDeleted, String countryName, String name1) {
+
+        if (withoutValidate) {
+            if (includeDeleted)
+                return volunteerPersonRepo.findByCountryNameAndValidateFalseAndName1LikeIgnoreCase(countryName, name1);
+            return volunteerPersonRepo.findByCountryNameAndValidateFalseAndName1LikeIgnoreCaseAndDeletedFalse(
+                    countryName, name1);
+
+        }else{
+            if (includeDeleted)
+                return volunteerPersonRepo.findByCountryNameAndValidateTrueAndName1LikeIgnoreCase(countryName, name1);
+            return volunteerPersonRepo.findByCountryNameAndValidateTrueAndName1LikeIgnoreCaseAndDeletedFalse(
+                    countryName, name1);
+        }
     }
 
     @Override
     public List<VolunteerPerson> findInterestZones_Neighborhood(
+            Boolean withoutValidate,
             Boolean includeDeleted,
             String interestNeighborhoodName,
             String interestCityName,
@@ -118,7 +217,7 @@ public class VolunteerPersonService implements IVolunteerPersonService{
                 //listReturn = this.findInterestZones_City(
                 //        false, includeDeleted, interestCityName, interestDepartmentName, countryName)
                 //        .stream().filter(
-                listReturn = this.findAll(includeDeleted, countryName).stream().filter(
+                listReturn = this.findAll(withoutValidate, includeDeleted, countryName).stream().filter(
                         volunteerPerson -> volunteerPerson.getInterestZones().isEmpty() ||
                                 !volunteerPerson.getInterestZones().stream().filter(interestZonesObject ->
                                         interestZonesObject.getDepartmentName().equals(interestDepartmentName) &&
@@ -135,12 +234,11 @@ public class VolunteerPersonService implements IVolunteerPersonService{
             return listReturn;
 
         }catch(Exception e){
-            log.warning( "Error buscando personas voluntarias por zona de interés en barrio: "
+            String msg = "Error buscando personas voluntarias por zona de interés en barrio: "
                     + interestNeighborhoodName + " (" + interestCityName+ ", " + interestDepartmentName + ", "
-                    + countryName + ")" + ". " + e.getMessage());
-            throw new VolunteerPersonFindInterestZones_NeighborhoodException(
-                    "Error buscando personas voluntarias por zona de interés en barrio " + interestNeighborhoodName +
-                            " (" + interestCityName+ ", " + interestDepartmentName + ", " + countryName + ")");
+                    + countryName + ")";
+            log.warning( msg + ": " + e.getMessage());
+            throw new VolunteerPersonFindInterestZones_NeighborhoodException(msg);
         }
 
     }
@@ -148,6 +246,7 @@ public class VolunteerPersonService implements IVolunteerPersonService{
     @Override
     public List<VolunteerPerson> findInterestZones_City(
             Boolean validateCity,
+            Boolean withoutValidate,
             Boolean includeDeleted,
             String interestCityName,
             String interestDepartmentName,
@@ -170,7 +269,7 @@ public class VolunteerPersonService implements IVolunteerPersonService{
                 // TODO: Testear cual de los dos filtros previos es el mas eficiente (tomando por departamento o findAll)
                 //listReturn = this.findInterestZones_Department(
                 //       false, includeDeleted, interestDepartmentName, countryName).stream().filter(
-                listReturn = this.findAll(includeDeleted, countryName).stream().filter(
+                listReturn = this.findAll(withoutValidate, includeDeleted, countryName).stream().filter(
                         volunteerPerson -> volunteerPerson.getInterestZones().isEmpty() ||
                                 !volunteerPerson.getInterestZones().stream().filter(interestZonesObject ->
                                         interestZonesObject.getDepartmentName().equals(interestDepartmentName) &&
@@ -195,6 +294,7 @@ public class VolunteerPersonService implements IVolunteerPersonService{
     @Override
     public List<VolunteerPerson> findInterestZones_Department(
             Boolean validateInterestDepartment,
+            Boolean withoutValidate,
             Boolean includeDeleted,
             String interestDepartmentName,
             String countryName) {
@@ -214,7 +314,8 @@ public class VolunteerPersonService implements IVolunteerPersonService{
                             departments.length > 0 &&
                             Arrays.asList(departments).contains(interestDepartmentName))){
 
-                listReturn = this.findAll(includeDeleted, countryName).stream().filter(volunteerPerson ->
+                listReturn = this.findAll(withoutValidate, includeDeleted, countryName)
+                        .stream().filter(volunteerPerson ->
                                 volunteerPerson.getInterestZones().isEmpty() ||
                                         ! volunteerPerson.getInterestZones().stream().filter(interestZonesObject ->
                                                 interestZonesObject.getDepartmentName().equals(interestDepartmentName)
@@ -224,11 +325,10 @@ public class VolunteerPersonService implements IVolunteerPersonService{
             return listReturn;
 
         }catch(Exception e){
-            log.warning("Error buscando personas voluntarias por zona de interés en departamento/provincia: " +
-                    interestDepartmentName + " (" + countryName + ")" + ". " + e.getMessage());
-            throw new FormalCaregiverFindInterestZones_DepartmentException(
-                    "Error buscando personas voluntarias por zona de interés en departamento/provincia: " +
-                            interestDepartmentName + " (" + countryName + ")");
+            String msg = "Error buscando personas voluntarias por zona de interés en departamento/provincia: " +
+                    interestDepartmentName + " (" + countryName + ")" + ". " + e.getMessage();
+            log.warning(msg + ": " + e.getMessage());
+            throw new FormalCaregiverFindInterestZones_DepartmentException(msg);
         }
     }
 
@@ -245,9 +345,15 @@ public class VolunteerPersonService implements IVolunteerPersonService{
 
             if (interestNeighborhoodName.isEmpty())
                 volunteerPersonList = this.findInterestZones_City(
-                        true, false, interestCityName, interestDepartmentName, countryName);
+                        true,
+                        false,
+                        false,
+                        interestCityName,
+                        interestDepartmentName,
+                        countryName);
             else
                 volunteerPersonList = this.findInterestZones_Neighborhood(
+                        false,
                         false,
                         interestNeighborhoodName,
                         interestCityName,
@@ -283,9 +389,9 @@ public class VolunteerPersonService implements IVolunteerPersonService{
             }).toList();
 
         }catch(Exception e){
-            log.warning("Error buscando personas voluntarias por rango de dias/horas. " + e.getMessage());
-            throw new VolunteerPersonFindDateTimeRangeException(
-                    "Error buscando personas voluntarias por rango de dias/horas");
+            String msg = "Error buscando personas voluntarias por rango de dias/horas";
+            log.warning(msg + ": " + e.getMessage());
+            throw new VolunteerPersonFindDateTimeRangeException(msg);
         }
     }
 
@@ -373,5 +479,30 @@ public class VolunteerPersonService implements IVolunteerPersonService{
                 //"zones/findDepartments/false/" + // Se incluyen departamentos que no estén eliminados
                 "zones/findDepartments/" + includeDeleted.toString() + "/" +
                 countryName;
+    }
+
+    private void physicallyDeleteVolunteerPerson(String id){
+        try{
+            volunteerPersonRepo.deleteById(id);
+            log.warning("Se borró físicamente el Voluntario con id " + id);
+
+        }catch(IllegalArgumentException e){
+            log.warning("No se pudo eliminar el Voluntario con Id: " + id + ". El Voluntario seguramente no ha" +
+                    " quedado vinculado a un usuario (coleccion Users) con el rol VOLUNTEER_PERSON. Si es asi, copie " +
+                    "el Id del Voluntario en la clave 'entityId' correspopndiente al rol del usuario, en la coleccion" +
+                    " Users. Alternativamente, puede eliminar el documento del Voluntario e ingresarlo nuevamente.");
+            throw new VolunteerPersonPhysicallyDeleteException("No se pudo eliminar el Voluntario con Id: " + id);
+        }
+    }
+
+    private void defaultValues(VolunteerPerson volunteerPerson){
+        volunteerPerson.setValidate(false);
+        volunteerPerson.setDeleted(false);
+    }
+
+    private void defaultValues(VolunteerPerson volunteerPerson, VolunteerPerson oldVolunteerPerson){
+        volunteerPerson.setAvailable(oldVolunteerPerson.getAvailable());
+        volunteerPerson.setValidate(oldVolunteerPerson.getValidate());
+        volunteerPerson.setDeleted(oldVolunteerPerson.getDeleted());
     }
 }

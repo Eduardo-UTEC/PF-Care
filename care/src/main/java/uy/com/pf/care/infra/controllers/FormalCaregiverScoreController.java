@@ -28,7 +28,9 @@ public class FormalCaregiverScoreController {
 
         }catch (FormalCaregiverScoreDuplicateKeyException e){
             throw new ResponseStatusException(HttpStatus.CONFLICT, e.getMessage());
-        }catch (FormalCaregiverScorePhysicallyDeleteException | FormalCaregiverScoreSaveException e){
+        }catch (FormalCaregiverScorePhysicallyDeleteException |
+                FormalCaregiverScoreSaveException |
+                FormalCaregiverScoreUpdateVotesException e){
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
         }
     }
