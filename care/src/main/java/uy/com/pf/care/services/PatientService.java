@@ -93,7 +93,6 @@ public class PatientService implements IPatientService{
     //Devuelve un lista con los pacientes cuya Id no existe, con lo cual no pudieron actualizarse.
     @Override
     public List<String> updateReferenceCaregiverOnPatients(List<String> patientsId, String referenceCaregiverId) {
-
         List<String> ret = new ArrayList<>();
         for (String patientId : patientsId){
             Optional<Patient> patient = patientRepo.findById(patientId);
@@ -114,7 +113,6 @@ public class PatientService implements IPatientService{
             patientRepo.save(patient.get());
             return true;
         }
-
         String msg = "No se encontro el paciente con id " + id;
         log.warning(msg);
         throw new PatientNotFoundException(msg);

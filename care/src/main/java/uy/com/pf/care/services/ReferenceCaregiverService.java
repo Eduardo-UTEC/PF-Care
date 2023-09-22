@@ -119,12 +119,34 @@ public class ReferenceCaregiverService implements IReferenceCaregiverService {
     }
 
     @Override
+    public Boolean addPatient(String referenceCaregiverId, String patientId, RelationshipEnum relationship) {
+        Optional<ReferenceCaregiver> found = referenceCaregiverRepo.findById(referenceCaregiverId);
+        if (found.isPresent()){
+            if (this.patientLinked(found.get(), patientId)) {
+                String msg = "El Paciente ya está vinculado al Cuidador Referente";
+                log.warning(msg);
+                throw new ReferenceCaregiverChangeRelationshipPatientException(msg);
+            }
+            found.get().getPatients().add(new PatientLinkedReferentObject(patientId, relationship));
+            ForceEnumsToReferenceCaregiver.execute(found.get());
+            referenceCaregiverRepo.save(found.get());
+            log.warning("Paciente con el rol " + relationship.getName() + " vinculado con exito al Cuidador Referente");
+            return true;
+        }
+
+        String msg = "No se encontro el Cuidador Referente con id " + referenceCaregiverId;
+        log.warning(msg);
+        throw new ReferenceCaregiverNotFoundException(msg);
+    }
+
+    @Override
     public Boolean changeRelationshipPatient(String referenceCaregiverId, String patientId, RelationshipEnum relationship) {
         Optional<ReferenceCaregiver> found = referenceCaregiverRepo.findById(referenceCaregiverId);
          if (found.isPresent()){
              for (PatientLinkedReferentObject object : found.get().getPatients()){
                  if (object.getPatientId().equals(patientId)){
                      object.setRelationship(relationship);
+                     ForceEnumsToReferenceCaregiver.execute(found.get());
                      referenceCaregiverRepo.save(found.get());
                      log.warning("La relación del Cuidador Referente con el paciente ha cambiado con exito");
                      return true;
@@ -138,38 +160,41 @@ public class ReferenceCaregiverService implements IReferenceCaregiverService {
         String msg = "No se encontro el Cuidador Referente con id " + referenceCaregiverId;
         log.warning(msg);
         throw new ReferenceCaregiverNotFoundException(msg);
-
-
     }
 
     @Override
     public Optional<ReferenceCaregiver> findId(String id) {
-        return Optional.empty();
+        return referenceCaregiverRepo.findById(id);
     }
 
     @Override
     public Optional<ReferenceCaregiver> findIdentificationDocument(Integer identificationDocument, String countryName) {
-        return Optional.empty();
+        return referenceCaregiverRepo.findByIdentificationDocumentAndZone_CountryName(identificationDocument, countryName);
     }
 
     @Override
-    public List<ReferenceCaregiver> findName1(String name1, String neighborhoodName, String cityName, String departmentName, String countryName) {
-        return null;
+    public List<ReferenceCaregiver> findName1(
+            String name1, String neighborhoodName, String cityName, String departmentName, String countryName) {
+        return referenceCaregiverRepo.
+                findByZone_CountryNameAndZone_DepartmentNameAndZone_CityNameAndZone_NeighborhoodNameAndName1IgnoreCaseOrderByName1(
+                        countryName, departmentName, cityName, neighborhoodName, name1);
     }
 
     @Override
     public List<ReferenceCaregiver> findCity(String cityName, String departmentName, String countryName) {
-        return null;
+        return referenceCaregiverRepo.findByZone_CountryNameAndZone_DepartmentNameAndZone_CityNameOrderByName1(
+                countryName, departmentName, cityName);
     }
 
     @Override
     public List<ReferenceCaregiver> findDepartment(String departmentName, String countryName) {
-        return null;
+        return referenceCaregiverRepo.findByZone_CountryNameAndZone_DepartmentNameOrderByName1(
+                countryName, departmentName);
     }
 
     @Override
     public List<ReferenceCaregiver> findAll(String countryName) {
-        return null;
+        return referenceCaregiverRepo.findByZone_CountryNameOrderByName1(countryName);
     }
 
     private void physicallyDeleteReferenceCaregiver(String id){
@@ -201,7 +226,7 @@ public class ReferenceCaregiverService implements IReferenceCaregiverService {
             log.warning(msg);
             throw new ReferenceCaregiverUserIdOmittedException(msg);
         }
-        if (referenceCaregiver.getPatients() == null || referenceCaregiver.getPatients().isEmpty()){
+        if (referenceCaregiver.getPatients().isEmpty()){
             msg = "El Cuidador Referente debe estar vinculado al menos a un Paciente (clave 'patientsId' no puede ser nula ni vacia)";
             log.warning(msg);
             throw new ReferenceCaregiverPatientsIdOmittedException(msg);
@@ -247,11 +272,18 @@ public class ReferenceCaregiverService implements IReferenceCaregiverService {
 
     }
 
-
     private String getStartUrl() {
         if (paramConfig == null)
             throw new IllegalStateException("ParamConfig no está inicializado");
         return paramConfig.getProtocol() + "://" + paramConfig.getSocket() + "/";
+    }
+
+    private boolean patientLinked(ReferenceCaregiver referenceCaregiver, String patientId){
+        for (PatientLinkedReferentObject patient : referenceCaregiver.getPatients()){
+            if (patient.getPatientId().equals(patientId))
+                return true;
+        }
+        return false;
     }
 
 }

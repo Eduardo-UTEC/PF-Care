@@ -226,15 +226,13 @@ public class FormalCaregiverScoreService implements IFormalCaregiverScoreService
             } else {
                 log.info("No se pudo actualizar el voto al Cuidador Formal con id " +
                         formalCaregiverScore.getFormalCaregiverId() +
-                        " del paciente  con id " + formalCaregiverScore.getPatientId() + ". "
-                        + LocalDateTime.now());
+                        " del paciente  con id " + formalCaregiverScore.getPatientId());
                 return Mono.error(new FormalCaregiverScoreUpdateVotesException(
                         "Error al intentar actualizar votos del Cuidador Formal"));
             }
         }).onErrorResume(error -> {
             log.info("Ocurrió un error al intentar actualizar el voto al Cuidador Formal: "
-                    + formalCaregiverScore.getFormalCaregiverId() + ". "
-                    + error.getMessage());
+                    + formalCaregiverScore.getFormalCaregiverId() + ". " + error.getMessage());
             return Mono.error(new FormalCaregiverScoreUpdateVotesException(
                     "Error al intentar actualizar votos del Cuidador Formal" + ". " + error.getMessage()));
         }).blockOptional().orElse(false);

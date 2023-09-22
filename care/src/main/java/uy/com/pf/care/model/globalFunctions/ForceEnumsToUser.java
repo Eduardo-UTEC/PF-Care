@@ -6,12 +6,22 @@ import uy.com.pf.care.model.enums.RoleEnum;
 public class ForceEnumsToUser {
     public static void execute(User user){
         user.getRoles().forEach(userObject -> {
-            switch (userObject.getRole().getRol()) {
+            /*switch (userObject.getRole().getRol()) {
                 case PATIENT -> userObject.getRole().setRol(RoleEnum.PATIENT);
                 case REFERENCE_CARE -> userObject.getRole().setRol(RoleEnum.REFERENCE_CARE);
                 case FORMAL_CARE -> userObject.getRole().setRol(RoleEnum.FORMAL_CARE);
                 case VOLUNTEER_PERSON -> userObject.getRole().setRol(RoleEnum.VOLUNTEER_PERSON);
                 case VOLUNTEER_COMPANY -> userObject.getRole().setRol(RoleEnum.VOLUNTEER_COMPANY);
+            }
+
+             */
+
+            switch (userObject.getRol()) {
+                case PATIENT -> userObject.setRol(RoleEnum.PATIENT);
+                case REFERENCE_CARE -> userObject.setRol(RoleEnum.REFERENCE_CARE);
+                case FORMAL_CARE -> userObject.setRol(RoleEnum.FORMAL_CARE);
+                case VOLUNTEER_PERSON -> userObject.setRol(RoleEnum.VOLUNTEER_PERSON);
+                case VOLUNTEER_COMPANY -> userObject.setRol(RoleEnum.VOLUNTEER_COMPANY);
             }
         });
     }

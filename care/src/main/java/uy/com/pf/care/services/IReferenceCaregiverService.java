@@ -10,6 +10,7 @@ public interface IReferenceCaregiverService {
 
     String save(ReferenceCaregiver referenceCaregiver);
     Boolean update(ReferenceCaregiver newReferenceCaregiver);
+    Boolean addPatient(String referenceCaregiverId, String patientId, RelationshipEnum relationship);
     Boolean changeRelationshipPatient(String referenceCaregiverId, String patientId, RelationshipEnum relationship);
     Optional<ReferenceCaregiver> findId(String id);
     Optional<ReferenceCaregiver> findIdentificationDocument(Integer identificationDocument, String countryName);

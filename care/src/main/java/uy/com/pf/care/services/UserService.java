@@ -4,13 +4,12 @@ import lombok.extern.java.Log;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import uy.com.pf.care.exceptions.*;
+import uy.com.pf.care.infra.repos.IUserRepo;
 import uy.com.pf.care.model.documents.User;
 import uy.com.pf.care.model.enums.RoleEnum;
 import uy.com.pf.care.model.globalFunctions.ForceEnumsToUser;
 import uy.com.pf.care.model.objects.LoginObjectAuthenticate;
-import uy.com.pf.care.model.objects.RoleObject;
 import uy.com.pf.care.model.objects.UserObject;
-import uy.com.pf.care.infra.repos.IUserRepo;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -24,6 +23,9 @@ public class UserService implements IUserService{
 
     @Override
     public String save(User newUser) {
+
+        this.saveValidate(newUser);
+
         try{
             ForceEnumsToUser.execute(newUser);
             String id = userRepo.save(newUser).getUserId();
@@ -42,6 +44,7 @@ public class UserService implements IUserService{
         try {
             Optional<User> oldUser = userRepo.findById(user.getUserId());
             if (oldUser.isPresent()) {
+                this.defaultValues(user, oldUser.get());
                 ForceEnumsToUser.execute(user);
                 userRepo.save(user);
                 log.info("Usuario actualizado con exito");
@@ -61,7 +64,7 @@ public class UserService implements IUserService{
     }
 
     @Override
-    public Boolean addNewRol(String userId, String roleId, RoleEnum rol) {
+    public Boolean addNewRol(String userId, RoleEnum rol) {
         try {
             Optional<User> user = userRepo.findById(userId);
             if (user.isPresent()) {
@@ -71,11 +74,12 @@ public class UserService implements IUserService{
                     throw new UserAlreadyDefinedRolException(msg);
                 }
                 //Agrego el nuevo rol.
-                //Nota: entityId=null porque aún no se agregó el document corrrespondiente al rol.
+                //Nota: entityId=null porque aún no se agregó el document correspondiente al rol.
                 //Ej: Si 'rol' es PATIENT, cuando se agregue el paciente al document "Patients", se obtiene su id
                 //y se actualiza 'entityId'
-                user.get().getRoles().add( new UserObject(null, new RoleObject(roleId, rol)));
-                this.update(user.get());
+                //user.get().getRoles().add( new UserObject(null, new RoleObject(roleId, rol)));
+                user.get().getRoles().add( new UserObject(null, rol));
+                userRepo.save(user.get());
                 return true;
             }
             String msg = "No se encontro el usuario con id: " + userId;
@@ -99,22 +103,20 @@ public class UserService implements IUserService{
         try {
             Optional<User> user = userRepo.findById(userId);
             if (user.isPresent()) {
-                boolean roleExist = false;
                 for (UserObject userObject : user.get().getRoles()) {
-                    if (userObject.getRole().getRol().getOrdinal() == roleOrdinal.getOrdinal()) {
+                    //if (userObject.getRole().getRol().getOrdinal() == roleOrdinal.getOrdinal()) {
+                    if (userObject.getRol().getOrdinal() == roleOrdinal.getOrdinal()) {
                         if (userObject.getEntityId() != null){
-                            String msg = "El usuario ya está vinculado a un " + userObject.getRole().getRol().getName();
+                            //String msg = "El usuario ya está vinculado a un " + userObject.getRole().getRol().getName();
+                            String msg = "El usuario ya está vinculado a un " + userObject.getRol().getName();
                             log.warning(msg);
                             throw new UserAlreadyLinkedException(msg);
                         }
                         userObject.setEntityId(entityId);
-                        roleExist = true;
-                        break;
+                        ForceEnumsToUser.execute(user.get());
+                        userRepo.save(user.get());
+                        return true;
                     }
-                }
-                if (roleExist) {
-                    this.update(user.get());
-                    return true;
                 }
                 String msg = "El usuario " + userId + " no tiene el rol '" + roleOrdinal.getName();
                 log.info(msg);
@@ -256,12 +258,27 @@ public class UserService implements IUserService{
     private boolean roleExist(User user, RoleEnum rol){
         boolean found = false;
         for (UserObject userObject : user.getRoles()){
-            if (userObject.getRole().getRol().getOrdinal() == rol.getOrdinal()){
+            //if (userObject.getRole().getRol().getOrdinal() == rol.getOrdinal()){
+            if (userObject.getRol().getOrdinal() == rol.getOrdinal()){
                 found = true;
                 break;
             }
         }
         return found;
+    }
+
+    //Valida las key requeridas para guardar un nuevo Usuario
+    private void saveValidate(User user) {
+        String msg;
+        if (user.getRoles() == null || user.getRoles().isEmpty()) {
+            msg = "El usuario debe tener al menos un rol asignado (clave 'roles' no puede ser nula ni vacia)";
+            log.warning(msg);
+            throw new UserSaveException(msg);
+        }
+    }
+
+    private void defaultValues(User newUser, User oldUser){
+        newUser.setRoles(oldUser.getRoles());
     }
 
 }

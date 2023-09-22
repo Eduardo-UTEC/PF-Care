@@ -103,11 +103,11 @@ public class VolunteerPersonController {
         }
     }
 
-    @GetMapping("findName/{withoutValidate}/{includeDeleted}/{name}/{countryName}")
+    @GetMapping("findName/{name}/{withoutValidate}/{includeDeleted}/{countryName}")
     public ResponseEntity<List<VolunteerPerson>> findName(
+            @PathVariable String name,
             @PathVariable Boolean withoutValidate,
             @PathVariable Boolean includeDeleted,
-            @PathVariable String name,
             @PathVariable String countryName){
 
         try{

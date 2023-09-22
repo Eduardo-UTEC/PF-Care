@@ -52,15 +52,18 @@ public class UserController {
             }
     }
 
-    @PutMapping("addNewRol/{userId}/{roleId}/{roleOrdinal}")
+    //@PutMapping("addNewRol/{userId}/{roleId}/{roleOrdinal}")
+    @PutMapping("addNewRol/{userId}/{roleOrdinal}")
     public ResponseEntity<Boolean> addNewRol(
             @PathVariable String userId,
-            @PathVariable String roleId,
+            //@PathVariable String roleId,
             @PathVariable int roleOrdinal) {
 
         try{
-            return ResponseEntity.ok(userService.addNewRol(
-                    userId, roleId, RoleEnum.values()[roleOrdinal]));
+            //return ResponseEntity.ok(userService.addNewRol(
+            //        userId, roleId, RoleEnum.values()[roleOrdinal]));
+            return ResponseEntity.ok(userService.addNewRol(userId, RoleEnum.values()[roleOrdinal]));
+
 
         }catch (UserAlreadyDefinedRolException e){
             throw new ResponseStatusException(HttpStatus.CONFLICT, e.getMessage());

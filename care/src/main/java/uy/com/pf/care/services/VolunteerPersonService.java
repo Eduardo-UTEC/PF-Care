@@ -121,21 +121,16 @@ public class VolunteerPersonService implements IVolunteerPersonService{
 
     @Override
     public List<VolunteerPerson> findAll(Boolean withoutValidate, Boolean includeDeleted, String countryName) {
-        /*if (includeDeleted)
-            return volunteerPersonRepo.findByCountryName(countryName);
-        return volunteerPersonRepo.findByCountryNameAndDeletedFalse(countryName);
-
-         */
 
         if (withoutValidate) {
             if (includeDeleted)
-                return volunteerPersonRepo.findByCountryNameAndValidateFalseOrderByName1(countryName);
-            return volunteerPersonRepo.findByCountryNameAndValidateFalseAndDeletedFalseOrderByName1(countryName);
+                return volunteerPersonRepo.findByCountryNameAndValidateFalseAndAvailableTrueOrderByName1(countryName);
+            return volunteerPersonRepo.findByCountryNameAndValidateFalseAndDeletedFalseAndAvailableTrueOrderByName1(countryName);
 
         }else {
             if (includeDeleted)
-                return volunteerPersonRepo.findByCountryNameAndValidateTrueOrderByName1(countryName);
-            return volunteerPersonRepo.findByCountryNameAndValidateTrueAndDeletedFalseOrderByName1(countryName);
+                return volunteerPersonRepo.findByCountryNameAndValidateTrueAndAvailableTrueOrderByName1(countryName);
+            return volunteerPersonRepo.findByCountryNameAndValidateTrueAndDeletedFalseAndAvailableTrueOrderByName1(countryName);
         }
     }
 
@@ -160,14 +155,14 @@ public class VolunteerPersonService implements IVolunteerPersonService{
 
         if (withoutValidate) {
             if (includeDeleted)
-                return volunteerPersonRepo.findByCountryNameAndValidateFalseAndName1IgnoreCase(countryName, name1);
-            return volunteerPersonRepo.findByCountryNameAndValidateFalseAndName1IgnoreCaseAndDeletedFalse(
+                return volunteerPersonRepo.findByCountryNameAndValidateFalseAndAvailableTrueAndName1IgnoreCase(countryName, name1);
+            return volunteerPersonRepo.findByCountryNameAndValidateFalseAndName1IgnoreCaseAndDeletedFalseAndAvailableTrue(
                     countryName, name1);
 
         }else{
             if (includeDeleted)
-                return volunteerPersonRepo.findByCountryNameAndValidateTrueAndName1IgnoreCase(countryName, name1);
-            return volunteerPersonRepo.findByCountryNameAndValidateTrueAndName1IgnoreCaseAndDeletedFalse(
+                return volunteerPersonRepo.findByCountryNameAndValidateTrueAndAvailableTrueAndName1IgnoreCase(countryName, name1);
+            return volunteerPersonRepo.findByCountryNameAndValidateTrueAndName1IgnoreCaseAndDeletedFalseAndAvailableTrue(
                     countryName, name1);
         }
     }
@@ -178,14 +173,16 @@ public class VolunteerPersonService implements IVolunteerPersonService{
 
         if (withoutValidate) {
             if (includeDeleted)
-                return volunteerPersonRepo.findByCountryNameAndValidateFalseAndName1LikeIgnoreCase(countryName, name1);
-            return volunteerPersonRepo.findByCountryNameAndValidateFalseAndName1LikeIgnoreCaseAndDeletedFalse(
+                return volunteerPersonRepo.findByCountryNameAndValidateFalseAndAvailableTrueAndName1LikeIgnoreCase(
+                        countryName, name1);
+            return volunteerPersonRepo.findByCountryNameAndValidateFalseAndName1LikeIgnoreCaseAndDeletedFalseAndAvailableTrue(
                     countryName, name1);
 
         }else{
             if (includeDeleted)
-                return volunteerPersonRepo.findByCountryNameAndValidateTrueAndName1LikeIgnoreCase(countryName, name1);
-            return volunteerPersonRepo.findByCountryNameAndValidateTrueAndName1LikeIgnoreCaseAndDeletedFalse(
+                return volunteerPersonRepo.findByCountryNameAndValidateTrueAndAvailableTrueAndName1LikeIgnoreCase(
+                        countryName, name1);
+            return volunteerPersonRepo.findByCountryNameAndValidateTrueAndName1LikeIgnoreCaseAndDeletedFalseAndAvailableTrue(
                     countryName, name1);
         }
     }

@@ -125,7 +125,11 @@ public class FormalCaregiverController {
         }
     }
 
-    //  Devuelve true si la operación fue exitosa.
+    // *** NOTA: este servicio es solo para uso interno de FormalCaregiverScore.
+    // A saber: si se usa 'manualmente', si bien actualiza correctamente el array 'votes' del Cuidador Formal,
+    // no actualiza la coleccion FormalCaregiverScores, con lo cual los votos y el promedio quedan descordinados.
+    //
+    // Devuelve true si la operación fue exitosa.
     @PutMapping("updateVotes/{formalCaregiverId}/{previousScore}/{currentScore}")
     public ResponseEntity<Boolean> updateVotes(
             @PathVariable String formalCaregiverId,

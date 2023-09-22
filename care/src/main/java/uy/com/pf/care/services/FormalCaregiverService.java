@@ -14,6 +14,7 @@ import org.springframework.web.client.RestTemplate;
 import uy.com.pf.care.exceptions.*;
 import uy.com.pf.care.infra.config.ParamConfig;
 import uy.com.pf.care.model.documents.FormalCaregiver;
+import uy.com.pf.care.model.documents.ReferenceCaregiver;
 import uy.com.pf.care.model.enums.RoleEnum;
 import uy.com.pf.care.model.globalFunctions.ForceEnumsToFormalCaregivers;
 import uy.com.pf.care.model.globalFunctions.UpdateEntityId;
@@ -44,6 +45,7 @@ public class FormalCaregiverService implements IFormalCaregiverService {
 
     @Override
     public String save(FormalCaregiver formalCaregiver) {
+
         try {
             this.defaultValues(formalCaregiver);
             ForceEnumsToFormalCaregivers.execute(formalCaregiver);
@@ -70,7 +72,7 @@ public class FormalCaregiverService implements IFormalCaregiverService {
         } catch (Exception e) {
             if (newFormalCaregiverId != null)
                 this.physicallyDeleteFormalCaregiver(newFormalCaregiverId);
-            String msg = "*** ERROR GUARDANDO PACIENTE";
+            String msg = "*** ERROR GUARDANDO CUIDADOR FORMAL";
             log.warning(msg + ": " + e.getMessage());
             throw new PatientSaveException(msg);
         }
@@ -204,9 +206,11 @@ public class FormalCaregiverService implements IFormalCaregiverService {
         }
     }
 
-    /*  Si previousScore = -1, implica que no hay un puntaje previo asignado.
-       Si previousScore = [1..5], implica hay un puntaje previo en el ordinal previousScore - 1 y debe restarse.
-       currentScore: es el puntaje que debe sumarse en el ordinal currentScore - 1.
+    /*
+        previousScore y currentScore son ordinales en el array (no son cantidad de votos).
+        Si previousScore = -1, implica que no hay un puntaje previo asignado.
+        Si previousScore = [1..5], implica hay un puntaje previo en el ordinal previousScore - 1 y debe restarse.
+        currentScore: es el puntaje que debe sumarse en el ordinal currentScore - 1.
     */
     private int[] obtainNewVotes(int[] votes, int previousScore, int currentScore){
         if (previousScore != -1)
@@ -220,15 +224,15 @@ public class FormalCaregiverService implements IFormalCaregiverService {
         try{
             if (withoutValidate) {
                 if (includeDeleted)
-                    return formalCaregiverRepo.findByCountryNameAndValidateFalse(countryName);
+                    return formalCaregiverRepo.findByCountryNameAndValidateFalseAndAvailableTrue(countryName);
 
-                return formalCaregiverRepo.findByCountryNameAndValidateFalseAndDeletedFalse(countryName);
+                return formalCaregiverRepo.findByCountryNameAndValidateFalseAndDeletedFalseAndAvailableTrue(countryName);
             }
             // solo los validados
             if (includeDeleted)
-                return formalCaregiverRepo.findByCountryNameAndValidateTrue(countryName);
+                return formalCaregiverRepo.findByCountryNameAndValidateTrueAndAvailableTrue(countryName);
 
-            return formalCaregiverRepo.findByCountryNameAndValidateTrueAndDeletedFalse(countryName);
+            return formalCaregiverRepo.findByCountryNameAndValidateTrueAndDeletedFalseAndAvailableTrue(countryName);
 
         }catch (Exception e){
             String msg = "Error buscando todos los cuidadores formales de " + countryName;
@@ -281,16 +285,16 @@ public class FormalCaregiverService implements IFormalCaregiverService {
         try{
             if (withoutValidate) {
                 if (includeDeleted)
-                    return formalCaregiverRepo.findByCountryNameAndValidateFalseAndNameIgnoreCase(countryName, name);
+                    return formalCaregiverRepo.findByCountryNameAndValidateFalseAndAvailableTrueAndNameIgnoreCase(countryName, name);
 
-                return formalCaregiverRepo.findByCountryNameAndNameIgnoreCaseAndValidateFalseAndDeletedFalse(
+                return formalCaregiverRepo.findByCountryNameAndNameIgnoreCaseAndValidateFalseAndDeletedFalseAndAvailableTrue(
                         countryName, name);
             }
             // solo los validados
             if (includeDeleted)
-                return formalCaregiverRepo.findByCountryNameAndValidateTrueAndNameIgnoreCase(countryName, name);
+                return formalCaregiverRepo.findByCountryNameAndValidateTrueAndAvailableTrueAndNameIgnoreCase(countryName, name);
 
-            return formalCaregiverRepo.findByCountryNameAndNameIgnoreCaseAndValidateTrueAndDeletedFalse(
+            return formalCaregiverRepo.findByCountryNameAndNameIgnoreCaseAndValidateTrueAndAvailableTrueAndDeletedFalse(
                     countryName, name);
 
         }catch(Exception e){
@@ -305,16 +309,16 @@ public class FormalCaregiverService implements IFormalCaregiverService {
         try{
             if (witoutValidate) {
                 if (includeDeleted)
-                    return formalCaregiverRepo.findByCountryNameAndNameLikeIgnoreCaseAndValidateFalse(countryName, name);
+                    return formalCaregiverRepo.findByCountryNameAndNameLikeIgnoreCaseAndValidateFalseAndAvailableTrue(countryName, name);
 
-                return formalCaregiverRepo.findByCountryNameAndNameLikeIgnoreCaseAndValidateFalseAndDeletedFalse(
+                return formalCaregiverRepo.findByCountryNameAndNameLikeIgnoreCaseAndValidateFalseAndDeletedFalseAndAvailableTrue(
                         countryName, name);
             }
             //solo los validados
             if (includeDeleted)
-                return formalCaregiverRepo.findByCountryNameAndNameLikeIgnoreCaseAndValidateTrue(countryName, name);
+                return formalCaregiverRepo.findByCountryNameAndNameLikeIgnoreCaseAndValidateTrueAndAvailableTrue(countryName, name);
 
-            return formalCaregiverRepo.findByCountryNameAndNameLikeIgnoreCaseAndValidateTrueAndDeletedFalse(
+            return formalCaregiverRepo.findByCountryNameAndNameLikeIgnoreCaseAndValidateTrueAndDeletedFalseAndAvailableTrue(
                     countryName, name);
 
         }catch(Exception e){
@@ -336,7 +340,7 @@ public class FormalCaregiverService implements IFormalCaregiverService {
         try{
             RestTemplate restTemplate = new RestTemplate();
             NeighborhoodObject[] neighborhoods = restTemplate.getForEntity(
-                    getUrlNeighborhoods(withoutValidate, includeDeleted, interestCityName, interestDepartmentName, countryName),
+                    getUrlNeighborhoods(includeDeleted, interestCityName, interestDepartmentName, countryName),
                     NeighborhoodObject[].class).getBody();
 
             List<FormalCaregiver> listReturn = new ArrayList<>();
@@ -395,7 +399,7 @@ public class FormalCaregiverService implements IFormalCaregiverService {
 
             if (validateCity)
                 cities = restTemplate.getForEntity(
-                        getUrlCities(withoutValidate, includeDeleted, interestDepartmentName, countryName), String[].class)
+                        getUrlCities(includeDeleted, interestDepartmentName, countryName), String[].class)
                         .getBody();
 
             // Si se desea validar la ciudad, verifico que la ciudad exista
@@ -441,7 +445,7 @@ public class FormalCaregiverService implements IFormalCaregiverService {
 
             if (validateInterestDepartment)
                 departments = restTemplate.
-                        getForEntity(getUrlDepartments(withoutValidate, includeDeleted, countryName), String[].class)
+                        getForEntity(getUrlDepartments(includeDeleted, countryName), String[].class)
                         .getBody();
 
             // Si se desea validar el Departamento de Interes, verifico que el departamento exista
@@ -558,11 +562,10 @@ public class FormalCaregiverService implements IFormalCaregiverService {
     }
 
     private String getUrlNeighborhoods(
-            Boolean withoutValidate, Boolean includeDeleted, String cityName, String departmentName, String countryName) {
+            Boolean includeDeleted, String cityName, String departmentName, String countryName) {
 
         return getStartUrl() +
                 "zones/findNeighborhoods/" +
-                withoutValidate.toString() + "/" +
                 includeDeleted.toString() + "/" +
                 cityName + "/" +
                 departmentName + "/" +
@@ -570,19 +573,17 @@ public class FormalCaregiverService implements IFormalCaregiverService {
     }
 
     //"zones/findCities/false/" + // Se incluyen ciudades que no estén eliminadas
-    private String getUrlCities(Boolean withoutValidate, Boolean includeDeleted, String departmentName, String countryName){
+    private String getUrlCities(Boolean includeDeleted, String departmentName, String countryName){
         return  getStartUrl() +
                 "zones/findCities/" +
-                withoutValidate.toString() + "/" +
                 includeDeleted.toString() + "/" +
                 departmentName + "/" +
                 countryName;
     }
 
-    private String getUrlDepartments(Boolean withoutValidate, Boolean includeDeleted, String countryName){
+    private String getUrlDepartments(Boolean includeDeleted, String countryName){
         return  getStartUrl() +
                 "zones/findDepartments/" +
-                withoutValidate.toString() + "/" +
                 includeDeleted.toString() + "/" +
                 countryName;
     }

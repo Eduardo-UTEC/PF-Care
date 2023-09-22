@@ -1,5 +1,6 @@
 package uy.com.pf.care.model.documents;
 
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -31,8 +32,9 @@ public class User extends LoginObjectRegister {
     @Id
     private String userId;
 
-    @NotNull(message = "User: El usuario debe tener al menos un rol")
-    @NotEmpty(message = "User: El usuario debe tener al menos un rol")
+    //@NotNull(message = "User: El usuario debe tener al menos un rol")
+    //@NotEmpty(message = "User: El usuario debe tener al menos un rol")
+    @Valid
     private List<UserObject> roles;
 
     //Zona donde vive el usuario (si es empresa, es la zona donde está ubicada)
