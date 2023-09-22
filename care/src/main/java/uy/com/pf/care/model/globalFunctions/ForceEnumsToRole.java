@@ -7,9 +7,8 @@ import uy.com.pf.care.model.enums.RoleEnum;
 public class ForceEnumsToRole {
     public static void execute(Role role){
             switch (role.getRoleName()){
-                case WEB_ADMIN -> role.setRoleName(RoleEnum.WEB_ADMIN);
                 case PATIENT -> role.setRoleName(RoleEnum.PATIENT);
-                case REFERRING_CARE -> role.setRoleName(RoleEnum.REFERRING_CARE);
+                case REFERENCE_CARE -> role.setRoleName(RoleEnum.REFERENCE_CARE);
                 case FORMAL_CARE -> role.setRoleName(RoleEnum.FORMAL_CARE);
                 case VOLUNTEER_PERSON -> role.setRoleName(RoleEnum.VOLUNTEER_PERSON);
                 case VOLUNTEER_COMPANY -> role.setRoleName(RoleEnum.VOLUNTEER_COMPANY);

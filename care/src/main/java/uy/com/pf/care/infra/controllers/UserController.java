@@ -39,10 +39,12 @@ public class UserController {
             @PathVariable int roleOrdinal,
             @PathVariable String entityId) {
 
-            try{
+            try {
                 return ResponseEntity.ok(userService.updateEntityIdInRolesList(
                         userId, RoleEnum.values()[roleOrdinal], entityId));
 
+            }catch(UserAlreadyLinkedException e){
+                throw new ResponseStatusException(HttpStatus.CONFLICT, e.getMessage());
             }catch(UserNotFoundException | UserRoleNotFoundException e){
                 throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
             }catch (UserUpdateEntityIdInRolesListException e){

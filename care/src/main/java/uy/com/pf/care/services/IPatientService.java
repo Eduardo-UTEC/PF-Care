@@ -8,6 +8,7 @@ import java.util.Optional;
 public interface IPatientService {
     String save(Patient patient);
     Boolean update(Patient newPatient);
+    List<String> updateReferenceCaregiverOnPatients(List<String> patientsId, String referenceCaregiverId);
     Boolean setValidation(String id, Boolean isValidated);
     Boolean setDeletion(String id, Boolean isDeleted);
     Optional<Patient> findId(String id);

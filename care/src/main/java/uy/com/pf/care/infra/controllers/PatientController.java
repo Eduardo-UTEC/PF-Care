@@ -44,6 +44,22 @@ public class PatientController {
         }
     }
 
+    //Devuelve un lista con los pacientes cuya Id no existe, con lo cual no pudieron actualizarse.
+    @PutMapping("/updateReferenceCaregiver/{referenceCaregiverId}")
+    public ResponseEntity<List<String>> updateReferenceCaregiver(
+            @Valid @NotNull @RequestBody List<String> patientsId,
+            @PathVariable String referenceCaregiverId) {
+
+        try {
+            return ResponseEntity.ok(patientService.updateReferenceCaregiverOnPatients(patientsId, referenceCaregiverId));
+
+        }catch(Exception e){
+            String msg = "*** ERROR ACTUALIZANDO ID'S DE CUIDADORES REFERENTES EN COLECCION PATIENTS";
+            log.warning(msg + ": " + e.getMessage());
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, msg);
+        }
+    }
+
     @GetMapping("findAll/{withoutValidate}/{includeDeleted}/{countryName}")
     public ResponseEntity<List<Patient>> findAll(
             @PathVariable Boolean withoutValidate,

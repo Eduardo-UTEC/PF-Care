@@ -34,15 +34,14 @@ public class Patient extends PersonObject {
     @Id
     private String patientId;
 
-    @NotNull(message = "Patient: El Paciente debe estar vinculado a un Usuario (clave 'userId' no puede ser nula)")
-    @NotEmpty(message = "Patient: El Paciente debe estar vinculado a un Usuario (clave 'userId' no puede ser vacia)")
+    //@NotNull(message = "Patient: El Paciente debe estar vinculado a un Usuario (clave 'userId' no puede ser nula)")
+    //@NotEmpty(message = "Patient: El Paciente debe estar vinculado a un Usuario (clave 'userId' no puede ser vacia)")
     private String userId;
+
+    private String referenceCaregiverId;
 
     @NotNull(message = "Patient: La clave 'zone' no puede ser nula")
     private ZoneObject zone;
-
-    //@NotNull(message = "Patient: La clave 'referenceCaregiver' no puede ser nula")
-    private ReferenceCaregiverObject referenceCaregiver;
 
     //@Valid
     private List<FormalCaregiverOthersObject> formalCaregivers = new ArrayList<>();

@@ -40,7 +40,7 @@ public class ForceEnumsToPatient {
         });
 
         //ReferenceCaregiver.RelatioshipEnum
-        switch (patient.getReferenceCaregiver().getRelationship()){
+        /*switch (patient.getReferenceCaregiver().getRelationship()){
             case NOBODY -> patient.getReferenceCaregiver().setRelationship(RelationshipEnum.NOBODY);
             case FATHER -> patient.getReferenceCaregiver().setRelationship(RelationshipEnum.FATHER);
             case MOTHER -> patient.getReferenceCaregiver().setRelationship(RelationshipEnum.MOTHER);
@@ -58,6 +58,8 @@ public class ForceEnumsToPatient {
             case NEIGHBOR -> patient.getReferenceCaregiver().setRelationship(RelationshipEnum.NEIGHBOR);
             case COWORKER -> patient.getReferenceCaregiver().setRelationship(RelationshipEnum.COWORKER);
         }
+
+
         patient.getReferenceCaregiver().getDayTimeRange().forEach(dayTimeRangeObject -> {
             switch (dayTimeRangeObject.getDay()){
                 case MON -> dayTimeRangeObject.setDay(DaysWeekEnum.MON);
@@ -69,6 +71,7 @@ public class ForceEnumsToPatient {
                 case SUN -> dayTimeRangeObject.setDay(DaysWeekEnum.SUN);
             }
         });
+         */
 
 
     }

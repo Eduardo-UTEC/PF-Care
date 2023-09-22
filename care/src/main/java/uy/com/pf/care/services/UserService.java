@@ -102,6 +102,11 @@ public class UserService implements IUserService{
                 boolean roleExist = false;
                 for (UserObject userObject : user.get().getRoles()) {
                     if (userObject.getRole().getRol().getOrdinal() == roleOrdinal.getOrdinal()) {
+                        if (userObject.getEntityId() != null){
+                            String msg = "El usuario ya está vinculado a un " + userObject.getRole().getRol().getName();
+                            log.warning(msg);
+                            throw new UserAlreadyLinkedException(msg);
+                        }
                         userObject.setEntityId(entityId);
                         roleExist = true;
                         break;

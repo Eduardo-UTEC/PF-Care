@@ -12,6 +12,7 @@ import uy.com.pf.care.model.enums.RoleEnum;
 import uy.com.pf.care.model.globalFunctions.ForceEnumsToPatient;
 import uy.com.pf.care.model.globalFunctions.UpdateEntityId;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -26,6 +27,9 @@ public class PatientService implements IPatientService{
 
     @Override
     public String save(Patient patient) {
+
+        //Valido keys necesarias para el Save del nuevo paciente
+        this.saveValidate(patient);
 
         //Se define aqui para controlar la excepcion, estableciendo si se debe eliminar el Paciente
         String newPatientId = null;
@@ -84,6 +88,22 @@ public class PatientService implements IPatientService{
             log.warning(msg +  ": " + e.getMessage());
             throw new PatientUpdateException(msg);
         }
+    }
+
+    //Devuelve un lista con los pacientes cuya Id no existe, con lo cual no pudieron actualizarse.
+    @Override
+    public List<String> updateReferenceCaregiverOnPatients(List<String> patientsId, String referenceCaregiverId) {
+
+        List<String> ret = new ArrayList<>();
+        for (String patientId : patientsId){
+            Optional<Patient> patient = patientRepo.findById(patientId);
+            if (patient.isPresent()) {
+                patient.get().setReferenceCaregiverId(referenceCaregiverId);
+                patientRepo.save(patient.get());
+            }else
+                ret.add(patientId);
+        }
+        return ret;
     }
 
     @Override
@@ -297,6 +317,16 @@ public class PatientService implements IPatientService{
                     "Alternativamente, puede eliminar el documento del paciente e ingresarlo nuevamente. ");
             throw new PatientPhysicallyDeleteException(
                     "No se pudo eliminar el paciente con Id: " + id);
+        }
+    }
+
+    //Valida las key requeridas para guardar un nuevo Cuidador Referente
+    private void saveValidate(Patient patient){
+        String msg;
+        if (patient.getUserId() == null || patient.getUserId().isBlank()){
+            msg = "El Paciente debe estar vinculado a un Usuario (clave 'userId' no puede ser nula ni vacia)";
+            log.warning(msg);
+            throw new PatientUserIdOmittedException(msg);
         }
     }
 
