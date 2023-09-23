@@ -14,7 +14,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import uy.com.pf.care.model.enums.RoleEnum;
 
 import java.util.List;
-
+/*
 @CompoundIndexes({
     @CompoundIndex(
         def = "{'countryName':1, 'departmentName':1, 'roleName':1}",
@@ -46,3 +46,6 @@ public class Role {
     private String countryName;
 
 }
+
+
+ */

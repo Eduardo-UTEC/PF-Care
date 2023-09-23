@@ -2,8 +2,10 @@ package uy.com.pf.care.services;
 
 import lombok.extern.java.Log;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 import uy.com.pf.care.exceptions.*;
+import uy.com.pf.care.model.documents.Patient;
 import uy.com.pf.care.model.documents.Video;
 import uy.com.pf.care.infra.repos.IVideoRepo;
 import uy.com.pf.care.model.objects.VideoObject;
@@ -21,10 +23,18 @@ public class VideoService implements IVideoService{
 
     @Override
     public String save(Video video) {
-        try{
+
+        this.saveValidate(video);
+
+        try {
             String id = videoRepo.save(video).getVideoId();
             log.info("*** Video guardado con exito");
             return id;
+
+        }catch(DuplicateKeyException e){
+            String msg = "Error guardando nuevo video (clave duplicada)";
+            log.warning(msg + ": " + e.getMessage());
+            throw new VideoDuplicateKeyException(msg);
 
         }catch(Exception e){
             String msg = "*** ERROR GUARDANDO VIDEO";
@@ -38,6 +48,7 @@ public class VideoService implements IVideoService{
         try {
             Optional<Video> entityFound = videoRepo.findById(newVideo.getVideoId());
             if (entityFound.isPresent()) {
+                this.defaultValues(newVideo, entityFound.get());
                 videoRepo.save(newVideo);
                 log.info("Video actualizado con exito");
                 return true;
@@ -108,4 +119,19 @@ public class VideoService implements IVideoService{
     private VideoObject toVideoObject(Video video){
         return new VideoObject(video.getVideoId(), video.getDescription(), video.getUrl());
     }
+
+    private void saveValidate(Video video){
+        if (video.getOrdinalRoles().isEmpty()){
+            String msg = "El video debe tener un rol asignado";
+            log.warning(msg);
+            throw new VideoWithoutRoleException(msg);
+        }
+
+    }
+
+    // Asigna los valores a la nueva entitdad, tomados de la vieja entidad (de la persistida)
+    private void defaultValues(Video newVideo, Video oldVideo){
+        newVideo.setOrdinalRoles(oldVideo.getOrdinalRoles());
+    }
+
 }

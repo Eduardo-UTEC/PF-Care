@@ -1,5 +1,5 @@
 package uy.com.pf.care.model.globalFunctions;
-
+/*
 import uy.com.pf.care.model.documents.Role;
 import uy.com.pf.care.model.enums.RoleEnum;
 
@@ -16,3 +16,4 @@ public class ForceEnumsToRole {
     }
 }
 
+*/

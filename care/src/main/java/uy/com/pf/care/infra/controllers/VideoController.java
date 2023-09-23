@@ -26,9 +26,11 @@ public class VideoController {
 
     @PostMapping("/add")
     public ResponseEntity<String> add(@Valid @NotNull @RequestBody Video video){
-        try{
+        try {
             return ResponseEntity.ok(videoService.save(video));
 
+        }catch (VideoWithoutRoleException | VideoDuplicateKeyException e) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, e.getMessage());
         }catch (VideoSaveException e){
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
         }

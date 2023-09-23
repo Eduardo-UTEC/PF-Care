@@ -6,7 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import uy.com.pf.care.model.enums.RoleEnum;
-
+/*
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -19,3 +19,5 @@ public class RoleObject {
     @NotNull(message = "RoleObject: La clave 'rolName' no puede ser nula")
     private RoleEnum rol;
 }
+
+ */
