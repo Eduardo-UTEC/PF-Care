@@ -5,15 +5,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 import uy.com.pf.care.exceptions.*;
-import uy.com.pf.care.model.documents.Patient;
 import uy.com.pf.care.model.documents.Video;
 import uy.com.pf.care.infra.repos.IVideoRepo;
+import uy.com.pf.care.model.enums.RoleEnum;
 import uy.com.pf.care.model.objects.VideoObject;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @Service
 @Log
@@ -62,6 +64,122 @@ public class VideoService implements IVideoService{
             String msg = "*** ERROR ACTUALIZANDO VIDEO";
             log.warning(msg + ": " + e.getMessage());
             throw new VideoUpdateException(msg);
+        }
+    }
+
+    @Override
+    public Boolean addRoles(String videoId, List<RoleEnum> ordinalRoles) {
+        try {
+            Optional<Video> found = videoRepo.findById(videoId);
+            if (found.isPresent()) {
+                AtomicInteger count = new AtomicInteger(0);
+                ordinalRoles.forEach(roleEnum -> {
+                    if (!found.get().getOrdinalRoles().contains(roleEnum.getOrdinal())) {
+                        found.get().getOrdinalRoles().add((roleEnum.getOrdinal()));
+                        count.incrementAndGet();
+                    }
+                });
+                if (count.get() > 0) {
+                    videoRepo.save(found.get());
+                    log.warning( count.get() == ordinalRoles.size() ?
+                            "Roles agregados exitosamente al video." :
+                            "Roles agregados correctamente (hubo " + (ordinalRoles.size() - count.get()) +
+                                    " roles que ya estaban asignados)");
+                    return true;
+                }else{
+                    log.warning("Los roles ya estaban asignados al video.");
+                    return false;
+                }
+            }
+            String msg = "No se encontro el video con id " + videoId;
+            log.warning(msg);
+            throw new VideoNotFoundException((msg));
+
+        }catch (VideoNotFoundException e){
+            throw new VideoNotFoundException(e.getMessage());
+        }catch (Exception e){
+            String msg = "*** ERROR AGREGANDO ROLES AL VIDEO";
+            log.warning(msg + ": " +e.getMessage());
+            throw new VideoAddRolesException(msg);
+        }
+
+    }
+
+    @Override
+    public Boolean changeRole(String videoId, RoleEnum oldOrdinalRole, RoleEnum newOrdinalRole) {
+        try {
+            Optional<Video> found = videoRepo.findById(videoId);
+            if (found.isPresent()) {
+                if (found.get().getOrdinalRoles().contains(newOrdinalRole.getOrdinal())) {
+                    String msg = "El video ya tiene asignado el rol '" + newOrdinalRole.getName() +"'";
+                    log.warning(msg);
+                    throw new VideoRoleAlreadyLinkedException(msg);
+                }
+                int index = found.get().getOrdinalRoles().indexOf(oldOrdinalRole.getOrdinal());
+                if (index >= 0) {
+                    found.get().getOrdinalRoles().set(index, newOrdinalRole.getOrdinal());
+                    videoRepo.save(found.get());
+                    log.warning("Rol cambiado con exito.");
+                    return true;
+                }
+                String msg = "El rol que se pretende cambiar (" + oldOrdinalRole.getName() + ")" +
+                        " no esta asignado al video " + videoId;
+                log.warning(msg);
+                throw new VideoRolNotLinkedException(msg);
+            }
+            String msg = "Video no encontrado";
+            log.warning(msg);
+            throw new VideoNotFoundException(msg);
+
+        }catch(VideoRoleAlreadyLinkedException e){
+            throw new VideoRoleAlreadyLinkedException(e.getMessage());
+        }catch(VideoRolNotLinkedException e){
+            throw new VideoRolNotLinkedException(e.getMessage());
+        }catch(VideoNotFoundException e){
+            throw new VideoNotFoundException(e.getMessage());
+        }catch (Exception e){
+            String msg = "*** ERROR CAMBIANDO EL ROL DEL VIDEO";
+            log.warning(msg + ": " + e.getMessage());
+            throw new VideoChangeRoleException(msg);
+        }
+    }
+
+    @Override
+    public Boolean delRoles(String videoId, List<RoleEnum> ordinalRoles) {
+        try {
+            Optional<Video> found = videoRepo.findById(videoId);
+            if (found.isPresent()) {
+                int sizeRoles = found.get().getOrdinalRoles().size();
+                ordinalRoles.forEach(roleEnum -> {
+                    found.get().getOrdinalRoles().removeIf(savedRolOrdinal ->
+                            Objects.equals(savedRolOrdinal, roleEnum.getOrdinal()));
+
+                });
+
+                int erased = sizeRoles - found.get().getOrdinalRoles().size();
+                if (erased == 0){
+                    log.warning("Los roles proporcionados no pertenecen al video.");
+                    return false;
+                }
+
+                videoRepo.save(found.get());
+                if (erased == ordinalRoles.size())
+                    log.warning("Los roles fueron eliminados del video.");
+                else
+                    log.warning(erased + " roles eliminaodos del video (" + (ordinalRoles.size() - erased) +
+                            " roles no pertenecían al video)");
+                return true;
+            }
+            String msg = "Video no encontrado";
+            log.warning(msg);
+            throw new VideoNotFoundException(msg);
+
+        } catch (VideoNotFoundException e) {
+            throw new VideoNotFoundException(e.getMessage());
+        } catch (Exception e) {
+            String msg = "*** ERROR BORRANDO ROLES DEL VIDEO";
+            log.warning(msg + ": " + e.getMessage());
+            throw new VideoDelRoleException(msg);
         }
     }
 
