@@ -2,7 +2,6 @@ package uy.com.pf.care.infra.controllers;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
-import lombok.Builder;
 import lombok.extern.java.Log;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -83,7 +82,7 @@ public class VideoController {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
         }
     }
-    @PutMapping("/delRole/{videoId}")
+    @PutMapping("/delRoles/{videoId}")
     public ResponseEntity<Boolean> delRole(
             @PathVariable String videoId,
             @Valid @NotNull @RequestBody List<RoleEnum> ordinalRoles){

@@ -1,7 +1,5 @@
 package uy.com.pf.care.services;
 
-import uy.com.pf.care.model.documents.Residential;
-import uy.com.pf.care.model.documents.Video;
 import uy.com.pf.care.model.documents.VolunteerActivity;
 
 import java.util.List;

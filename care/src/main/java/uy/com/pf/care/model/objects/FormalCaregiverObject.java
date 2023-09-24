@@ -2,7 +2,8 @@ package uy.com.pf.care.model.objects;
 
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PositiveOrZero;
-import lombok.*;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 import uy.com.pf.care.model.enums.FormalCaregiversEnum;
 
 @Data

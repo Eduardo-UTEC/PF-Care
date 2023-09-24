@@ -1,7 +1,6 @@
 package uy.com.pf.care.services;
 
 import com.mongodb.client.result.UpdateResult;
-
 import lombok.extern.java.Log;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
@@ -14,10 +13,9 @@ import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 import uy.com.pf.care.exceptions.*;
 import uy.com.pf.care.infra.config.ParamConfig;
-import uy.com.pf.care.model.documents.FormalCaregiverScore;
 import uy.com.pf.care.infra.repos.IFormalCaregiverScoreRepo;
+import uy.com.pf.care.model.documents.FormalCaregiverScore;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 

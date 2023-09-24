@@ -10,9 +10,7 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.CompoundIndex;
-import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
-import uy.com.pf.care.model.objects.ZoneObject;
 
 @Document("VolunteerActivities")
 @CompoundIndex(def = "{'countryName':1, 'departmentName':1, 'name':1}", unique = true)

@@ -1,7 +1,6 @@
 package uy.com.pf.care.model.globalFunctions;
 
 import uy.com.pf.care.model.documents.Patient;
-import uy.com.pf.care.model.enums.DaysWeekEnum;
 import uy.com.pf.care.model.enums.PersonGenderEnum;
 import uy.com.pf.care.model.enums.RelationshipEnum;
 

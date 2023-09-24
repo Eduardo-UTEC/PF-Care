@@ -5,8 +5,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 import uy.com.pf.care.exceptions.*;
-import uy.com.pf.care.model.documents.Video;
 import uy.com.pf.care.infra.repos.IVideoRepo;
+import uy.com.pf.care.model.documents.Video;
 import uy.com.pf.care.model.enums.RoleEnum;
 import uy.com.pf.care.model.objects.VideoObject;
 
@@ -14,7 +14,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @Service

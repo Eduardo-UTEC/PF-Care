@@ -13,14 +13,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import uy.com.pf.care.exceptions.*;
 import uy.com.pf.care.infra.config.ParamConfig;
+import uy.com.pf.care.infra.repos.IFormalCaregiverRepo;
 import uy.com.pf.care.model.documents.FormalCaregiver;
-import uy.com.pf.care.model.documents.ReferenceCaregiver;
 import uy.com.pf.care.model.enums.RoleEnum;
 import uy.com.pf.care.model.globalFunctions.ForceEnumsToFormalCaregivers;
 import uy.com.pf.care.model.globalFunctions.UpdateEntityId;
 import uy.com.pf.care.model.objects.DayTimeRangeObject;
 import uy.com.pf.care.model.objects.NeighborhoodObject;
-import uy.com.pf.care.infra.repos.IFormalCaregiverRepo;
 
 import java.util.ArrayList;
 import java.util.Arrays;

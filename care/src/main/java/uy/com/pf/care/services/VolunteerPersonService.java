@@ -9,22 +9,16 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import uy.com.pf.care.exceptions.*;
 import uy.com.pf.care.infra.config.ParamConfig;
-import uy.com.pf.care.model.documents.Video;
+import uy.com.pf.care.infra.repos.IVolunteerPersonRepo;
 import uy.com.pf.care.model.documents.VolunteerPerson;
 import uy.com.pf.care.model.enums.RoleEnum;
 import uy.com.pf.care.model.globalFunctions.ForceEnumsToVolunteerPerson;
 import uy.com.pf.care.model.globalFunctions.UpdateEntityId;
 import uy.com.pf.care.model.objects.DayTimeRangeObject;
 import uy.com.pf.care.model.objects.NeighborhoodObject;
-import uy.com.pf.care.infra.repos.IVolunteerPersonRepo;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Service
 @Log
@@ -184,7 +178,39 @@ public class VolunteerPersonService implements IVolunteerPersonService{
 
     @Override
     public Boolean delVolunteerActivitiesId(String volunteerPersonId, List<String> volunteerActivitiesId) {
-        return null;
+        if (volunteerActivitiesId.isEmpty()) return false;
+        try {
+            Optional<VolunteerPerson> found = volunteerPersonRepo.findById(volunteerPersonId);
+            if (found.isPresent()) {
+                int sizeVolunteerActivitiesId = found.get().getVolunteerActivitiesId().size();
+                volunteerActivitiesId.forEach(activityId -> {
+                    found.get().getVolunteerActivitiesId().removeIf(savedActivityOrdinal ->
+                            Objects.equals(savedActivityOrdinal, activityId));
+                });
+                int erased = sizeVolunteerActivitiesId - found.get().getVolunteerActivitiesId().size();
+                if (erased == 0){
+                    log.warning("Las actividades proporcionadas no pertenecen al Voluntario.");
+                    return false;
+                }
+                volunteerPersonRepo.save(found.get());
+                if (erased == volunteerActivitiesId.size())
+                    log.warning("Las actividades fueron eliminadas del Voluntario.");
+                else
+                    log.warning(erased + " actividades eliminadas del Voluntario (" +
+                            (volunteerActivitiesId.size() - erased) + " actividades no pertenecían al Voluntario)");
+                return true;
+            }
+            String msg = "Voluntario no encontrado";
+            log.warning(msg);
+            throw new VolunteerPersonNotFoundException(msg);
+
+        } catch (VolunteerPersonNotFoundException e) {
+            throw new VolunteerPersonNotFoundException(e.getMessage());
+        } catch (Exception e) {
+            String msg = "*** ERROR BORRANDO ACTIVIDADES DEL VOLUNTARIO";
+            log.warning(msg + ": " + e.getMessage());
+            throw new VolunteerPersonDelActivitiesException(msg);
+        }
     }
 
     @Override

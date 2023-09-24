@@ -1,7 +1,9 @@
 package uy.com.pf.care.model.documents;
 
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.*;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import jdk.jfr.BooleanFlag;
 import lombok.*;
 import org.springframework.data.annotation.Id;
@@ -12,7 +14,8 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import uy.com.pf.care.model.objects.FormalCaregiverObject;
 import uy.com.pf.care.model.objects.InterestZonesObject;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Document("FormalCaregivers")
 @CompoundIndexes({

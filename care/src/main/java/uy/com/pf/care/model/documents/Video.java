@@ -3,10 +3,7 @@ package uy.com.pf.care.model.documents;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.CompoundIndex;
 import org.springframework.data.mongodb.core.index.CompoundIndexes;
@@ -16,14 +13,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Document("Videos")
-
 @CompoundIndexes({
     @CompoundIndex(def = "{'countryName':1, 'departmentName':1, 'url':1}", unique = true)
 })
 @Data
+@EqualsAndHashCode(callSuper=false)
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
+@Builder()
 public class Video {
 
     @Id
@@ -49,4 +46,5 @@ public class Video {
     @NotEmpty(message = "Video: El pais no puede ser vacio")
     @Size(max = 15 , message = "Video: El pais no puede exceder los 15 caracteres")
     private String countryName;
+
 }

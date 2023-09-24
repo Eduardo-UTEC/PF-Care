@@ -8,7 +8,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
-import uy.com.pf.care.exceptions.*;
+import uy.com.pf.care.exceptions.PatientNotFoundException;
+import uy.com.pf.care.exceptions.PatientSaveException;
+import uy.com.pf.care.exceptions.PatientUpdateException;
+import uy.com.pf.care.exceptions.UserUpdateEntityIdInRolesListException;
 import uy.com.pf.care.model.documents.Patient;
 import uy.com.pf.care.services.IPatientService;
 
@@ -71,7 +74,7 @@ public class PatientController {
 
         }catch(Exception e) {
             String msg = "Error buscando todos los pacientes de " + countryName;
-            log.warning(msg);
+            log.warning(msg + ": " + e.getMessage());
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, msg);
         }
     }

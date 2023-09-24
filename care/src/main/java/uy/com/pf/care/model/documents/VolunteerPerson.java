@@ -11,7 +11,9 @@ import org.springframework.data.mongodb.core.index.CompoundIndex;
 import org.springframework.data.mongodb.core.index.CompoundIndexes;
 import org.springframework.data.mongodb.core.mapping.Document;
 import uy.com.pf.care.model.enums.ContactMethodsEnum;
-import uy.com.pf.care.model.objects.*;
+import uy.com.pf.care.model.objects.DayTimeRangeObject;
+import uy.com.pf.care.model.objects.InterestZonesObject;
+import uy.com.pf.care.model.objects.PersonObject;
 
 import java.util.ArrayList;
 import java.util.List;

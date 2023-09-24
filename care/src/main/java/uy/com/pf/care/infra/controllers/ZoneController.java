@@ -10,10 +10,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import uy.com.pf.care.exceptions.FormalCaregiverUpdateException;
 import uy.com.pf.care.exceptions.ZoneSaveException;
-import uy.com.pf.care.model.documents.Residential;
 import uy.com.pf.care.model.documents.Zone;
 import uy.com.pf.care.model.objects.NeighborhoodObject;
-import uy.com.pf.care.model.objects.ZoneIdObject;
 import uy.com.pf.care.services.IZoneService;
 
 import java.util.List;

@@ -84,6 +84,20 @@ public class VolunteerPersonController {
         }
     }
 
+    @PutMapping("/delActivities/{volunteerPersonId}")
+    public ResponseEntity<Boolean> delActivitiesId(
+            @PathVariable String volunteerPersonId,
+            @Valid @NotNull @RequestBody List<String> volunteerActivitiesId){
+        try {
+            return ResponseEntity.ok(volunteerPersonService.delVolunteerActivitiesId(
+                    volunteerPersonId, volunteerActivitiesId));
+
+        }catch (VolunteerPersonNotFoundException e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+        }catch(VolunteerPersonDelActivitiesException e){
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
+        }
+    }
 
     @GetMapping("findAll/{withoutValidate}/{includeDeleted}/{countryName}")
     public ResponseEntity<List<VolunteerPerson>> findAll(

@@ -1,6 +1,5 @@
 package uy.com.pf.care.model.documents;
 
-import jakarta.validation.constraints.NotNull;
 import jdk.jfr.BooleanFlag;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -10,7 +9,6 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.CompoundIndex;
 import org.springframework.data.mongodb.core.index.CompoundIndexes;
 import org.springframework.data.mongodb.core.mapping.Document;
-import org.springframework.validation.annotation.Validated;
 import uy.com.pf.care.model.objects.ZoneObject;
 
 @Document("Zones")

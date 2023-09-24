@@ -1,7 +1,5 @@
 package uy.com.pf.care.model.documents;
 
-import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jdk.jfr.BooleanFlag;
 import lombok.AllArgsConstructor;
@@ -49,13 +47,16 @@ public class Patient extends PersonObject {
     private List<InformalCaregiverObject> informalCaregivers = new ArrayList<>();
 
     //@NotNull(message = "Patient: La clave 'healthProvider' no puede ser nula")
-    private HealthProviderObject healthProvider;
+    //private HealthProviderObject healthProvider;
+    private String healthProviderId;
 
     //@NotNull(message = "Patient: La clave 'emergencyService' no puede ser nula")
-    private EmergencyServiceObject emergencyService;
+    //private EmergencyServiceObject emergencyService;
+    private String emergencyServiceId;
 
     //@NotNull(message = "Patient: La clave 'residential' no puede ser nula")
-    private ResidentialObject residential;
+    //private ResidentialObject residential;
+    private String residentialId;
 
     @BooleanFlag
     private Boolean validate;

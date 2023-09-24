@@ -8,10 +8,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
-import uy.com.pf.care.exceptions.*;
-import uy.com.pf.care.model.documents.Patient;
+import uy.com.pf.care.exceptions.ResidentialNotFoundException;
+import uy.com.pf.care.exceptions.ResidentialSaveException;
+import uy.com.pf.care.exceptions.ResidentialSetDeletionException;
+import uy.com.pf.care.exceptions.ResidentialUpdateException;
 import uy.com.pf.care.model.documents.Residential;
-import uy.com.pf.care.model.objects.ResidentialIdObject;
 import uy.com.pf.care.services.IResidentialService;
 
 import java.util.List;

@@ -1,7 +1,6 @@
 package uy.com.pf.care.services;
 
 import uy.com.pf.care.model.documents.VolunteerPerson;
-import uy.com.pf.care.model.enums.RoleEnum;
 import uy.com.pf.care.model.objects.DayTimeRangeObject;
 
 import java.util.List;

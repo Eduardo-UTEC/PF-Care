@@ -1,15 +1,11 @@
 package uy.com.pf.care.model.objects;
 
-import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.validation.annotation.Validated;
-
-import java.io.Serializable;
 
 @Data
 @AllArgsConstructor

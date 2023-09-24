@@ -7,8 +7,8 @@ import uy.com.pf.care.exceptions.ResidentialNotFoundException;
 import uy.com.pf.care.exceptions.ResidentialSaveException;
 import uy.com.pf.care.exceptions.ResidentialSetDeletionException;
 import uy.com.pf.care.exceptions.ResidentialUpdateException;
-import uy.com.pf.care.model.documents.Residential;
 import uy.com.pf.care.infra.repos.IResidentialRepo;
+import uy.com.pf.care.model.documents.Residential;
 
 import java.time.LocalDateTime;
 import java.util.List;

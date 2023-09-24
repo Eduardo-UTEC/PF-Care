@@ -1,13 +1,9 @@
 package uy.com.pf.care.model.globalFunctions;
 
-import jakarta.validation.constraints.NotNull;
 import uy.com.pf.care.model.documents.VolunteerPerson;
 import uy.com.pf.care.model.enums.ContactMethodsEnum;
 import uy.com.pf.care.model.enums.DaysWeekEnum;
 import uy.com.pf.care.model.enums.PersonGenderEnum;
-import uy.com.pf.care.model.objects.DayTimeRangeObject;
-
-import java.util.List;
 
 public class ForceEnumsToVolunteerPerson {
 

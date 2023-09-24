@@ -1,8 +1,7 @@
 package uy.com.pf.care.model.enums;
 
-import com.fasterxml.jackson.annotation.JsonEnumDefaultValue;
-import jakarta.validation.constraints.NotNull;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 
 @AllArgsConstructor
 @Getter
