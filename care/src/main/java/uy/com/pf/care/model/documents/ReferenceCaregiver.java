@@ -22,8 +22,12 @@ import java.util.List;
 @Document("ReferenceCaregivers")
 @CompoundIndexes({
         @CompoundIndex(def = "{'identificationDocument':1, 'zone.countryName':1}", unique = true),
-        @CompoundIndex(
-                def = "{'zone.countryName':1, 'zone.departmentName':1, 'zone.cityName':1, 'zone.neighborhoodName':1, 'name1':1}")
+        @CompoundIndex(def =
+                "{'zone.countryName':1, " +
+                "'zone.departmentName':1, " +
+                "'zone.cityName':1, " +
+                "'zone.neighborhoodName':1, " +
+                "'name1':1}")
 })
 @EqualsAndHashCode(callSuper = true)
 @Data

@@ -16,7 +16,7 @@ public class PersonObject {
 
     @NotNull(message = "PersonObject: La clave 'name1' no puede ser nula")
     @NotEmpty(message = "PersonObject: La clave 'name1' no puede ser vacía")
-    @Size(max = 15, message = "PersonObject: La clave 'name1' no puede exceder los 15 caracteres")
+    @Size(max = 30, message = "PersonObject: La clave 'name1' no puede exceder los 30 caracteres")
     private String name1;
 
 //    @NotNull(message = "PersonObject: La clave 'name2' no puede ser nula")
@@ -25,7 +25,7 @@ public class PersonObject {
 
     @NotNull(message = "PersonObject: La clave 'surname1' no puede ser nula")
     @NotEmpty(message = "PersonObject: La clave 'surname1' no puede ser vacía")
-    @Size(max = 15, message = "PersonObject: La clave 'surname1' no puede exceder los 15 caracteres")
+    @Size(max = 30, message = "PersonObject: La clave 'surname1' no puede exceder los 30 caracteres")
     private String surname1;
 
 //    @NotNull(message = "PersonObject: La clave 'surname2' no puede ser nula")
@@ -40,12 +40,12 @@ public class PersonObject {
 
     @NotNull(message = "PersonObject: La clave 'telephone' no puede ser nula")
     @NotEmpty(message = "PersonObject: La clave 'telephone' no puede ser vacía")
-    @Size(min = 7, max = 20, message = "PersonObject: La clave 'telephone' debe contener entre 7 y 20 caracteres")
+    @Size(min = 7, max = 30, message = "PersonObject: La clave 'telephone' debe contener entre 7 y 30 caracteres")
     private String  telephone;
 
     //@NotNull(message = "PersonObject: La clave 'mail' no puede ser nula")
     //@NotEmpty(message = "PersonObject: La clave 'mail' no puede ser vacía")
-    @Size(max = 60, message = "PersonObject: La clave 'mail' no puede exceder los 60 caracteres")
+    @Size(max = 80, message = "PersonObject: La clave 'mail' no puede exceder los 80 caracteres")
     private String mail;
 
     @NotNull(message = "PersonObject: La clave 'identificationDocument' no puede ser nula")

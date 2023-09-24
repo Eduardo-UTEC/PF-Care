@@ -1,6 +1,7 @@
 package uy.com.pf.care.services;
 
 import uy.com.pf.care.model.documents.VolunteerPerson;
+import uy.com.pf.care.model.enums.RoleEnum;
 import uy.com.pf.care.model.objects.DayTimeRangeObject;
 
 import java.util.List;
@@ -10,6 +11,12 @@ public interface IVolunteerPersonService {
 
     String save(VolunteerPerson volunteerPerson);
     Boolean update(VolunteerPerson newVolunteerPerson);
+    Boolean addVolunteerActivitiesId(String volunteerPersonId, List<String> volunteerActivitiesId);
+    Boolean changeVolunteerActivityId(String volunteerPersonId, String oldVolunteerActivityId, String newVolunteerActivityId);
+    Boolean delVolunteerActivitiesId(String volunteerPersonId, List<String> volunteerActivitiesId);
+    Boolean setAvailability(String id, Boolean isAvailable);
+    Boolean setValidation(String id, Boolean isValidated);
+    Boolean setDeletion(String id, Boolean isDeleted);
     Optional<VolunteerPerson> findId(String id);
     VolunteerPerson findIdentificationNumber(String identificationDocument, String countryName);
     List<VolunteerPerson> findAll(Boolean withoutValidate, Boolean includeDeleted, String countryName);
@@ -46,9 +53,5 @@ public interface IVolunteerPersonService {
             String interestCityName,
             String interestDepartmentName,
             String countryName);
-
-    Boolean setAvailability(String id, Boolean isAvailable);
-    Boolean setValidation(String id, Boolean isValidated);
-    Boolean setDeletion(String id, Boolean isDeleted);
 
 }

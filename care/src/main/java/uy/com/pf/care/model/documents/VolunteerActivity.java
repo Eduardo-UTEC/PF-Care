@@ -14,11 +14,8 @@ import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 import uy.com.pf.care.model.objects.ZoneObject;
 
-@CompoundIndex(
-        def = "{'countryName':1, 'departmentName':1, 'name':1}",
-        unique = true
-)
 @Document("VolunteerActivities")
+@CompoundIndex(def = "{'countryName':1, 'departmentName':1, 'name':1}", unique = true)
 
 @Data
 @EqualsAndHashCode(callSuper=false)
@@ -40,7 +37,6 @@ public class VolunteerActivity{
             "VolunteerActivity: La descripcion de la actividad del voluntario no puede exceder los 100 caracteres")
     private String description;
 
-    @NotNull(message = "VolunteerActivity: La propiedad 'deleted' de la actividad del voluntario no puede ser nula")
     @BooleanFlag
     private Boolean deleted;
 

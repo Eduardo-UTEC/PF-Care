@@ -50,6 +50,40 @@ public class VolunteerPersonController {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
         }
     }
+    @PutMapping("/addActivities/{volunteerPersonId}")
+    public ResponseEntity<Boolean> addVolunteerActivitiesId(
+            @PathVariable String volunteerPersonId,
+            @Valid @NotNull @RequestBody List<String> volunteerActivitiesId){
+        try {
+            return ResponseEntity.ok(volunteerPersonService.addVolunteerActivitiesId(
+                    volunteerPersonId, volunteerActivitiesId));
+
+        }catch (VolunteerPersonNotFoundException e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+        }catch(VolunteerPersonAddVolunteerActivitiesIdException e){
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
+        }
+    }
+
+    @PutMapping("/changeActivity/{volunteerPersonId}/{oldVolunteerActivityId}/{newVolunteerActivityId}")
+    public ResponseEntity<Boolean> changeActivity(
+            @PathVariable String volunteerPersonId,
+            @PathVariable String oldVolunteerActivityId,
+            @PathVariable String newVolunteerActivityId) {
+
+        try {
+            return ResponseEntity.ok(volunteerPersonService.changeVolunteerActivityId(
+                    volunteerPersonId, oldVolunteerActivityId, newVolunteerActivityId));
+
+        }catch (VolunteerPersonActivityAlreadyLinkedException | VolunteerPersonActivityNotLinkedException e) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, e.getMessage());
+        }catch (VolunteerPersonNotFoundException e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+        }catch(VolunteerPersonChangeActivityException e){
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
+        }
+    }
+
 
     @GetMapping("findAll/{withoutValidate}/{includeDeleted}/{countryName}")
     public ResponseEntity<List<VolunteerPerson>> findAll(
@@ -212,8 +246,8 @@ public class VolunteerPersonController {
 
         try{
             return ResponseEntity.ok(volunteerPersonService.findInterestZones_City(
-                    withoutValidate,
                     true,
+                    withoutValidate,
                     includeDeleted,
                     interestCityName,
                     interestDepartmentName,

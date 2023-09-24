@@ -19,7 +19,7 @@ import java.util.*;
         @CompoundIndex(def = "{'mail':1}", unique = true),
         //@CompoundIndex(def = "{'countryName':1, 'name':1, 'telephone':1}", unique = true),
         @CompoundIndex(def = "{'telephone':1}", unique = true),
-        @CompoundIndex(def = "{'countryName':1, 'name':1}", unique = false)
+        @CompoundIndex(def = "{'countryName':1, 'name':1}")
 })
 @Data
 @AllArgsConstructor
@@ -40,13 +40,13 @@ public class FormalCaregiver extends FormalCaregiverObject {
 
     @NotNull(message = "FormalCaregiver: El telefono del Cuidador Formal no puede ser nulo")
     @NotEmpty(message = "FormalCaregiver: El telefono del Cuidador Formal no puede ser vacío")
-    @Size(min = 7, max = 20,
-            message = "FormalCaregiver: El telefono del Cuidador Formal debe contener entre 7 y 20 caracteres")
+    @Size(min = 7, max = 30,
+            message = "FormalCaregiver: El telefono del Cuidador Formal debe contener entre 7 y 30 caracteres")
     private String telephone;
 
     @NotNull(message = "FormalCaregiver: El mail del Cuidador Formal no puede ser nulo")
     @NotEmpty(message = "FormalCaregiver: El mail del Cuidador Formal no puede ser vacío")
-    @Size(max = 50, message = "FormalCaregiver: El mail del Cuidador Formal no puede exceder los 50 caracteres")
+    @Size(max = 80, message = "FormalCaregiver: El mail del Cuidador Formal no puede exceder los 80 caracteres")
     private String mail;
 
     @NotNull(message = "FormalCaregiver: La propiedad 'comments' del Cuidador Formal no puede ser nula")

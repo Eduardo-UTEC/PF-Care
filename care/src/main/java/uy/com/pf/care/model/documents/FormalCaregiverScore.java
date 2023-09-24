@@ -20,13 +20,13 @@ import java.time.LocalDate;
 @Document("FormalCaregiversScores")
 @CompoundIndexes({
         @CompoundIndex(def = "{'formalCaregiverId': 1, 'patientId': 1}", unique = true),
-        @CompoundIndex(def = "{'formalCaregiverId': 1, 'date': -1}", unique = false)
+        @CompoundIndex(def = "{'formalCaregiverId': 1, 'date': -1}")
 })
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper=false)
-public class FormalCaregiverScore { //extends ScoreObject { // **** Eliminar ScoreObject si no es necesaria *****
+public class FormalCaregiverScore {
 
     @Id
     private String formalCaregiverScoreId;

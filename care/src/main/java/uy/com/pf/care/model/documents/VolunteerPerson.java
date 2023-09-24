@@ -11,7 +11,6 @@ import org.springframework.data.mongodb.core.index.CompoundIndex;
 import org.springframework.data.mongodb.core.index.CompoundIndexes;
 import org.springframework.data.mongodb.core.mapping.Document;
 import uy.com.pf.care.model.enums.ContactMethodsEnum;
-import uy.com.pf.care.model.enums.DaysWeekEnum;
 import uy.com.pf.care.model.objects.*;
 
 import java.util.ArrayList;
@@ -46,8 +45,9 @@ public class VolunteerPerson extends PersonObject {
     private List<DayTimeRangeObject> dayTimeRange = new ArrayList<>(); // Rangos de dias y horarios disponibles
 
     @Builder.Default
-    @Valid
-    List<VolunteerActivityObject> activities = new ArrayList<>();
+    //@Valid
+    //List<VolunteerActivityObject> activities = new ArrayList<>();
+    List<String> volunteerActivitiesId = new ArrayList<>();
 
     @NotNull(message = "VolunteerPerson: La clave 'photo' no puede ser nula")
     private Byte[] photo;
@@ -77,8 +77,8 @@ public class VolunteerPerson extends PersonObject {
 
     @NotNull(message = "VolunteerPerson: El país de la persona voluntaria no puede ser nulo")
     @NotEmpty(message = "VolunteerPerson: El país de la persona voluntaria no puede ser vacío")
-    @Size(max = 15,
-            message = "VolunteerPerson: El pais de la persona voluntaria no puede exceder los 15 caracteres")
+    @Size(max = 30,
+            message = "VolunteerPerson: El pais de la persona voluntaria no puede exceder los 30 caracteres")
     private String countryName; // Pais de residencia de la persona voluntaria
 
 }

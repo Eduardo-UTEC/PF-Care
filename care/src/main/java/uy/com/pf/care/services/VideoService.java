@@ -69,6 +69,7 @@ public class VideoService implements IVideoService{
 
     @Override
     public Boolean addRoles(String videoId, List<RoleEnum> ordinalRoles) {
+        if (ordinalRoles.isEmpty()) return false;
         try {
             Optional<Video> found = videoRepo.findById(videoId);
             if (found.isPresent()) {
@@ -146,6 +147,7 @@ public class VideoService implements IVideoService{
 
     @Override
     public Boolean delRoles(String videoId, List<RoleEnum> ordinalRoles) {
+        if (ordinalRoles.isEmpty()) return false;
         try {
             Optional<Video> found = videoRepo.findById(videoId);
             if (found.isPresent()) {

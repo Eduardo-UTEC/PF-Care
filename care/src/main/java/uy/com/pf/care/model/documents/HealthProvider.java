@@ -15,10 +15,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document("HealthProviders")
 @CompoundIndexes({
-        @CompoundIndex(
-                def = "{'countryName':1, 'departmentName':1, 'cityName':1, 'name':1}",
-                unique = true
-        )
+        @CompoundIndex(def = "{'countryName':1, 'departmentName':1, 'cityName':1, 'name':1}", unique = true)
 })
 @EqualsAndHashCode(callSuper=false)
 @Data
@@ -31,7 +28,7 @@ public class HealthProvider {
 
     @NotNull(message = "HealthProvider: La propiedad 'name' no puede ser nula")
     @NotEmpty(message = "HealthProvider: La propiedad 'name' no puede ser vacía")
-    @Size(max = 20, message = "HealthProvider: El nombre del Proveedor de Salud no puede exceder los 20 caracteres")
+    @Size(max = 30, message = "HealthProvider: El nombre del Proveedor de Salud no puede exceder los 30 caracteres")
     private String name;
 
     @BooleanFlag

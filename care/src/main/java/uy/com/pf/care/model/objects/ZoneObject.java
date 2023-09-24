@@ -18,7 +18,7 @@ public class ZoneObject {
 
     @NotNull(message = "ZoneObject: El barrio no puede ser nulo")
     //@NotEmpty(message = "ZoneObject: El barrio no puede ser vacio")
-    @Size(max = 25 , message = "ZoneObject: El barrio no puede exceder los 25 caracteres")
+    @Size(max = 35 , message = "ZoneObject: El barrio no puede exceder los 35 caracteres")
     private String neighborhoodName;
 
     @NotNull(message = "ZoneObject: La ciudad no puede ser nula")

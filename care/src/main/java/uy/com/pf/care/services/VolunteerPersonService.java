@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import uy.com.pf.care.exceptions.*;
 import uy.com.pf.care.infra.config.ParamConfig;
+import uy.com.pf.care.model.documents.Video;
 import uy.com.pf.care.model.documents.VolunteerPerson;
 import uy.com.pf.care.model.enums.RoleEnum;
 import uy.com.pf.care.model.globalFunctions.ForceEnumsToVolunteerPerson;
@@ -21,6 +22,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 @Log
@@ -64,6 +68,8 @@ public class VolunteerPersonService implements IVolunteerPersonService{
             throw new VolunteerPersonDuplicateKeyException(msg);
 
         } catch (Exception e) {
+            if (newVolunteerPersonId != null)
+                this.physicallyDeleteVolunteerPerson(newVolunteerPersonId);
             String msg = "*** ERROR GUARDANDO PERSONA VOLUNTARIA";
             log.warning(msg + ": " + e.getMessage());
             throw new VolunteerPersonSaveException(msg);
@@ -93,6 +99,147 @@ public class VolunteerPersonService implements IVolunteerPersonService{
             String msg = "*** ERROR ACTUALIZANDO PERSONA VOLUNTARIA";
             log.warning(msg + ": " + e.getMessage());
             throw new VolunteerPersonUpdateException(msg);
+        }
+    }
+
+    @Override
+    public Boolean addVolunteerActivitiesId(String volunteerPersonId, List<String> volunteerActivitiesId) {
+        if (volunteerActivitiesId.isEmpty()) return false;
+        try {
+            Optional<VolunteerPerson> found = volunteerPersonRepo.findById(volunteerPersonId);
+            if (found.isPresent()) {
+                AtomicInteger count = new AtomicInteger(0);
+                volunteerActivitiesId.forEach(activityId -> {
+                    if (!found.get().getVolunteerActivitiesId().contains(activityId)) {
+                        found.get().getVolunteerActivitiesId().add((activityId));
+                        count.incrementAndGet();
+                    }
+                });
+
+                if (count.get() > 0) {
+                    volunteerPersonRepo.save(found.get());
+                    log.warning(count.get() == volunteerActivitiesId.size() ?
+                            "Actividades agregadas exitosamente al Voluntario." :
+                            "Actividades agregadas correctamente (hubo " + (volunteerActivitiesId.size() - count.get()) +
+                                    " actividades que ya estaban asignadas)");
+                    return true;
+                } else {
+                    log.warning("Las actividades ya estaban asignadas al Voluntario.");
+                    return false;
+                }
+            }
+            String msg = "No se encontro la Persona Voluntaria con id " + volunteerPersonId;
+            log.warning(msg);
+            throw new VolunteerPersonNotFoundException(msg);
+
+        }catch (VolunteerPersonNotFoundException e){
+            throw new VolunteerPersonNotFoundException(e.getMessage());
+        }catch (Exception e){
+            String msg = "*** ERROR AGREGANDO ROLES AL VIDEO";
+            log.warning(msg + ": " +e.getMessage());
+            throw new VolunteerPersonAddVolunteerActivitiesIdException(msg);
+        }
+
+    }
+
+    @Override
+    public Boolean changeVolunteerActivityId(
+            String volunteerPersonId, String oldVolunteerActivityId, String newVolunteerActivityId) {
+        try {
+            Optional<VolunteerPerson> found = volunteerPersonRepo.findById(volunteerPersonId);
+            if (found.isPresent()) {
+                if (found.get().getVolunteerActivitiesId().contains(newVolunteerActivityId)) {
+                    String msg = "El Voluntario ya tiene asignada la actividad '" + newVolunteerActivityId +"'";
+                    log.warning(msg);
+                    throw new VolunteerPersonActivityAlreadyLinkedException(msg);
+                }
+                int index = found.get().getVolunteerActivitiesId().indexOf(oldVolunteerActivityId);
+                if (index >= 0) {
+                    found.get().getVolunteerActivitiesId().set(index, newVolunteerActivityId);
+                    volunteerPersonRepo.save(found.get());
+                    log.warning("Actividad cambiada con exito.");
+                    return true;
+                }
+                String msg = "La actividad que se pretende cambiar (" + oldVolunteerActivityId + ")" +
+                        " no esta asignada al Voluntario " + newVolunteerActivityId;
+                log.warning(msg);
+                throw new VolunteerPersonActivityNotLinkedException(msg);
+            }
+            String msg = "Voluntario no encontrado";
+            log.warning(msg);
+            throw new VolunteerPersonNotFoundException(msg);
+
+        }catch(VolunteerPersonActivityAlreadyLinkedException e){
+            throw new VolunteerPersonActivityAlreadyLinkedException(e.getMessage());
+        }catch(VolunteerPersonActivityNotLinkedException e){
+            throw new VolunteerPersonActivityNotLinkedException(e.getMessage());
+        }catch(VolunteerPersonNotFoundException e){
+            throw new VolunteerPersonNotFoundException(e.getMessage());
+        }catch (Exception e){
+            String msg = "*** ERROR CAMBIANDO ACTIVIDAD DEL VOLUNTARIO";
+            log.warning(msg + ": " + e.getMessage());
+            throw new VolunteerPersonChangeActivityException(msg);
+        }
+    }
+
+    @Override
+    public Boolean delVolunteerActivitiesId(String volunteerPersonId, List<String> volunteerActivitiesId) {
+        return null;
+    }
+
+    @Override
+    public Boolean setAvailability(String id, Boolean isAvailable) {
+        try{
+            Optional<VolunteerPerson> volunteerPerson = this.findId(id);
+            if (volunteerPerson.isPresent() && ! volunteerPerson.get().getDeleted()) {
+                volunteerPerson.get().setAvailable(isAvailable);
+                volunteerPersonRepo.save(volunteerPerson.get());
+                return true;
+            }
+            return false;
+
+        }catch(Exception e){
+            log.warning("No se pudo setear la disponibilidad de la persona voluntaria con id: " + id + ". "
+                    + e.getMessage());
+            throw new VolunteerPersonSetAvailabilityException(
+                    "No se pudo setear la disponibilidad de la persona voluntaria con id: " + id + ". ");
+        }
+    }
+
+    @Override
+    public Boolean setValidation(String id, Boolean isValidated) {
+        Optional<VolunteerPerson> volunteerPersonFound = this.findId(id);
+        if (volunteerPersonFound.isPresent()) {
+            volunteerPersonFound.get().setValidate(isValidated);
+            volunteerPersonRepo.save(volunteerPersonFound.get());
+            return true;
+        }
+        return false;
+    }
+
+    /*  Devuelve true si la operación fue exitosa.
+        1. Esta es una tarea del "administrador del sistema"
+        2. La "disponiblidad" del voluntario pasa a false, sin importar si se pasa a borrado o no borrado.
+            Ello posibilita que el administrador sea quien recupere a un voluntario, y luego sea este quien se
+            disponibilice.
+     */
+    @Override
+    public Boolean setDeletion(String id, Boolean isDeleted) {
+        try {
+            Optional<VolunteerPerson> volunteerPerson = this.findId(id);
+            if (volunteerPerson.isPresent()) {
+                volunteerPerson.get().setDeleted(isDeleted);
+                volunteerPerson.get().setAvailable(false);
+                volunteerPersonRepo.save(volunteerPerson.get());
+                return true;
+            }
+            return false;
+
+        }catch(Exception e){
+            log.warning("No se pudo setear el borrado lógico de la persona voluntaria con id: " + id + ". "
+                    + e.getMessage());
+            throw new VolunteerPersonSetDeletionException(
+                    "No se pudo setear el borrado lógico de la persona voluntaria con id " + id);
         }
     }
 
@@ -392,62 +539,6 @@ public class VolunteerPersonService implements IVolunteerPersonService{
         }
     }
 
-    @Override
-    public Boolean setAvailability(String id, Boolean isAvailable) {
-        try{
-            Optional<VolunteerPerson> volunteerPerson = this.findId(id);
-            if (volunteerPerson.isPresent() && ! volunteerPerson.get().getDeleted()) {
-                volunteerPerson.get().setAvailable(isAvailable);
-                volunteerPersonRepo.save(volunteerPerson.get());
-                return true;
-            }
-            return false;
-
-        }catch(Exception e){
-            log.warning("No se pudo setear la disponibilidad de la persona voluntaria con id: " + id + ". "
-                    + e.getMessage());
-            throw new VolunteerPersonSetAvailabilityException(
-                    "No se pudo setear la disponibilidad de la persona voluntaria con id: " + id + ". ");
-        }
-    }
-
-    @Override
-    public Boolean setValidation(String id, Boolean isValidated) {
-        Optional<VolunteerPerson> volunteerPersonFound = this.findId(id);
-        if (volunteerPersonFound.isPresent()) {
-            volunteerPersonFound.get().setValidate(isValidated);
-            volunteerPersonRepo.save(volunteerPersonFound.get());
-            return true;
-        }
-        return false;
-    }
-
-    /*  Devuelve true si la operación fue exitosa.
-        1. Esta es una tarea del "administrador del sistema"
-        2. La "disponiblidad" del voluntario pasa a false, sin importar si se pasa a borrado o no borrado.
-            Ello posibilita que el administrador sea quien recupere a un voluntario, y luego sea este quien se
-            disponibilice.
-     */
-    @Override
-    public Boolean setDeletion(String id, Boolean isDeleted) {
-        try {
-            Optional<VolunteerPerson> volunteerPerson = this.findId(id);
-            if (volunteerPerson.isPresent()) {
-                volunteerPerson.get().setDeleted(isDeleted);
-                volunteerPerson.get().setAvailable(false);
-                volunteerPersonRepo.save(volunteerPerson.get());
-                return true;
-            }
-            return false;
-
-        }catch(Exception e){
-            log.warning("No se pudo setear el borrado lógico de la persona voluntaria con id: " + id + ". "
-                    + e.getMessage());
-            throw new VolunteerPersonSetDeletionException(
-                    "No se pudo setear el borrado lógico de la persona voluntaria con id " + id);
-        }
-    }
-
     private String getUrlNeighborhoods(
             Boolean includeDeleted, String cityName, String departmentName, String countryName) {
 
@@ -498,6 +589,8 @@ public class VolunteerPersonService implements IVolunteerPersonService{
     }
 
     private void defaultValues(VolunteerPerson volunteerPerson, VolunteerPerson oldVolunteerPerson){
+        volunteerPerson.setUserId(oldVolunteerPerson.getUserId());
+        volunteerPerson.setVolunteerActivitiesId(oldVolunteerPerson.getVolunteerActivitiesId());
         volunteerPerson.setAvailable(oldVolunteerPerson.getAvailable());
         volunteerPerson.setValidate(oldVolunteerPerson.getValidate());
         volunteerPerson.setDeleted(oldVolunteerPerson.getDeleted());

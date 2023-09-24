@@ -18,9 +18,7 @@ import java.util.List;
 @Document("Videos")
 
 @CompoundIndexes({
-    @CompoundIndex(
-        def = "{'countryName':1, 'departmentName':1, 'url':1}", unique = true
-    )
+    @CompoundIndex(def = "{'countryName':1, 'departmentName':1, 'url':1}", unique = true)
 })
 @Data
 @AllArgsConstructor

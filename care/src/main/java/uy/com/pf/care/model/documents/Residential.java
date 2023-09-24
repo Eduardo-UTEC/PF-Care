@@ -16,8 +16,12 @@ import uy.com.pf.care.model.objects.AddressObject;
 
 @Document("Residential")
 @CompoundIndexes({
-        @CompoundIndex(
-                def = "{'countryName':1, 'departmentName':1, 'cityName':1, 'name':1, 'address.street':1, " +
+        @CompoundIndex(def =
+                "{'countryName':1, " +
+                        "'departmentName':1, " +
+                        "'cityName':1, " +
+                        "'name':1, " +
+                        "'address.street':1, " +
                         "'address.portNumber':1}",
                 unique = true
         )
@@ -33,7 +37,7 @@ public class Residential {
 
     @NotNull(message = "Residential: El nombre del Residencial no puede ser nulo")
     @NotEmpty(message = "Residential: El nombre del Residencial no puede ser vacio")
-    @Size(max = 20 , message = "Residential: El nombre del Residencial no puede exceder los 20 caracteres")
+    @Size(max = 40 , message = "Residential: El nombre del Residencial no puede exceder los 40 caracteres")
     private String name;
 
     @NotNull(message = "Residential: El telefono del Residencial no puede ser nulo")

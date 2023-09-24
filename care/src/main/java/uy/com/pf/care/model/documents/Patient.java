@@ -21,9 +21,8 @@ import java.util.List;
 @CompoundIndexes({
         @CompoundIndex(def = "{'identificationDocument':1, 'zone.countryName':1}", unique = true),
         @CompoundIndex(def = "{'mail':1}", unique = true),
-        @CompoundIndex(
-                def = "{'zone.countryName':1, 'zone.departmentName':1, 'zone.cityName':1, 'zone.neighborhoodName':1, " +
-                        "'name1':1}", unique = false)
+        @CompoundIndex(def = "{'zone.countryName':1, 'zone.departmentName':1, 'zone.cityName':1, 'zone.neighborhoodName':1, " +
+                        "'name1':1}")
 })
 @Data
 @EqualsAndHashCode(callSuper=false)

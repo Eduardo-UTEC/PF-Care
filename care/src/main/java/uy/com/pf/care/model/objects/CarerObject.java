@@ -14,7 +14,7 @@ public class CarerObject {
 
     @NotNull(message = "CarerObject: El nombre del Cuidador Formal no puede ser nulo")
     @NotEmpty(message = "CarerObject: El nombre del Cuidador Formal no puede ser vacío")
-    @Size(max = 30, message = "CarerObject: El nombre del Cuidador Formal no puede exceder los 30 caracteres")
+    @Size(max = 50, message = "CarerObject: El nombre del Cuidador Formal no puede exceder los 50 caracteres")
     private String name;    // Puede ser Formal o Informal
 
     // Dias y rangos horarios semanales disponibles para el cuidado.
