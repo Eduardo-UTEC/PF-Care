@@ -1,6 +1,9 @@
 package uy.com.pf.care.model.documents;
 
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import jdk.jfr.BooleanFlag;
 import lombok.*;
 import org.springframework.data.annotation.Id;
@@ -33,5 +36,16 @@ public class DonationRequest {
 
     @BooleanFlag
     private Boolean active;
+
+    @NotNull(message = "El departamento en el que se realiza la solicitud no puede ser nulo")
+    @NotEmpty(message = "El departamento en el que se realiza la solicitud no puede ser vacío")
+    @Size(max = 15, message = "El departamento en el que se realiza la solicitud no puede exceder los 15 caracteres")
+    private String departmentyName;
+
+    @NotNull(message = "El país en el que se realiza la solicitud no puede ser nulo")
+    @NotEmpty(message = "El país en el que se realiza la solicitud no puede ser vacío")
+    @Size(max = 15, message = "El pais en el que se realiza la solicitud no puede exceder los 15 caracteres")
+    private String countryName;
+
 
 }

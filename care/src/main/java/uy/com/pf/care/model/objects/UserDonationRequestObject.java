@@ -11,5 +11,5 @@ import uy.com.pf.care.model.enums.RoleEnum;
 @NoArgsConstructor
 public class UserDonationRequestObject {
     private String userId;
-    private RoleEnum rol;
+    private RoleEnum role;
 }
