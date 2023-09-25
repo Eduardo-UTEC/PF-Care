@@ -1,17 +1,15 @@
 package uy.com.pf.care.model.documents;
 
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotNull;
 import jdk.jfr.BooleanFlag;
 import lombok.*;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import uy.com.pf.care.model.enums.RequestStatusEnum;
 import uy.com.pf.care.model.objects.UserDonationRequestObject;
-import uy.com.pf.care.model.objects.UserObject;
-import uy.com.pf.care.model.objects.ZoneObject;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 @Document("DonationRequest")
@@ -30,9 +28,8 @@ public class DonationRequest {
     private LocalDate requestDate;
     private RequestStatusEnum requestStatus;
 
-    @Builder.Default
     @Valid
-    private List<Material> materials;
+    private List<Material> materials = new ArrayList<>();
 
     @BooleanFlag
     private Boolean active;

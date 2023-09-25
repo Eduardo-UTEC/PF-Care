@@ -5,10 +5,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import uy.com.pf.care.exceptions.*;
 import uy.com.pf.care.infra.repos.IMaterialRepo;
-import uy.com.pf.care.model.documents.EmergencyService;
 import uy.com.pf.care.model.documents.Material;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -44,7 +42,6 @@ public class MaterialService implements IMaterialService{
                 log.info("Material actualizado con exito");
                 return true;
             }
-
             String msg = "No se encontro el material con id: " + newMaterial.getMaterialId();
             log.warning(msg);
             throw new MaterialNotFoundException(msg);
@@ -77,8 +74,8 @@ public class MaterialService implements IMaterialService{
     }
 
     @Override
-    public List<Material> findId(Boolean includeDeleted, List<String> materialsId, String countryName) {
-        return null;
+    public List<Material> findIds(List<String> materialsId) {
+        return materialRepo.findAllById(materialsId);
     }
 
     @Override
