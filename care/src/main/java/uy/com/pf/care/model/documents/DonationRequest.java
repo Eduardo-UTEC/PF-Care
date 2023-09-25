@@ -29,6 +29,7 @@ public class DonationRequest {
     private UserDonationRequestObject userDonationRequest; // Usuario que inició la solicitud
     private String volunteerCompanyId; //Empresa que tomó la solicitud.
     private LocalDate requestDate;
+    private LocalDate finishedDate;
     private RequestStatusEnum requestStatus;
 
     @Valid
