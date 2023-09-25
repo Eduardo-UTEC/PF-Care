@@ -40,7 +40,7 @@ public class VolunteerPerson extends PersonObject {
 
     @Builder.Default
     @Valid
-    List<InterestZonesObject> interestZones = new ArrayList<>();
+    private List<InterestZonesObject> interestZones = new ArrayList<>();
 
     @Builder.Default
     @Valid
@@ -49,7 +49,7 @@ public class VolunteerPerson extends PersonObject {
     @Builder.Default
     //@Valid
     //List<VolunteerActivityObject> activities = new ArrayList<>();
-    List<String> volunteerActivitiesId = new ArrayList<>();
+    private List<String> volunteerActivitiesId = new ArrayList<>();
 
     @NotNull(message = "VolunteerPerson: La clave 'photo' no puede ser nula")
     private Byte[] photo;

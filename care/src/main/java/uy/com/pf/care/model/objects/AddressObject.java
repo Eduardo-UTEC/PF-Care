@@ -10,7 +10,6 @@ import lombok.ToString;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@ToString
 public class AddressObject {
 
     @NotNull(message = "AddressObject: La clave 'street' no puede ser nula")
