@@ -7,7 +7,10 @@ import java.util.List;
 
 public interface IDonationRequestService {
     String save(DonationRequest donationRequest);
-    Boolean update(DonationRequest newDonationRequest);
+    Boolean AcceptRequest(String donationRequestId, String volunteerCompanyId);
+    Boolean changeRequestStatus(String donationRequestId, RequestStatusEnum requestStatus);
+
+    Boolean setActive(String donationRequestId, Boolean isActive);
     List<DonationRequest> findAll(Boolean isActive, String departmentName, String countryName);
     DonationRequest findId(String id);
     List<DonationRequest> findIds(List<String> donationsRequestId);

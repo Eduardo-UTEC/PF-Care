@@ -28,8 +28,8 @@ public class DonationRequest {
 
     private UserDonationRequestObject userDonationRequest; // Usuario que inició la solicitud
     private String volunteerCompanyId; //Empresa que tomó la solicitud.
-    private LocalDate requestDate;
-    private LocalDate finishedDate;
+    private LocalDate startRequestDate;
+    private LocalDate finishRequestDate;
     private RequestStatusEnum requestStatus;
 
     @Valid
@@ -41,7 +41,7 @@ public class DonationRequest {
     @NotNull(message = "El departamento en el que se realiza la solicitud no puede ser nulo")
     @NotEmpty(message = "El departamento en el que se realiza la solicitud no puede ser vacío")
     @Size(max = 15, message = "El departamento en el que se realiza la solicitud no puede exceder los 15 caracteres")
-    private String departmentyName;
+    private String departmentName;
 
     @NotNull(message = "El país en el que se realiza la solicitud no puede ser nulo")
     @NotEmpty(message = "El país en el que se realiza la solicitud no puede ser vacío")
