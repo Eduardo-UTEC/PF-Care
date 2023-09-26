@@ -8,10 +8,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
-import uy.com.pf.care.exceptions.DonationRequestAcceptException;
-import uy.com.pf.care.exceptions.DonationRequestNotFoundException;
-import uy.com.pf.care.exceptions.DonationRequestSaveException;
+import uy.com.pf.care.exceptions.*;
 import uy.com.pf.care.model.documents.DonationRequest;
+import uy.com.pf.care.model.enums.RequestStatusEnum;
 import uy.com.pf.care.services.IDonationRequestService;
 
 import java.util.List;
@@ -34,7 +33,7 @@ public class DonationRequestController {
         }
     }
 
-    @PostMapping("/accept_request")
+    @PostMapping("/accept_request/{donationRequestId}/{volunteerCompanyId}")
     public ResponseEntity<Boolean> acceptRequest(
             @PathVariable String donationRequestId,
             @PathVariable String volunteerCompanyId){
@@ -43,7 +42,24 @@ public class DonationRequestController {
 
         }catch (DonationRequestNotFoundException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+        }catch (DonationRequestCompanyExistException e){
+            throw new ResponseStatusException(HttpStatus.CONFLICT, e.getMessage());
         }catch (DonationRequestAcceptException e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
+        }
+    }
+
+    @PostMapping("/change_request_status/{donationRequestId}/{ordinalRequestStatus}")
+    public ResponseEntity<Boolean> changeRequestStatus(
+            @PathVariable String donationRequestId,
+            @PathVariable Integer ordinalRequestStatus){
+        try {
+            return ResponseEntity.ok(donationRequestService.changeRequestStatus(
+                    donationRequestId, RequestStatusEnum.values()[ordinalRequestStatus]));
+
+        }catch (DonationRequestNotFoundException e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+        }catch (DonationRequestChangeStatusException e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
         }
     }

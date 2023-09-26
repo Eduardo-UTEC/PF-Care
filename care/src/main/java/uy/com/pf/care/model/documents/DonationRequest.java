@@ -7,6 +7,7 @@ import jakarta.validation.constraints.Size;
 import jdk.jfr.BooleanFlag;
 import lombok.*;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.CompoundIndex;
 import org.springframework.data.mongodb.core.mapping.Document;
 import uy.com.pf.care.model.enums.RequestStatusEnum;
 import uy.com.pf.care.model.objects.UserDonationRequestObject;
@@ -16,7 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Document("DonationRequest")
-//@CompoundIndex(def = "{'countryName':1, 'departmentName':1, 'name':1}", unique = true)
+@CompoundIndex(def = "{'countryName':1, 'departmentName':1, 'requestStatus':1, 'active':1}")
 @Data
 @EqualsAndHashCode(callSuper=false)
 @AllArgsConstructor

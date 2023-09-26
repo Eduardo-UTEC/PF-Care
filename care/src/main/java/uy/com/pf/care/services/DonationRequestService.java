@@ -3,9 +3,7 @@ package uy.com.pf.care.services;
 import lombok.extern.java.Log;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import uy.com.pf.care.exceptions.DonationRequestAcceptException;
-import uy.com.pf.care.exceptions.DonationRequestNotFoundException;
-import uy.com.pf.care.exceptions.DonationRequestSaveException;
+import uy.com.pf.care.exceptions.*;
 import uy.com.pf.care.infra.repos.IDonationRequestRepo;
 import uy.com.pf.care.model.documents.DonationRequest;
 import uy.com.pf.care.model.enums.RequestStatusEnum;
@@ -45,6 +43,11 @@ public class DonationRequestService implements IDonationRequestService{
         try {
             Optional<DonationRequest> found = donationRequestRepo.findById(donationRequestId);
             if (found.isPresent()) {
+                if (found.get().getVolunteerCompanyId() != null){
+                    String msg = "Ya existe una empresa vinculada a la solicitud de donación";
+                    log.info(msg);
+                    throw new DonationRequestCompanyExistException(msg);
+                }
                 found.get().setVolunteerCompanyId(volunteerCompanyId);
                 donationRequestRepo.save(found.get());
                 log.info("La empresa '" + volunteerCompanyId + "' aceptó la solicitud de donación '" + donationRequestId +
@@ -55,10 +58,12 @@ public class DonationRequestService implements IDonationRequestService{
             log.warning(msg);
             throw new DonationRequestNotFoundException(msg);
 
-        }catch(DonationRequestNotFoundException e){
+        }catch(DonationRequestNotFoundException e) {
             throw new DonationRequestNotFoundException(e.getMessage());
+        }catch (DonationRequestCompanyExistException e){
+            throw new DonationRequestCompanyExistException(e.getMessage());
         }catch(Exception e){
-            String msg = "*** ERROR GUARDANDO MATERIAL";
+            String msg = "*** ERROR ACEPTANDO SOLICITUD DE DONACION";
             log.warning(msg + ": " + e.getMessage());
             throw new DonationRequestAcceptException(msg);
         }
@@ -67,7 +72,26 @@ public class DonationRequestService implements IDonationRequestService{
 
     @Override
     public Boolean changeRequestStatus(String donationRequestId, RequestStatusEnum requestStatus) {
-        return null;
+        try {
+            Optional<DonationRequest> found = donationRequestRepo.findById(donationRequestId);
+            if (found.isPresent()) {
+                found.get().setRequestStatus(requestStatus);
+                donationRequestRepo.save(found.get());
+                log.info("Se cambió el estado de la donación a '" + requestStatus.getName() + "'");
+                return true;
+            }
+            String msg = "Solicitud de donación con Id " + donationRequestId + " no encontrada";
+            log.warning(msg);
+            throw new DonationRequestNotFoundException(msg);
+
+        }catch(DonationRequestNotFoundException e) {
+            throw new DonationRequestNotFoundException(e.getMessage());
+        }catch(Exception e){
+            String msg = "*** ERROR CAMBIANDO ESTADO DE LA SOLICITUD DE DONACION";
+            log.warning(msg + ": " + e.getMessage());
+            throw new DonationRequestChangeStatusException(msg);
+        }
+
     }
 
     @Override
