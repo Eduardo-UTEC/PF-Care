@@ -41,7 +41,7 @@ public class DonationRequestService implements IDonationRequestService{
     }
 
     @Override
-    public Boolean AcceptRequest(String donationRequestId, String volunteerCompanyId) {
+    public Boolean acceptRequest(String donationRequestId, String volunteerCompanyId) {
         try {
             Optional<DonationRequest> found = donationRequestRepo.findById(donationRequestId);
             if (found.isPresent()) {
@@ -76,8 +76,10 @@ public class DonationRequestService implements IDonationRequestService{
     }
 
     @Override
-    public List<DonationRequest> findAll(Boolean isActive, String departmentName, String countryName) {
-        return null;
+    public List<DonationRequest> findAll(Boolean includeNotActive, String departmentName, String countryName) {
+        return includeNotActive ?
+                donationRequestRepo.findByCountryNameAndDepartmentName(countryName, departmentName) :
+                donationRequestRepo.findByCountryNameAndDepartmentNameAndActiveTrue(countryName, departmentName);
     }
 
     @Override

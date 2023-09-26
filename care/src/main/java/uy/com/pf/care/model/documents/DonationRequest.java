@@ -32,8 +32,7 @@ public class DonationRequest {
     private LocalDate finishRequestDate;
     private RequestStatusEnum requestStatus;
 
-    @Valid
-    private List<Material> materials = new ArrayList<>();
+    private List<String> materialsId = new ArrayList<>();
 
     @BooleanFlag
     private Boolean active;
