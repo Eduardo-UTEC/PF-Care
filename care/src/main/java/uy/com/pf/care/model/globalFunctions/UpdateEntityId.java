@@ -5,6 +5,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
+import uy.com.pf.care.exceptions.UpdateEntityIdException;
 import uy.com.pf.care.infra.config.ParamConfig;
 
 //Actualiza el entityId de un User con el id de la entidad recién persistida.
@@ -17,14 +18,19 @@ public class UpdateEntityId {
     private ParamConfig paramConfig;
 
     public ResponseEntity<Boolean> execute(String userId, int ordinalRol, String entityId) {
+        try {
+            RestTemplate restTemplate = new RestTemplate();
+            return restTemplate.exchange(
+                    getStartUrl() + "users/updateEntityId/" + userId + "/" + ordinalRol + "/" + entityId,
+                    HttpMethod.PUT,
+                    null,
+                    Boolean.class
+            );
 
-        RestTemplate restTemplate = new RestTemplate();
-        return restTemplate.exchange(
-                getStartUrl() + "users/updateEntityId/" + userId + "/" + ordinalRol + "/"  + entityId,
-                HttpMethod.PUT,
-                null,
-                Boolean.class
-        );
+        }catch(Exception e){
+            throw new UpdateEntityIdException(e.getMessage());
+        }
+
     }
 
     private String getStartUrl() {

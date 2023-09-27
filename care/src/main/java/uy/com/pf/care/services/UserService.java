@@ -128,8 +128,8 @@ public class UserService implements IUserService{
 
         }catch (UserRoleNotFoundException e){
             throw new UserRoleNotFoundException(e.getMessage());
-        }catch (UserNotFoundException e){
-            throw new UserNotFoundException(e.getMessage());
+        }catch (UserAlreadyLinkedException e){
+            throw new UserAlreadyLinkedException(e.getMessage());
         }catch(Exception e){
             String msg = "*** ERROR ACTUALIZANDO EL ENTITYID DEL USUARIO " + userId;
             log.info(msg + ": " + e.getMessage());

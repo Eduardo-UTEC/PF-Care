@@ -186,20 +186,24 @@ public class VolunteerPersonController {
     //  Devuelve true si la operación fue exitosa.
     @PutMapping("setAvailability/{id}/{isAvailable}")
     public ResponseEntity<Boolean> setAvailability(@PathVariable String id, @PathVariable Boolean isAvailable) {
-        try{
+        try {
             return ResponseEntity.ok(volunteerPersonService.setAvailability(id, isAvailable));
 
-        }catch(Exception e) {
+        }catch(VolunteerPersonNotFoundException e){
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+        }catch(VolunteerPersonSetAvailabilityException e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
         }
     }
 
     // Devuelve true si la operación fue exitosa
     @PutMapping("setValidation/{id}/{isValidated}")
-    public ResponseEntity<Boolean> setValidate(@PathVariable String id, @PathVariable Boolean isValidated) {
-        try{
+    public ResponseEntity<Boolean> setValidation(@PathVariable String id, @PathVariable Boolean isValidated) {
+        try {
             return ResponseEntity.ok(volunteerPersonService.setValidation(id, isValidated));
 
+        }catch (VolunteerPersonNotFoundException e){
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         }catch(VolunteerPersonSetValidationException e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
         }
@@ -211,7 +215,9 @@ public class VolunteerPersonController {
         try{
             return ResponseEntity.ok(volunteerPersonService.setDeletion(id, isDeleted));
 
-        }catch(Exception e) {
+        }catch(VolunteerPersonNotFoundException e){
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+        }catch(VolunteerPersonSetDeletionException e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
         }
     }

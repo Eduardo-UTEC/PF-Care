@@ -5,6 +5,9 @@ import uy.com.pf.care.model.enums.ContactMethodsEnum;
 import uy.com.pf.care.model.enums.DaysWeekEnum;
 import uy.com.pf.care.model.enums.PersonGenderEnum;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class ForceEnumsToVolunteerPerson {
 
     public static void execute(VolunteerPerson volunteerPerson){
@@ -32,6 +35,7 @@ public class ForceEnumsToVolunteerPerson {
         });
 
         //contactMethods
+        List<ContactMethodsEnum> modifiedContactMethods = new ArrayList<>();
         volunteerPerson.getContactMethods().forEach(contactMethodsEnum -> {
             ContactMethodsEnum contact = null;
             switch (contactMethodsEnum){
@@ -41,7 +45,8 @@ public class ForceEnumsToVolunteerPerson {
                 case SMS -> contact = ContactMethodsEnum.SMS;
                 case MAIL -> contact = ContactMethodsEnum.MAIL;
             }
-            contactMethodsEnum = contact;
+            modifiedContactMethods.add(contact);
         });
+        volunteerPerson.setContactMethods(modifiedContactMethods);
     }
 }

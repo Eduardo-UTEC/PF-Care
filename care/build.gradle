@@ -32,6 +32,8 @@ dependencies {
 	testCompileOnly 'org.projectlombok:lombok:1.18.26'
 	testAnnotationProcessor 'org.projectlombok:lombok:1.18.26'
 
+	//developmentOnly("org.springframework.boot:spring-boot-devtools") //hot-reload
+
 	//implementation 'edu.stanford.nlp:stanford-corenlp:4.5.4'
 	//implementation 'edu.stanford.nlp:stanford-corenlp:4.5.4:models-spanish'
 }

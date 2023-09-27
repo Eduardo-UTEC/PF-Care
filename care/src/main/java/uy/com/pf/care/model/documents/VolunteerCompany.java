@@ -8,6 +8,7 @@ import jdk.jfr.BooleanFlag;
 import lombok.*;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.CompoundIndex;
+import org.springframework.data.mongodb.core.index.CompoundIndexes;
 import org.springframework.data.mongodb.core.mapping.Document;
 import uy.com.pf.care.model.enums.ContactMethodsEnum;
 import uy.com.pf.care.model.objects.AddressObject;
@@ -16,8 +17,11 @@ import uy.com.pf.care.model.objects.InterestZonesObject;
 import java.util.ArrayList;
 import java.util.List;
 
-@Document("VoluntaryCompanies")
-//@CompoundIndex(def = "{'countryName':1, 'departmentName':1, 'name':1}", unique = true)
+@Document("VolunteerCompanies")
+@CompoundIndexes({
+        @CompoundIndex(def = "{'countryName':1, 'name':1, 'telephone':1}", unique = true),
+        @CompoundIndex(def = "{'mail':1}", unique = true)
+})
 @Data
 @EqualsAndHashCode(callSuper=false)
 @AllArgsConstructor
@@ -47,13 +51,14 @@ public class VolunteerCompany {
     private String mail;
 
     @Builder.Default
-    @Valid
-    private List<String> donationsRequestId = new ArrayList<>();
+    private List<String> donationsRequestId = new ArrayList<>(); //Donaciones que aceptó
 
+    @NotNull(message = "La clave interestZones no puede ser nula")
     @Builder.Default
     @Valid
     private List<InterestZonesObject> interestZones = new ArrayList<>();
 
+    @NotNull(message = "La clave contactMethods no puede ser nula")
     private List<ContactMethodsEnum> contactMethods;
 
     @NotNull(message = "La clave 'photo' no puede ser nula")

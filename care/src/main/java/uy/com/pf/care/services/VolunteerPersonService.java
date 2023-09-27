@@ -81,9 +81,8 @@ public class VolunteerPersonService implements IVolunteerPersonService{
                 log.info("Persona Voluntaria actualizada con exito");
                 return true;
             }
-            String msg = "No se encontro la Persona Voluntaria con id " + newVolunteerPerson.getVolunteerPersonId();
-            log.info(msg);
-            throw new VolunteerPersonNotFoundException(msg);
+            this.notFound(newVolunteerPerson.getVolunteerPersonId());
+            return null;
 
         } catch (VolunteerPersonNotFoundException e) {
             throw new VolunteerPersonNotFoundException(e.getMessage());
@@ -122,9 +121,8 @@ public class VolunteerPersonService implements IVolunteerPersonService{
                     return false;
                 }
             }
-            String msg = "No se encontro la Persona Voluntaria con id " + volunteerPersonId;
-            log.warning(msg);
-            throw new VolunteerPersonNotFoundException(msg);
+            this.notFound(volunteerPersonId);
+            return null;
 
         }catch (VolunteerPersonNotFoundException e){
             throw new VolunteerPersonNotFoundException(e.getMessage());
@@ -159,9 +157,8 @@ public class VolunteerPersonService implements IVolunteerPersonService{
                 log.warning(msg);
                 throw new VolunteerPersonActivityNotLinkedException(msg);
             }
-            String msg = "Voluntario no encontrado";
-            log.warning(msg);
-            throw new VolunteerPersonNotFoundException(msg);
+            this.notFound(volunteerPersonId);
+            return null;
 
         }catch(VolunteerPersonActivityAlreadyLinkedException e){
             throw new VolunteerPersonActivityAlreadyLinkedException(e.getMessage());
@@ -200,9 +197,8 @@ public class VolunteerPersonService implements IVolunteerPersonService{
                             (volunteerActivitiesId.size() - erased) + " actividades no pertenecían al Voluntario)");
                 return true;
             }
-            String msg = "Voluntario no encontrado";
-            log.warning(msg);
-            throw new VolunteerPersonNotFoundException(msg);
+            this.notFound(volunteerPersonId);
+            return null;
 
         } catch (VolunteerPersonNotFoundException e) {
             throw new VolunteerPersonNotFoundException(e.getMessage());
@@ -215,15 +211,24 @@ public class VolunteerPersonService implements IVolunteerPersonService{
 
     @Override
     public Boolean setAvailability(String id, Boolean isAvailable) {
-        try{
+        try {
             Optional<VolunteerPerson> volunteerPerson = this.findId(id);
-            if (volunteerPerson.isPresent() && ! volunteerPerson.get().getDeleted()) {
+            if (volunteerPerson.isPresent()) {
+                if (volunteerPerson.get().getDeleted()) {
+                    log.warning("La Persona Voluntaria está eliminada");
+                    return false;
+                }
                 volunteerPerson.get().setAvailable(isAvailable);
                 volunteerPersonRepo.save(volunteerPerson.get());
+                log.info("Se estableció la disponiblidad de la persona voluntaria con id " + id + " como " +
+                        (isAvailable ? "DISPONIBLE" : "NO DISPONIBLE"));
                 return true;
             }
+            this.notFound(id);
             return false;
 
+        }catch (VolunteerPersonNotFoundException e){
+            throw new VolunteerPersonNotFoundException(e.getMessage());
         }catch(Exception e){
             log.warning("No se pudo setear la disponibilidad de la persona voluntaria con id: " + id + ". "
                     + e.getMessage());
@@ -234,13 +239,25 @@ public class VolunteerPersonService implements IVolunteerPersonService{
 
     @Override
     public Boolean setValidation(String id, Boolean isValidated) {
-        Optional<VolunteerPerson> volunteerPersonFound = this.findId(id);
-        if (volunteerPersonFound.isPresent()) {
-            volunteerPersonFound.get().setValidate(isValidated);
-            volunteerPersonRepo.save(volunteerPersonFound.get());
-            return true;
+        try {
+            Optional<VolunteerPerson> volunteerPersonFound = this.findId(id);
+            if (volunteerPersonFound.isPresent()) {
+                volunteerPersonFound.get().setValidate(isValidated);
+                volunteerPersonRepo.save(volunteerPersonFound.get());
+                log.info("Se validó la persona voluntaria con id " + id + " como " +
+                        (isValidated ? "VALIDADA" : "NO VALIDADA"));
+                return true;
+            }
+            this.notFound(id);
+            return false;
+
+        }catch(VolunteerPersonNotFoundException e){
+            throw new VolunteerPersonNotFoundException(e.getMessage());
+        }catch(Exception e){
+            String msg = "*** ERROR VALIDANDO PERSONA VOLUNTARIA";
+            log.warning(msg + ": " + e.getMessage());
+            throw new VolunteerPersonSetValidationException(msg);
         }
-        return false;
     }
 
     /*  Devuelve true si la operación fue exitosa.
@@ -257,10 +274,14 @@ public class VolunteerPersonService implements IVolunteerPersonService{
                 volunteerPerson.get().setDeleted(isDeleted);
                 volunteerPerson.get().setAvailable(false);
                 volunteerPersonRepo.save(volunteerPerson.get());
+                log.info("Se " + (isDeleted ? "eliminó" : "restauró") + " la persona voluntaria con id " + id);
                 return true;
             }
+            this.notFound(id);
             return false;
 
+        }catch (VolunteerPersonNotFoundException e){
+            throw new VolunteerPersonNotFoundException(e.getMessage());
         }catch(Exception e){
             log.warning("No se pudo setear el borrado lógico de la persona voluntaria con id: " + id + ". "
                     + e.getMessage());
@@ -275,9 +296,8 @@ public class VolunteerPersonService implements IVolunteerPersonService{
         if (found.isPresent())
             return found;
 
-        String msg = "No se encontro la Persona Voluntaria con id " + id;
-        log.info(msg);
-        throw new VolunteerPersonNotFoundException(msg);
+        this.notFound(id);
+        return Optional.empty();
     }
 
     @Override
@@ -620,5 +640,11 @@ public class VolunteerPersonService implements IVolunteerPersonService{
         volunteerPerson.setAvailable(oldVolunteerPerson.getAvailable());
         volunteerPerson.setValidate(oldVolunteerPerson.getValidate());
         volunteerPerson.setDeleted(oldVolunteerPerson.getDeleted());
+    }
+
+    private void notFound(String volunteerPersonId){
+        String msg = "No se encontro la Persona Voluntaria con id " + volunteerPersonId;
+        log.info(msg);
+        throw new VolunteerPersonNotFoundException(msg);
     }
 }
