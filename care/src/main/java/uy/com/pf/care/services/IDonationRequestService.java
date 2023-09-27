@@ -9,11 +9,10 @@ public interface IDonationRequestService {
     String save(DonationRequest donationRequest);
     Boolean acceptRequest(String donationRequestId, String volunteerCompanyId);
     Boolean changeRequestStatus(String donationRequestId, RequestStatusEnum requestStatus);
-
     Boolean setActive(String donationRequestId, Boolean isActive);
     List<DonationRequest> findAll(Boolean includeNotActive, String departmentName, String countryName);
-    DonationRequest findId(String id);
+    DonationRequest findId(String donationRequestId);
     List<DonationRequest> findIds(List<String> donationsRequestId);
     List<DonationRequest> findByStatus(
-            Boolean isActive, RequestStatusEnum requestStatus, String departmentName, String countryName);
+            Boolean activeOnly, RequestStatusEnum ordinalRequestStatus, String departmentName, String countryName);
 }

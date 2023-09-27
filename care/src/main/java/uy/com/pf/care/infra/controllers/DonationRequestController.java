@@ -28,6 +28,8 @@ public class DonationRequestController {
         try {
             return ResponseEntity.ok(donationRequestService.save(donationRequest));
 
+        }catch(DonationRequestMaterialsEmptyException e){
+            throw new ResponseStatusException(HttpStatus.CONFLICT, e.getMessage());
         }catch (DonationRequestSaveException e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
         }
@@ -64,17 +66,69 @@ public class DonationRequestController {
         }
     }
 
-    @GetMapping("/findAll/{includeNotActive}/{departmentName}/{countryName}")
+    @GetMapping("/findAll/{activeOnly}/{departmentName}/{countryName}")
     public ResponseEntity<List<DonationRequest>> findAll(
-            @PathVariable Boolean includeNotActive,
+            @PathVariable Boolean activeOnly,
             @PathVariable String departmentName,
             @PathVariable String countryName){
         try {
-            return ResponseEntity.ok(donationRequestService.findAll(includeNotActive, departmentName, countryName));
+            return ResponseEntity.ok(donationRequestService.findAll(activeOnly, departmentName, countryName));
 
         }catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
         }
     }
+
+    @GetMapping("/findId/{donationRequestId}")
+    public ResponseEntity<DonationRequest> findId(@PathVariable String donationRequestId){
+        try {
+            return ResponseEntity.ok(donationRequestService.findId(donationRequestId));
+
+        }catch(DonationRequestNotFoundException e){
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+        }catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
+        }
+    }
+
+    @GetMapping("/findIds")
+    public ResponseEntity<List<DonationRequest>> findIds(@Valid @NotNull @RequestBody List<String> donationsRequestId){
+        try {
+            return ResponseEntity.ok(donationRequestService.findIds(donationsRequestId));
+
+        }catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
+        }
+    }
+
+    @GetMapping("/findByStatus/{activeOnly}/{ordinalRequestStatus}/{departmentName}/{countryName}")
+    public ResponseEntity<List<DonationRequest>> findByStatus(
+            @PathVariable Boolean activeOnly,
+            @PathVariable Integer ordinalRequestStatus,
+            @PathVariable String departmentName,
+            @PathVariable String countryName){
+        try {
+            return ResponseEntity.ok(donationRequestService.findByStatus(
+                    activeOnly, RequestStatusEnum.values()[ordinalRequestStatus], departmentName, countryName));
+
+        }catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
+        }
+    }
+
+    @PutMapping("/setActive/{donationRequestId}/{isActive}")
+    public ResponseEntity<Boolean> setActive(
+            @PathVariable String donationRequestId,
+            @PathVariable Boolean isActive){
+        try {
+            return ResponseEntity.ok(donationRequestService.setActive(donationRequestId, isActive));
+
+        }catch (DonationRequestNotFoundException e){
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+        }catch (DonationRequestSetActiveException e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
+        }
+    }
+
 
 }

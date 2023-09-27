@@ -2,10 +2,14 @@ package uy.com.pf.care.services;
 
 import lombok.extern.java.Log;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 import uy.com.pf.care.exceptions.*;
 import uy.com.pf.care.infra.repos.IDonationRequestRepo;
 import uy.com.pf.care.model.documents.DonationRequest;
+import uy.com.pf.care.model.documents.FormalCaregiver;
 import uy.com.pf.care.model.enums.RequestStatusEnum;
 
 import java.time.LocalDate;
@@ -19,11 +23,19 @@ public class DonationRequestService implements IDonationRequestService{
     @Autowired
     private IDonationRequestRepo donationRequestRepo;
 
+    @Autowired
+    private MongoTemplate mongoTemplate;
 
     //Tener en cuenta que quien inicia un proceso de solicitud es un administrador web, un paciente o un
     //cuidador (formal o referente). Nunca lo inicia una empresa.
     @Override
     public String save(DonationRequest donationRequest) {
+
+        if (donationRequest.getMaterialId().isEmpty()){
+            String msg = "Debe especificar el material en la solicitud de donación.";
+            log.info(msg);
+            throw new DonationRequestMaterialsEmptyException(msg);
+        }
         try{
             this.defaultValues(donationRequest);
             String newDonationRequestlId = donationRequestRepo.save(donationRequest).getDonationRequestId();
@@ -54,9 +66,8 @@ public class DonationRequestService implements IDonationRequestService{
                         "'. Vínculo registrado con éxito");
                 return true;
             }
-            String msg = "Solicitud de donación con Id " + donationRequestId + " no encontrada";
-            log.warning(msg);
-            throw new DonationRequestNotFoundException(msg);
+            this.notFound(donationRequestId);
+            return null;
 
         }catch(DonationRequestNotFoundException e) {
             throw new DonationRequestNotFoundException(e.getMessage());
@@ -80,9 +91,8 @@ public class DonationRequestService implements IDonationRequestService{
                 log.info("Se cambió el estado de la donación a '" + requestStatus.getName() + "'");
                 return true;
             }
-            String msg = "Solicitud de donación con Id " + donationRequestId + " no encontrada";
-            log.warning(msg);
-            throw new DonationRequestNotFoundException(msg);
+            this.notFound(donationRequestId);
+            return null;
 
         }catch(DonationRequestNotFoundException e) {
             throw new DonationRequestNotFoundException(e.getMessage());
@@ -96,29 +106,65 @@ public class DonationRequestService implements IDonationRequestService{
 
     @Override
     public Boolean setActive(String donationRequestId, Boolean isActive) {
-        return null;
+        try {
+            Optional<DonationRequest> found = donationRequestRepo.findById(donationRequestId);
+            if (found.isPresent()) {
+                if (found.get().getActive() == isActive){
+                    log.info("La Solicitud de Donación ya estaba '" + (isActive ? "Activa'" : "Inactiva'"));
+                    return false;
+                }
+                found.get().setActive(isActive);
+                donationRequestRepo.save(found.get());
+                log.info("La Solicitud de Donación pasó a '" + (isActive ? "Activa'" : "Inactiva'"));
+                return true;
+            }
+            this.notFound(donationRequestId);
+            return null;
+
+        }catch(DonationRequestNotFoundException e) {
+            throw new DonationRequestNotFoundException(e.getMessage());
+        }catch(Exception e){
+            String msg = "*** ERROR ESTABLECIENDO COMO ACTIVA/INACTIVA LA SOLICITUD DE DONACION";
+            log.warning(msg + ": " + e.getMessage());
+            throw new DonationRequestSetActiveException(msg);
+        }
     }
 
     @Override
-    public List<DonationRequest> findAll(Boolean includeNotActive, String departmentName, String countryName) {
-        return includeNotActive ?
-                donationRequestRepo.findByCountryNameAndDepartmentName(countryName, departmentName) :
-                donationRequestRepo.findByCountryNameAndDepartmentNameAndActiveTrue(countryName, departmentName);
+    public List<DonationRequest> findAll(Boolean activeOnly, String departmentName, String countryName) {
+        return activeOnly ?
+                donationRequestRepo.findByCountryNameAndDepartmentNameAndActiveTrue(countryName, departmentName):
+                donationRequestRepo.findByCountryNameAndDepartmentName(countryName, departmentName);
     }
 
     @Override
-    public DonationRequest findId(String id) {
+    public DonationRequest findId(String donationRequestId) {
+        Optional<DonationRequest> found = donationRequestRepo.findById(donationRequestId);
+        if (found.isPresent())
+            return found.get();
+
+        this.notFound(donationRequestId);
         return null;
     }
 
     @Override
     public List<DonationRequest> findIds(List<String> donationsRequestId) {
-        return null;
+            return donationRequestRepo.findAllById(donationsRequestId);
     }
 
     @Override
-    public List<DonationRequest> findByStatus(Boolean isActive, RequestStatusEnum requestStatus, String departmentName, String countryName) {
-        return null;
+    public List<DonationRequest> findByStatus(
+            Boolean activeOnly, RequestStatusEnum ordinalRequestStatus, String departmentName, String countryName) {
+
+        Query query = new Query(
+                Criteria.where("requestStatus").is(RequestStatusEnum.values()[ordinalRequestStatus.getOrdinal()]).
+                        and("departmentName").is(departmentName).
+                        and("countryName").is(countryName)
+        );
+        if (activeOnly)
+            query.addCriteria(Criteria.where("active").is(true));
+
+        return mongoTemplate.find(query, DonationRequest.class);
     }
 
     private void defaultValues(DonationRequest donationRequest){
@@ -127,6 +173,12 @@ public class DonationRequestService implements IDonationRequestService{
         donationRequest.setFinishRequestDate(null);
         donationRequest.setVolunteerCompanyId(null);
         donationRequest.setActive(true);
+    }
+
+    private void notFound(String donationRequestId){
+        String msg = "Solicitud de donación con Id " + donationRequestId + " no encontrada";
+        log.warning(msg);
+        throw new DonationRequestNotFoundException(msg);
     }
 
 

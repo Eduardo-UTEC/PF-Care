@@ -31,9 +31,8 @@ public class DonationRequest {
     private String volunteerCompanyId; //Empresa que tomó la solicitud.
     private LocalDate startRequestDate;
     private LocalDate finishRequestDate;
+    private String materialId;  //Material solicitado (1 material por solicitud)
     private RequestStatusEnum requestStatus;
-
-    private List<String> materialsId = new ArrayList<>();
 
     @BooleanFlag
     private Boolean active;
