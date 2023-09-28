@@ -11,7 +11,7 @@ import uy.com.pf.care.model.enums.RoleEnum;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
-public class UserObject {
+public class    UserObject {
     //Si es un paciente, entityId es el Id del paciente. Si es un cuidador formal, es el Id del cuidador formal...
     private String entityId;
 

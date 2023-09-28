@@ -123,7 +123,7 @@ public class UserController {
         }
     }*/
 
-    @GetMapping("login")
+    @PostMapping("login")
     public ResponseEntity<User> login(@Valid @NotNull @RequestBody LoginObjectAuthenticate loginObjectAuthenticate) {
         try{
             return ResponseEntity.ok(userService.login(loginObjectAuthenticate));

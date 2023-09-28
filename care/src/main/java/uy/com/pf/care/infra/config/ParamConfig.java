@@ -13,5 +13,4 @@ public class ParamConfig {
 
     @Value("${socket}")
     private String socket;
-
 }
