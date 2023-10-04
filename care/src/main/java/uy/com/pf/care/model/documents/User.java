@@ -17,11 +17,9 @@ import uy.com.pf.care.model.objects.ZoneObject;
 import java.util.List;
 
 @Document("Users")
-
 @CompoundIndexes({
     @CompoundIndex(def = "{'userName':1}", unique = true)
 })
-
 @Data
 @EqualsAndHashCode(callSuper=false)
 @AllArgsConstructor

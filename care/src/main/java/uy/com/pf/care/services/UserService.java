@@ -3,8 +3,10 @@ package uy.com.pf.care.services;
 import lombok.extern.java.Log;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
+import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Service;
 import uy.com.pf.care.exceptions.*;
+import uy.com.pf.care.infra.config.CareSecurity;
 import uy.com.pf.care.infra.repos.IUserRepo;
 import uy.com.pf.care.model.documents.User;
 import uy.com.pf.care.model.enums.RoleEnum;
@@ -22,6 +24,9 @@ public class UserService implements IUserService{
     @Autowired
     private IUserRepo userRepo;
 
+    @Autowired
+    private MongoTemplate mongoTemplate;
+
     @Override
     public String save(User newUser) {
 
@@ -29,6 +34,7 @@ public class UserService implements IUserService{
 
         try {
             ForceEnumsToUser.execute(newUser);
+            this.encrypt(newUser);
             String id = userRepo.save(newUser).getUserId();
             log.info("*** Usuario guardado con exito: " + LocalDateTime.now());
             return id;
@@ -52,6 +58,7 @@ public class UserService implements IUserService{
             if (oldUser.isPresent()) {
                 this.defaultValues(user, oldUser.get());
                 ForceEnumsToUser.execute(user);
+                this.encrypt(user);
                 userRepo.save(user);
                 log.info("Usuario actualizado con exito");
                 return true;
@@ -110,10 +117,8 @@ public class UserService implements IUserService{
             Optional<User> user = userRepo.findById(userId);
             if (user.isPresent()) {
                 for (UserObject userObject : user.get().getRoles()) {
-                    //if (userObject.getRole().getRol().getOrdinal() == roleOrdinal.getOrdinal()) {
                     if (userObject.getRol().getOrdinal() == roleOrdinal.getOrdinal()) {
                         if (userObject.getEntityId() != null){
-                            //String msg = "El usuario ya está vinculado a un " + userObject.getRole().getRol().getName();
                             String msg = "El usuario ya está vinculado a un " + userObject.getRol().getName();
                             log.warning(msg);
                             throw new UserAlreadyLinkedException(msg);
@@ -178,8 +183,9 @@ public class UserService implements IUserService{
     @Override
     public User login(LoginObjectAuthenticate loginObjectAuthenticate) {
         try {
+            CareSecurity careSecurity = new CareSecurity();
             User userFound = userRepo.findByUserName(loginObjectAuthenticate.getUserName());
-            if (userFound != null && userFound.getPass().equals(loginObjectAuthenticate.getPass()))
+            if (userFound != null && careSecurity.decrypt(userFound.getPass()).equals(loginObjectAuthenticate.getPass()))
                 return userFound;
 
             String msg = "Credenciales inválidas";
@@ -285,6 +291,11 @@ public class UserService implements IUserService{
 
     private void defaultValues(User newUser, User oldUser){
         newUser.setRoles(oldUser.getRoles());
+    }
+
+    private void encrypt(User user){
+        CareSecurity careSecurity = new CareSecurity();
+        user.setPass(careSecurity.encrypt(user.getPass()));
     }
 
 }
