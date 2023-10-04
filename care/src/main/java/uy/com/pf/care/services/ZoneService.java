@@ -2,10 +2,12 @@ package uy.com.pf.care.services;
 
 import lombok.extern.java.Log;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
+import uy.com.pf.care.exceptions.ZoneDuplicateKeyException;
 import uy.com.pf.care.exceptions.ZoneSaveException;
 import uy.com.pf.care.exceptions.ZoneUpdateException;
 import uy.com.pf.care.infra.repos.IZoneRepo;
@@ -30,12 +32,16 @@ public class ZoneService implements IZoneService{
 
     @Override
     public String save(Zone zone) {
-        try{
+        try {
             this.defaultValues(zone);
             String id = zoneRepo.save(zone).getZoneId();
             log.info("*** Zona guardada con exito: " + LocalDateTime.now());
             return id;
 
+        }catch(DuplicateKeyException e){
+            String msg = "Error guardando zona (clave duplicada)";
+            log.warning(msg + ": " + e.getMessage());
+            throw new ZoneDuplicateKeyException(msg);
         }catch(Exception e){
             log.warning("*** ERROR GUARDANDO ZONA: " + e);
             throw new ZoneSaveException("*** ERROR GUARDANDO ZONA");
@@ -55,6 +61,10 @@ public class ZoneService implements IZoneService{
             log.info("No se encontro la zona con id " + newZone.getZoneId());
             return false;
 
+        }catch(DuplicateKeyException e){
+            String msg = "Error actualizando zona (clave duplicada)";
+            log.warning(msg + ": " + e.getMessage());
+            throw new ZoneDuplicateKeyException(msg);
         }catch(Exception e){
             log.warning("*** ERROR  ZONA: " + e);
             throw new ZoneUpdateException("*** ERROR ACTUALIZANDO ZONA");

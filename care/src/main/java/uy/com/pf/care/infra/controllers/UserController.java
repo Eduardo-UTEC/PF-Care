@@ -25,10 +25,12 @@ public class UserController {
 
     @PostMapping("/add")
     public ResponseEntity<String> add(@Valid @NotNull @RequestBody User user){
-        try{
+        try {
             return ResponseEntity.ok(userService.save(user));
 
-        }catch (UserSaveException e){
+        } catch (UserDuplicateKeyException e){
+          throw new ResponseStatusException(HttpStatus.CONFLICT, e.getMessage());
+        } catch (UserSaveException e){
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
         }
     }

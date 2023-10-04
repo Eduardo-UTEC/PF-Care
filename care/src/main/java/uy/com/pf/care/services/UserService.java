@@ -2,6 +2,7 @@ package uy.com.pf.care.services;
 
 import lombok.extern.java.Log;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 import uy.com.pf.care.exceptions.*;
 import uy.com.pf.care.infra.repos.IUserRepo;
@@ -26,13 +27,18 @@ public class UserService implements IUserService{
 
         this.saveValidate(newUser);
 
-        try{
+        try {
             ForceEnumsToUser.execute(newUser);
             String id = userRepo.save(newUser).getUserId();
             log.info("*** Usuario guardado con exito: " + LocalDateTime.now());
             return id;
 
-        }catch(Exception e){
+        } catch (DuplicateKeyException e) {
+            String msg = "clave duplicada";
+            log.warning(msg + ": " + e.getMessage());
+            throw new UserDuplicateKeyException(msg);
+
+        } catch (Exception e){
             String msg = "*** ERROR GUARDANDO USUARIO";
             log.warning( msg +": " + e.getMessage());
             throw new UserSaveException(msg);

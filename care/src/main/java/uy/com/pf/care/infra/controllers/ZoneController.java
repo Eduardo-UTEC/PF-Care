@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import uy.com.pf.care.exceptions.FormalCaregiverUpdateException;
+import uy.com.pf.care.exceptions.ZoneDuplicateKeyException;
 import uy.com.pf.care.exceptions.ZoneSaveException;
 import uy.com.pf.care.model.documents.Zone;
 import uy.com.pf.care.model.objects.NeighborhoodObject;
@@ -27,9 +28,11 @@ public class ZoneController {
 
     @PostMapping("/add")
     public ResponseEntity<String> add(@Valid @NotNull @RequestBody Zone zone){
-        try{
+        try {
             return ResponseEntity.ok(zoneService.save(zone));
 
+        }catch (ZoneDuplicateKeyException e){
+            throw new ResponseStatusException(HttpStatus.CONFLICT, e.getMessage());
         }catch (ZoneSaveException e){
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
         }
@@ -40,6 +43,8 @@ public class ZoneController {
         try {
             return ResponseEntity.ok(zoneService.update(newZone));
 
+        }catch (ZoneDuplicateKeyException e){
+            throw new ResponseStatusException(HttpStatus.CONFLICT, e.getMessage());
         }catch(FormalCaregiverUpdateException e){
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
         }
