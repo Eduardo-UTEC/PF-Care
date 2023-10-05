@@ -9,8 +9,8 @@ import java.util.List;
 @Repository
 public interface IDonationRequestRepo extends MongoRepository<DonationRequest, String> {
 
-    public List<DonationRequest> findByCountryNameAndDepartmentName(String countryName, String departmentName);
-    public List<DonationRequest> findByCountryNameAndDepartmentNameAndActiveTrue(String countryName, String departmentName);
+    List<DonationRequest> findByCountryNameAndDepartmentName(String countryName, String departmentName);
+    List<DonationRequest> findByCountryNameAndDepartmentNameAndActiveTrue(String countryName, String departmentName);
 
 
 }
