@@ -6,7 +6,7 @@
       <GradleProjectSettings>
         <option name="externalProjectPath" value="$PROJECT_DIR$/care" />
         <option name="gradleHome" value="C:/gradle/gradle-8.3" />
-        <option name="gradleJvm" value="open-jdk 19.0.2" />
+        <option name="gradleJvm" value="#JAVA_HOME" />
         <option name="modules">
           <set>
             <option value="$PROJECT_DIR$/care" />

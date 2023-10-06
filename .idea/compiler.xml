@@ -12,6 +12,6 @@
         <module name="uy.com.pf.care.test" />
       </profile>
     </annotationProcessing>
-    <bytecodeTargetLevel target="19" />
+    <bytecodeTargetLevel target="17" />
   </component>
 </project>
