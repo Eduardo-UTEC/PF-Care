@@ -17,8 +17,8 @@ public enum RelationshipEnum {
     NIECE(8, "Sobrina"),
     GRANDSON(9, "Nieto"),
     GRANDDAUGHTER(10, "Nieta"),
-    UNCLE(11, "Tio"),
-    AUNT(12, "Tia"),
+    UNCLE(11, "Tío"),
+    AUNT(12, "Tía"),
     FRIEND(13, "Amigo"),
     NEIGHBOR(14, "Vecino"),
     COWORKER(15, "Compañero de Trabajo");
