@@ -37,14 +37,14 @@ public class Patient extends PersonObject {
 
     private String referenceCaregiverId;
 
-    @NotNull(message = "Patient: La clave 'zone' no puede ser nula")
-    private ZoneObject zone;
-
-    //@Valid
-    private List<FormalCaregiverOthersObject> formalCaregivers = new ArrayList<>();
+        //@Valid
+    private List<String> formalCaregiversId = new ArrayList<>();
 
     //@Valid
     private List<InformalCaregiverObject> informalCaregivers = new ArrayList<>();
+
+    @NotNull(message = "Patient: La clave 'zone' no puede ser nula")
+    private ZoneObject zone;
 
     //@NotNull(message = "Patient: La clave 'healthProvider' no puede ser nula")
     //private HealthProviderObject healthProvider;
