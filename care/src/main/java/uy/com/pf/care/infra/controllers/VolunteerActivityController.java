@@ -5,6 +5,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.extern.java.Log;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
@@ -51,7 +52,9 @@ public class VolunteerActivityController {
         }
     }
 
-    @GetMapping("findAll/{includeDeleted}/{countryName}")
+    @GetMapping(
+            value = "findAll/{includeDeleted}/{countryName}",
+            produces = MediaType.APPLICATION_JSON_VALUE + ";charset=UTF-8")
     public ResponseEntity<List<VolunteerActivity>> findAll(
             @PathVariable Boolean includeDeleted,
             @PathVariable String countryName){
@@ -64,7 +67,9 @@ public class VolunteerActivityController {
         }
     }
 
-    @GetMapping("findDepartment/{includeDeleted}/{departmentName}/{countryName}")
+    @GetMapping(
+            value = "findDepartment/{includeDeleted}/{departmentName}/{countryName}",
+            produces = MediaType.APPLICATION_JSON_VALUE + ";charset=UTF-8")
     public ResponseEntity<List<VolunteerActivity>> findDepartment(
             @PathVariable Boolean includeDeleted,
             @PathVariable String departmentName,
@@ -94,7 +99,7 @@ public class VolunteerActivityController {
         }
     }
 
-    @GetMapping("findId/{id}")
+    @GetMapping(value = "findId/{id}", produces = MediaType.APPLICATION_JSON_VALUE + ";charset=UTF-8")
     public ResponseEntity<Optional<VolunteerActivity>> findId(@PathVariable String id) {
         try{
             return ResponseEntity.ok(volunteerActivityService.findId(id));

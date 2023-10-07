@@ -5,6 +5,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.extern.java.Log;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
@@ -50,7 +51,9 @@ public class ZoneController {
         }
     }
 
-    @GetMapping("findAll/{includeDeleted}/{countryName}")
+    @GetMapping(
+            value = "findAll/{includeDeleted}/{countryName}",
+            produces = MediaType.APPLICATION_JSON_VALUE + ";charset=UTF-8")
     public ResponseEntity<List<Zone>> findAll(@PathVariable Boolean includeDeleted, @PathVariable String countryName){
         try{
             return ResponseEntity.ok(zoneService.findAll(includeDeleted, countryName));
@@ -61,7 +64,7 @@ public class ZoneController {
         }
     }
 
-    @GetMapping("findId/{id}")
+    @GetMapping(value = "findId/{id}", produces = MediaType.APPLICATION_JSON_VALUE + ";charset=UTF-8")
     public ResponseEntity<Optional<Zone>> findId(@PathVariable String id) {
         try{
             return ResponseEntity.ok(zoneService.findId(id));
@@ -72,7 +75,9 @@ public class ZoneController {
         }
     }
 
-    @GetMapping("findNeighborhoods/{includeDeleted}/{cityName}/{departmentName}/{countryName}")
+    @GetMapping(
+            value = "findNeighborhoods/{includeDeleted}/{cityName}/{departmentName}/{countryName}",
+            produces = MediaType.APPLICATION_JSON_VALUE + ";charset=UTF-8")
     public ResponseEntity<List<NeighborhoodObject>> findNeighborhood(@PathVariable Boolean includeDeleted,
                                                                      @PathVariable String cityName,
                                                                      @PathVariable String departmentName,
@@ -87,7 +92,9 @@ public class ZoneController {
         }
     }
 
-    @GetMapping("findCities/{includeDeleted}/{departmentName}/{countryName}")
+    @GetMapping(
+            value = "findCities/{includeDeleted}/{departmentName}/{countryName}",
+            produces = MediaType.APPLICATION_JSON_VALUE + ";charset=UTF-8")
     public ResponseEntity<List<String>> findCities(@PathVariable Boolean includeDeleted,
                                                    @PathVariable String departmentName,
                                                    @PathVariable String countryName){
@@ -100,7 +107,9 @@ public class ZoneController {
         }
     }
 
-    @GetMapping("findDepartments/{includeDeleted}/{countryName}")
+    @GetMapping(
+            value = "findDepartments/{includeDeleted}/{countryName}",
+            produces = MediaType.APPLICATION_JSON_VALUE + ";charset=UTF-8")
     public ResponseEntity<List<String>> findDepartment(@PathVariable Boolean includeDeleted,
                                                           @PathVariable String countryName){
         try{
@@ -112,7 +121,9 @@ public class ZoneController {
         }
     }
 
-    @GetMapping("findCountries/{includeDeleted}")
+    @GetMapping(
+            value = "findCountries/{includeDeleted}",
+            produces =MediaType.APPLICATION_JSON_VALUE + ";charset=UTF-8")
     public ResponseEntity<List<String>> findCountries(@PathVariable Boolean includeDeleted){
         try{
             return ResponseEntity.ok(zoneService.findCountries(includeDeleted));

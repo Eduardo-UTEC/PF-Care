@@ -5,6 +5,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.extern.java.Log;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
@@ -89,7 +90,7 @@ public class UserController {
     }
 
 
-    @GetMapping("findAll/{countryName}")
+    @GetMapping(value = "findAll/{countryName}", produces = MediaType.APPLICATION_JSON_VALUE + ";charset=UTF-8")
     public ResponseEntity<List<User>> findAll(@PathVariable String countryName){
         try{
             return ResponseEntity.ok(userService.findAll(countryName));
@@ -99,7 +100,7 @@ public class UserController {
         }
     }
 
-    @GetMapping("findId/{id}")
+    @GetMapping(value = "findId/{id}", produces = MediaType.APPLICATION_JSON_VALUE + ";charset=UTF-8")
     public ResponseEntity<User> findId(@PathVariable String id) {
         try {
             return ResponseEntity.ok(userService.findId(id));
@@ -125,7 +126,7 @@ public class UserController {
         }
     }*/
 
-    @PostMapping("login")
+    @PostMapping(value = "login", produces = MediaType.APPLICATION_JSON_VALUE + ";charset=UTF-8")
     public ResponseEntity<User> login(@Valid @NotNull @RequestBody LoginObjectAuthenticate loginObjectAuthenticate) {
         try{
             return ResponseEntity.ok(userService.login(loginObjectAuthenticate));
@@ -147,7 +148,7 @@ public class UserController {
         }
     }
 
-    @GetMapping("findUserName/{userName}")
+    @GetMapping(value = "findUserName/{userName}", produces = MediaType.APPLICATION_JSON_VALUE + ";charset=UTF-8")
     public ResponseEntity<User> findUserName(@PathVariable String userName) {
         try{
             return ResponseEntity.ok(userService.findUserName(userName));
@@ -159,7 +160,9 @@ public class UserController {
         }
     }
 
-    @GetMapping("findCity/{cityName}/{departmentName}/{countryName}")
+    @GetMapping(
+            value = "findCity/{cityName}/{departmentName}/{countryName}",
+            produces = MediaType.APPLICATION_JSON_VALUE + ";charset=UTF-8")
     public ResponseEntity<List<User>> findCity(@PathVariable String cityName,
                                                @PathVariable String departmentName,
                                                @PathVariable String countryName) {
@@ -171,7 +174,9 @@ public class UserController {
         }
     }
 
-    @GetMapping("findDepartment/{departmentName}/{countryName}")
+    @GetMapping(
+            value = "findDepartment/{departmentName}/{countryName}",
+            produces = MediaType.APPLICATION_JSON_VALUE + ";charset=UTF-8")
     public ResponseEntity<List<User>> findDepartment(@PathVariable String departmentName,
                                                      @PathVariable String countryName) {
         try{

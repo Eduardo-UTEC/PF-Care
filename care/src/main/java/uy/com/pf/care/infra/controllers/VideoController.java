@@ -5,6 +5,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.extern.java.Log;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
@@ -98,7 +99,9 @@ public class VideoController {
     }
 
 
-    @GetMapping("findAll/{departmentName}/{countryName}")
+    @GetMapping(
+            value = "findAll/{departmentName}/{countryName}",
+            produces = MediaType.APPLICATION_JSON_VALUE + ";charset=UTF-8")
     public ResponseEntity<List<Video>> findAll(@PathVariable String departmentName, @PathVariable String countryName){
         try{
             return ResponseEntity.ok(videoService.findAll(countryName, departmentName));
@@ -109,7 +112,7 @@ public class VideoController {
         }
     }
 
-    @GetMapping("findId/{id}")
+    @GetMapping(value = "findId/{id}", produces = MediaType.APPLICATION_JSON_VALUE + ";charset=UTF-8")
     public ResponseEntity<Optional<Video>> findId(@PathVariable String id) {
         try{
             return ResponseEntity.ok(videoService.findId(id));
@@ -121,7 +124,9 @@ public class VideoController {
         }
     }
 
-    @GetMapping("findByRole/{ordinalRole}/{departmentName}/{countryName}")
+    @GetMapping(
+            value = "findByRole/{ordinalRole}/{departmentName}/{countryName}",
+            produces = MediaType.APPLICATION_JSON_VALUE + ";charset=UTF-8")
     public ResponseEntity<List<VideoObject>> findByRole(
             @PathVariable Integer ordinalRole,
             @PathVariable String countryName,

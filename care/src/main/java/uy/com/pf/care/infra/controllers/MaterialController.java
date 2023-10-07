@@ -5,6 +5,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.extern.java.Log;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
@@ -45,7 +46,7 @@ public class MaterialController {
         }
     }
 
-    @GetMapping("findId/{id}")
+    @GetMapping(value = "findId/{id}", produces = MediaType.APPLICATION_JSON_VALUE + ";charset=UTF-8")
     public ResponseEntity<Optional<Material>> findId(@PathVariable String id) {
         try {
             return ResponseEntity.ok(materialService.findId(id));
@@ -59,7 +60,7 @@ public class MaterialController {
         }
     }
 
-    @PostMapping("findIds")
+    @PostMapping(value = "findIds", produces = MediaType.APPLICATION_JSON_VALUE + ";charset=UTF-8")
     public ResponseEntity<List<Material>> findIds(
             @Valid @NotNull @RequestBody List<String> materialsId) {
         try {
@@ -72,7 +73,9 @@ public class MaterialController {
         }
     }
 
-    @GetMapping("findAll/{includeDeleted}/{countryName}")
+    @GetMapping(
+            value = "findAll/{includeDeleted}/{countryName}",
+            produces = MediaType.APPLICATION_JSON_VALUE + ";charset=UTF-8")
     public ResponseEntity<List<Material>> findAll(
             @PathVariable Boolean includeDeleted,
             @PathVariable String countryName){
@@ -88,7 +91,9 @@ public class MaterialController {
     }
 
     //Boolean includeDeleted, Boolean exactMatch, String name, String countryName
-    @GetMapping("findName/{includeDeleted}/{exactMatch}/{name}/{countryName}")
+    @GetMapping(
+            value = "findName/{includeDeleted}/{exactMatch}/{name}/{countryName}",
+            produces = MediaType.APPLICATION_JSON_VALUE + ";charset=UTF-8")
     public ResponseEntity<List<Material>> findName(
             @PathVariable Boolean includeDeleted,
             @PathVariable Boolean exactMatch,

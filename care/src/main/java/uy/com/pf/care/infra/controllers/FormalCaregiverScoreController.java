@@ -4,6 +4,7 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
@@ -35,7 +36,7 @@ public class FormalCaregiverScoreController {
         }
     }
 
-    @GetMapping("findAll/{formalCaregiverId}")
+    @GetMapping(value = "findAll/{formalCaregiverId}", produces = MediaType.APPLICATION_JSON_VALUE + ";charset=UTF-8")
     public ResponseEntity<List<FormalCaregiverScore>> findAll(@PathVariable String formalCaregiverId){
         try{
             return ResponseEntity.ok(formalCaregiverScoreService.findAll(formalCaregiverId));
@@ -46,7 +47,7 @@ public class FormalCaregiverScoreController {
         }
     }
 
-    @GetMapping("findId/{id}")
+    @GetMapping(value = "findId/{id}", produces = MediaType.APPLICATION_JSON_VALUE + ";charset=UTF-8")
     public ResponseEntity<Optional<FormalCaregiverScore>> findId(@PathVariable String id) {
         try {
             return ResponseEntity.ok(formalCaregiverScoreService.findId(id));
@@ -58,7 +59,9 @@ public class FormalCaregiverScoreController {
         }
     }
 
-    @GetMapping("findScore/{formalCaregiverId}/{patientId}")
+    @GetMapping(
+            value = "findScore/{formalCaregiverId}/{patientId}",
+            produces = MediaType.APPLICATION_JSON_VALUE + ";charset=UTF-8")
     public ResponseEntity<FormalCaregiverScore> findScore(
             @PathVariable String formalCaregiverId,
             @PathVariable String patientId) {

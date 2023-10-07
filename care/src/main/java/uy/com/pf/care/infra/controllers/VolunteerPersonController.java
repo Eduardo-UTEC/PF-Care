@@ -6,6 +6,7 @@ import lombok.extern.java.Log;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
@@ -99,7 +100,9 @@ public class VolunteerPersonController {
         }
     }
 
-    @GetMapping("findAll/{withoutValidate}/{includeDeleted}/{countryName}")
+    @GetMapping(
+            value = "findAll/{withoutValidate}/{includeDeleted}/{countryName}",
+            produces = MediaType.APPLICATION_JSON_VALUE + ";charset=UTF-8")
     public ResponseEntity<List<VolunteerPerson>> findAll(
             @PathVariable Boolean withoutValidate,
             @PathVariable Boolean includeDeleted,
@@ -113,7 +116,7 @@ public class VolunteerPersonController {
         }
     }
 
-    @GetMapping("findId/{id}")
+    @GetMapping(value = "findId/{id}", produces = MediaType.APPLICATION_JSON_VALUE + ";charset=UTF-8")
     public ResponseEntity<Optional<VolunteerPerson>> findId(@PathVariable String id) {
         try {
             return ResponseEntity.ok(volunteerPersonService.findId(id));
@@ -125,7 +128,9 @@ public class VolunteerPersonController {
         }
     }
 
-    @GetMapping("findIdentificationNumber/{identificationNumber}/{countryName}")
+    @GetMapping(
+            value = "findIdentificationNumber/{identificationNumber}/{countryName}",
+            produces = MediaType.APPLICATION_JSON_VALUE + ";charset=UTF-8")
     public ResponseEntity<VolunteerPerson> findIdentificationNumber(
             @PathVariable String identificationNumber,
             @PathVariable String countryName) {
@@ -139,7 +144,7 @@ public class VolunteerPersonController {
         }
     }
 
-    @GetMapping("findMail/{mail}")
+    @GetMapping(value = "findMail/{mail}", produces = MediaType.APPLICATION_JSON_VALUE + ";charset=UTF-8")
     public ResponseEntity<VolunteerPerson> findMail(@PathVariable String mail) {
         try{
             return ResponseEntity.ok(volunteerPersonService.findMail(mail));
@@ -151,7 +156,9 @@ public class VolunteerPersonController {
         }
     }
 
-    @GetMapping("findName/{name}/{withoutValidate}/{includeDeleted}/{countryName}")
+    @GetMapping(
+            value = "findName/{name}/{withoutValidate}/{includeDeleted}/{countryName}",
+            produces = MediaType.APPLICATION_JSON_VALUE + ";charset=UTF-8")
     public ResponseEntity<List<VolunteerPerson>> findName(
             @PathVariable String name,
             @PathVariable Boolean withoutValidate,
@@ -167,7 +174,9 @@ public class VolunteerPersonController {
         }
     }
 
-    @GetMapping("findNameLike/{withoutValidate}/{includeDeleted}/{name}/{countryName}")
+    @GetMapping(
+            value = "findNameLike/{withoutValidate}/{includeDeleted}/{name}/{countryName}",
+            produces = MediaType.APPLICATION_JSON_VALUE + ";charset=UTF-8")
     public ResponseEntity<List<VolunteerPerson>> findNameLike(
             @PathVariable Boolean withoutValidate,
             @PathVariable Boolean includeDeleted,
@@ -223,13 +232,14 @@ public class VolunteerPersonController {
     }
 
     @GetMapping(
-            "findInterestZones_Neighborhood/" +
+            value = "findInterestZones_Neighborhood/" +
                     "{withoutValidate}/" +
                     "{includeDeleted}/" +
                     "{interestNeighborhoodName}/" +
                     "{interestCityName}/" +
                     "{interestDepartmentName}/" +
-                    "{countryName}")
+                    "{countryName}",
+            produces = MediaType.APPLICATION_JSON_VALUE + ";charset=UTF-8")
     public ResponseEntity<List<VolunteerPerson>> findInterestZones_Neighborhood(
             @PathVariable Boolean withoutValidate,
             @PathVariable Boolean includeDeleted,
@@ -251,12 +261,13 @@ public class VolunteerPersonController {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
         }
     }
-    @GetMapping("findInterestZones_City/" +
+    @GetMapping(value = "findInterestZones_City/" +
                 "{withoutValidate}/" +
                 "{includeDeleted}/" +
                 "{interestCityName}/" +
                 "{interestDepartmentName}/" +
-                "{countryName}")
+                "{countryName}",
+            produces = MediaType.APPLICATION_JSON_VALUE + ";charset=UTF-8")
     public ResponseEntity<List<VolunteerPerson>> findInterestZones_City(
             @PathVariable Boolean withoutValidate,
             @PathVariable Boolean includeDeleted,
@@ -277,7 +288,13 @@ public class VolunteerPersonController {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
         }
     }
-    @GetMapping("findInterestZones_Department/{withoutValidate}/{includeDeleted}/{interestDepartmentName}/{countryName}")
+    @GetMapping(
+            value = "findInterestZones_Department/" +
+                    "{withoutValidate}/" +
+                    "{includeDeleted}/" +
+                    "{interestDepartmentName}/" +
+                    "{countryName}",
+            produces = MediaType.APPLICATION_JSON_VALUE + ";charset=UTF-8")
     public ResponseEntity<List<VolunteerPerson>> findInterestZones_Department(
             @PathVariable Boolean withoutValidate,
             @PathVariable Boolean includeDeleted,
@@ -294,11 +311,12 @@ public class VolunteerPersonController {
     }
 
     @GetMapping(
-            "findDateTimeRange/" +
+            value = "findDateTimeRange/" +
                     "{interestNeighborhoodName}/" +
                     "{interestCityName}/" +
                     "{interestDepartmentName}/" +
-                    "{countryName}")
+                    "{countryName}",
+            produces = MediaType.APPLICATION_JSON_VALUE + ";charset=UTF-8")
     public ResponseEntity<List<VolunteerPerson>> findDateTimeRange(
             @PathVariable String interestNeighborhoodName,
             @PathVariable String interestCityName,

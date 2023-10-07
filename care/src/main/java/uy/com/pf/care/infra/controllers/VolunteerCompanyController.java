@@ -6,6 +6,7 @@ import lombok.extern.java.Log;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
@@ -116,7 +117,7 @@ public class VolunteerCompanyController {
         }
     }
 
-    @GetMapping("findId/{id}")
+    @GetMapping(value = "findId/{id}", produces = MediaType.APPLICATION_JSON_VALUE + ";charset=UTF-8")
     public ResponseEntity<Optional<VolunteerCompany>> findId(@PathVariable String id) {
         try {
             return ResponseEntity.ok(volunteerCompanyService.findId(id));
@@ -127,7 +128,9 @@ public class VolunteerCompanyController {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
         }
     }
-    @GetMapping("findAll/{validateOnly}/{includeDeleted}/{countryName}")
+    @GetMapping(
+            value = "findAll/{validateOnly}/{includeDeleted}/{countryName}",
+            produces = MediaType.APPLICATION_JSON_VALUE + ";charset=UTF-8")
     public ResponseEntity<List<VolunteerCompany>> findAll(
             @PathVariable Boolean validateOnly,
             @PathVariable Boolean includeDeleted,

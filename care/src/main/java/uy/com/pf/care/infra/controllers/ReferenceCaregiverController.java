@@ -5,6 +5,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.extern.java.Log;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
@@ -50,7 +51,9 @@ public class ReferenceCaregiverController {
         }
     }
 
-    @PutMapping("/changeRelationshipPatient/{referenceCaregiverId}/{patientId}/{ordinalRelationship}")
+    @PutMapping(
+            value = "/changeRelationshipPatient/{referenceCaregiverId}/{patientId}/{ordinalRelationship}",
+            produces = MediaType.APPLICATION_JSON_VALUE + ";charset=UTF-8")
     public ResponseEntity<Boolean> changeRelationshipPatient(
             @PathVariable String referenceCaregiverId,
             @PathVariable String patientId,
@@ -68,7 +71,9 @@ public class ReferenceCaregiverController {
         }
     }
 
-    @PutMapping("/addPatient/{referenceCaregiverId}/{patientId}/{ordinalRelationship}")
+    @PutMapping(
+            value = "/addPatient/{referenceCaregiverId}/{patientId}/{ordinalRelationship}",
+            produces = MediaType.APPLICATION_JSON_VALUE + ";charset=UTF-8")
     public ResponseEntity<Boolean> addPatient(
             @PathVariable String referenceCaregiverId,
             @PathVariable String patientId,
@@ -88,7 +93,7 @@ public class ReferenceCaregiverController {
         }
     }
 
-    @GetMapping("findId/{id}")
+    @GetMapping(value = "findId/{id}", produces = MediaType.APPLICATION_JSON_VALUE + ";charset=UTF-8")
     public ResponseEntity<Optional<ReferenceCaregiver>> findId(@PathVariable String id) {
         try{
             return ResponseEntity.ok(referenceCaregiverService.findId(id));
@@ -100,7 +105,9 @@ public class ReferenceCaregiverController {
         }
     }
 
-    @GetMapping("findIdentificationDocument/{document}/{countryName}")
+    @GetMapping(
+            value = "findIdentificationDocument/{document}/{countryName}",
+            produces = MediaType.APPLICATION_JSON_VALUE + ";charset=UTF-8")
     public ResponseEntity<Optional<ReferenceCaregiver>> findIdentificationDocument(
             @PathVariable Integer document,
             @PathVariable String countryName) {
@@ -115,7 +122,9 @@ public class ReferenceCaregiverController {
         }
     }
 
-    @GetMapping("findName1/{name1}/{neighborhoodName}/{cityName}/{departmentName}/{countryName}")
+    @GetMapping(
+            value = "findName1/{name1}/{neighborhoodName}/{cityName}/{departmentName}/{countryName}",
+            produces = MediaType.APPLICATION_JSON_VALUE + ";charset=UTF-8")
     public ResponseEntity<List<ReferenceCaregiver>> findName1(
             @PathVariable String name1,
             @PathVariable String neighborhoodName,
@@ -137,7 +146,9 @@ public class ReferenceCaregiverController {
         }
     }
 
-    @GetMapping("findCity/{cityName}/{departmentName}/{countryName}")
+    @GetMapping(
+            value = "findCity/{cityName}/{departmentName}/{countryName}",
+            produces = MediaType.APPLICATION_JSON_VALUE + ";charset=UTF-8")
     public ResponseEntity<List<ReferenceCaregiver>> findCity(
             @PathVariable String cityName,
             @PathVariable String departmentName,
@@ -155,7 +166,9 @@ public class ReferenceCaregiverController {
         }
     }
 
-    @GetMapping("findDepartment/{departmentName}/{countryName}")
+    @GetMapping(
+            value = "findDepartment/{departmentName}/{countryName}",
+            produces = MediaType.APPLICATION_JSON_VALUE + ";charset=UTF-8")
     public ResponseEntity<List<ReferenceCaregiver>> findDepartment(
             @PathVariable String departmentName,
             @PathVariable String countryName) {
@@ -171,7 +184,7 @@ public class ReferenceCaregiverController {
         }
     }
 
-    @GetMapping("findAll/{countryName}")
+    @GetMapping(value = "findAll/{countryName}", produces = MediaType.APPLICATION_JSON_VALUE + ";charset=UTF-8")
     public ResponseEntity<List<ReferenceCaregiver>> findAll(@PathVariable String countryName) {
 
         try {

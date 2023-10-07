@@ -5,6 +5,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.extern.java.Log;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
@@ -66,7 +67,9 @@ public class DonationRequestController {
         }
     }
 
-    @GetMapping("/findAll/{activeOnly}/{departmentName}/{countryName}")
+    @GetMapping(
+            value = "/findAll/{activeOnly}/{departmentName}/{countryName}",
+            produces = MediaType.APPLICATION_JSON_VALUE + ";charset=UTF-8")
     public ResponseEntity<List<DonationRequest>> findAll(
             @PathVariable Boolean activeOnly,
             @PathVariable String departmentName,
@@ -79,7 +82,7 @@ public class DonationRequestController {
         }
     }
 
-    @GetMapping("/findId/{donationRequestId}")
+    @GetMapping(value = "/findId/{donationRequestId}", produces = MediaType.APPLICATION_JSON_VALUE + ";charset=UTF-8")
     public ResponseEntity<DonationRequest> findId(@PathVariable String donationRequestId){
         try {
             return ResponseEntity.ok(donationRequestService.findId(donationRequestId));
@@ -91,7 +94,7 @@ public class DonationRequestController {
         }
     }
 
-    @GetMapping("/findIds")
+    @GetMapping(value = "/findIds", produces = MediaType.APPLICATION_JSON_VALUE + ";charset=UTF-8")
     public ResponseEntity<List<DonationRequest>> findIds(@Valid @NotNull @RequestBody List<String> donationsRequestId){
         try {
             return ResponseEntity.ok(donationRequestService.findIds(donationsRequestId));
@@ -101,7 +104,9 @@ public class DonationRequestController {
         }
     }
 
-    @GetMapping("/findByStatus/{activeOnly}/{ordinalRequestStatus}/{departmentName}/{countryName}")
+    @GetMapping(
+            value = "/findByStatus/{activeOnly}/{ordinalRequestStatus}/{departmentName}/{countryName}",
+            produces = MediaType.APPLICATION_JSON_VALUE + ";charset=UTF-8")
     public ResponseEntity<List<DonationRequest>> findByStatus(
             @PathVariable Boolean activeOnly,
             @PathVariable Integer ordinalRequestStatus,

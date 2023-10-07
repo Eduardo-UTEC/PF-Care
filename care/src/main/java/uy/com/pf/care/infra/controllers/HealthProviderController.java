@@ -5,6 +5,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.extern.java.Log;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
@@ -47,7 +48,7 @@ public class HealthProviderController {
         }
     }
 
-    @GetMapping("findId/{id}")
+    @GetMapping(value = "findId/{id}", produces = MediaType.APPLICATION_JSON_VALUE + ";charset=UTF-8")
     public ResponseEntity<Optional<HealthProvider>> findId(@PathVariable String id) {
         try {
             return ResponseEntity.ok(healthProviderService.findId(id));
@@ -61,7 +62,9 @@ public class HealthProviderController {
         }
     }
 
-    @GetMapping("findAll/{includeDeleted}/{countryName}")
+    @GetMapping(
+            value = "findAll/{includeDeleted}/{countryName}",
+            produces = MediaType.APPLICATION_JSON_VALUE + ";charset=UTF-8")
     public ResponseEntity<List<HealthProvider>> findAll(
             @PathVariable Boolean includeDeleted,
             @PathVariable String countryName ){
@@ -76,7 +79,9 @@ public class HealthProviderController {
         }
     }
 
-    @GetMapping("findByName/{name}/{cityName}/{departmentName}/{countryName}")
+    @GetMapping(
+            value = "findByName/{name}/{cityName}/{departmentName}/{countryName}",
+            produces = MediaType.APPLICATION_JSON_VALUE + ";charset=UTF-8")
     public ResponseEntity<HealthProvider> findByName(
             @PathVariable String name,
             @PathVariable String cityName,
@@ -93,7 +98,9 @@ public class HealthProviderController {
         }
     }
 
-    @GetMapping("findByCity/{includeDeleted}/{cityName}/{departmentName}/{countryName}")
+    @GetMapping(
+            value = "findByCity/{includeDeleted}/{cityName}/{departmentName}/{countryName}",
+            produces = MediaType.APPLICATION_JSON_VALUE + ";charset=UTF-8")
     public ResponseEntity<List<HealthProvider>> findByCity(
             @PathVariable Boolean includeDeleted,
             @PathVariable String cityName,
@@ -112,7 +119,9 @@ public class HealthProviderController {
         }
     }
 
-    @GetMapping("findByDepartment/{includeDeleted}/{departmentName}/{countryName}")
+    @GetMapping(
+            value = "findByDepartment/{includeDeleted}/{departmentName}/{countryName}",
+            produces = MediaType.APPLICATION_JSON_VALUE + ";charset=UTF-8")
     public ResponseEntity<List<HealthProvider>> findByDepartment(
             @PathVariable Boolean includeDeleted,
             @PathVariable String departmentName,

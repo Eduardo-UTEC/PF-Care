@@ -5,6 +5,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.extern.java.Log;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
@@ -48,7 +49,9 @@ public class PatientController {
     }
 
     //Devuelve un lista con los pacientes cuya Id no existe, con lo cual no pudieron actualizarse.
-    @PutMapping("/updateReferenceCaregiver/{referenceCaregiverId}")
+    @PutMapping(
+            value = "/updateReferenceCaregiver/{referenceCaregiverId}",
+            produces = MediaType.APPLICATION_JSON_VALUE + ";charset=UTF-8")
     public ResponseEntity<List<String>> updateReferenceCaregiver(
             @Valid @NotNull @RequestBody List<String> patientsId,
             @PathVariable String referenceCaregiverId) {
@@ -63,7 +66,9 @@ public class PatientController {
         }
     }
 
-    @GetMapping("findAll/{withoutValidate}/{includeDeleted}/{countryName}")
+    @GetMapping(
+            value = "findAll/{withoutValidate}/{includeDeleted}/{countryName}",
+            produces = MediaType.APPLICATION_JSON_VALUE + ";charset=UTF-8")
     public ResponseEntity<List<Patient>> findAll(
             @PathVariable Boolean withoutValidate,
             @PathVariable Boolean includeDeleted,
@@ -79,7 +84,7 @@ public class PatientController {
         }
     }
 
-    @GetMapping("findId/{id}")
+    @GetMapping(value = "findId/{id}", produces = MediaType.APPLICATION_JSON_VALUE + ";charset=UTF-8")
     public ResponseEntity<Optional<Patient>> findId(@PathVariable String id) {
         try{
             return ResponseEntity.ok(patientService.findId(id));
@@ -91,7 +96,9 @@ public class PatientController {
         }
     }
 
-    @GetMapping("findIdentificationDocument/{document}/{countryName}")
+    @GetMapping(
+            value = "findIdentificationDocument/{document}/{countryName}",
+            produces = MediaType.APPLICATION_JSON_VALUE + ";charset=UTF-8")
     public ResponseEntity<Optional<Patient>> findIdentificationDocument(
             @PathVariable Integer document,
             @PathVariable String countryName) {
@@ -108,7 +115,7 @@ public class PatientController {
     @GetMapping(value = {
             "findName1/{name1}/{withoutValidate}/{includeDeleted}/{cityName}/{departmentName}/{countryName}",
             "findName1/{name1}/{withoutValidate}/{includeDeleted}/{neighborhoodName}/{cityName}/{departmentName}/{countryName}"
-    })
+    }, produces = MediaType.APPLICATION_JSON_VALUE + ";charset=UTF-8")
     public ResponseEntity<List<Patient>> findName1(
             @PathVariable String name1,
             @PathVariable Boolean withoutValidate,
@@ -143,7 +150,9 @@ public class PatientController {
         }
     }
 
-    @GetMapping("findCity/{withoutValidate}/{includeDeleted}/{cityName}/{departmentName}/{countryName}")
+    @GetMapping(
+            value = "findCity/{withoutValidate}/{includeDeleted}/{cityName}/{departmentName}/{countryName}",
+            produces = MediaType.APPLICATION_JSON_VALUE + ";charset=UTF-8")
     public ResponseEntity<List<Patient>> findCity(
             @PathVariable Boolean withoutValidate,
             @PathVariable Boolean includeDeleted,
@@ -163,7 +172,9 @@ public class PatientController {
         }
     }
 
-    @GetMapping("findDepartment/{withoutValidate}/{includeDeleted}/{departmentName}/{countryName}")
+    @GetMapping(
+            value = "findDepartment/{withoutValidate}/{includeDeleted}/{departmentName}/{countryName}",
+            produces = MediaType.APPLICATION_JSON_VALUE + ";charset=UTF-8")
     public ResponseEntity<List<Patient>> findDepartment(
             @PathVariable Boolean withoutValidate,
             @PathVariable Boolean includeDeleted,
@@ -182,7 +193,7 @@ public class PatientController {
         }
     }
 
-    @GetMapping("findMail/{mail}")
+    @GetMapping(value = "findMail/{mail}", produces = MediaType.APPLICATION_JSON_VALUE + ";charset=UTF-8")
     public ResponseEntity<Optional<Patient>> findMail(@PathVariable String mail) {
         try{
             return ResponseEntity.ok(patientService.findMail(mail));

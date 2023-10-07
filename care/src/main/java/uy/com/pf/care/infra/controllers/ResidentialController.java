@@ -5,6 +5,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.extern.java.Log;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
@@ -48,7 +49,9 @@ public class ResidentialController {
         }
     }
 
-    @GetMapping("findAll/{includeDeleted}/{countryName}")
+    @GetMapping(
+            value = "findAll/{includeDeleted}/{countryName}",
+            produces = MediaType.APPLICATION_JSON_VALUE + ";charset=UTF-8")
     public ResponseEntity<List<Residential>> findAll(
             @PathVariable Boolean includeDeleted,
             @PathVariable String countryName){
@@ -63,7 +66,7 @@ public class ResidentialController {
         }
     }
 
-    @GetMapping("findId/{id}")
+    @GetMapping(value = "findId/{id}", produces = MediaType.APPLICATION_JSON_VALUE + ";charset=UTF-8")
     public ResponseEntity<Optional<Residential>> findId(@PathVariable String id) {
         try{
             return ResponseEntity.ok(residentialService.findId(id));
@@ -77,7 +80,9 @@ public class ResidentialController {
         }
     }
 
-    @GetMapping("findDepartment/{includeDeleted}/{departmentName}/{countryName}")
+    @GetMapping(
+            value = "findDepartment/{includeDeleted}/{departmentName}/{countryName}",
+            produces = MediaType.APPLICATION_JSON_VALUE + ";charset=UTF-8")
     public ResponseEntity<List<Residential>> findDepartment(
             @PathVariable Boolean includeDeleted,
             @PathVariable String departmentName,
@@ -93,7 +98,9 @@ public class ResidentialController {
         }
     }
 
-    @GetMapping("findCity/{includeDeleted}/{cityName}/{departmentName}/{countryName}")
+    @GetMapping(
+            value = "findCity/{includeDeleted}/{cityName}/{departmentName}/{countryName}",
+            produces = MediaType.APPLICATION_JSON_VALUE + ";charset=UTF-8")
     public ResponseEntity<List<Residential>> findCity(
             @PathVariable Boolean includeDeleted,
             @PathVariable String cityName,
@@ -111,7 +118,9 @@ public class ResidentialController {
         }
     }
 
-    @GetMapping("findName/{includeDeleted}/{name}/{cityName}/{departmentName}/{countryName}")
+    @GetMapping(
+            value = "findName/{includeDeleted}/{name}/{cityName}/{departmentName}/{countryName}",
+            produces = MediaType.APPLICATION_JSON_VALUE + ";charset=UTF-8")
     public ResponseEntity<List<Residential>> findName(
             @PathVariable Boolean includeDeleted,
             @PathVariable String name,
