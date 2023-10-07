@@ -20,9 +20,9 @@ import java.util.List;
 @Document("FormalCaregivers")
 @CompoundIndexes({
         @CompoundIndex(def = "{'mail':1}", unique = true),
-        //@CompoundIndex(def = "{'countryName':1, 'name':1, 'telephone':1}", unique = true),
+        //@CompoundIndex(def = "{'countryName':1, 'name1':1, 'telephone':1}", unique = true),
         @CompoundIndex(def = "{'telephone':1}", unique = true),
-        @CompoundIndex(def = "{'countryName':1, 'name':1}")
+        @CompoundIndex(def = "{'countryName':1, 'name1':1}")
 })
 @Data
 @AllArgsConstructor

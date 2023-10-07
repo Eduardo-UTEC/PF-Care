@@ -13,20 +13,20 @@ public interface IFormalCaregiverRepo extends MongoRepository<FormalCaregiver, S
     List<FormalCaregiver> findByCountryNameAndValidateFalseAndAvailableTrue(String countryName);
     List<FormalCaregiver> findByCountryNameAndValidateTrueAndDeletedFalseAndAvailableTrue(String countryName);
     List<FormalCaregiver> findByCountryNameAndValidateFalseAndDeletedFalseAndAvailableTrue(String countryName);
-    List<FormalCaregiver> findByCountryNameAndValidateTrueAndAvailableTrueAndNameIgnoreCase(
+    List<FormalCaregiver> findByCountryNameAndValidateTrueAndAvailableTrueAndName1IgnoreCase(
             String countryName, String name);
-    List<FormalCaregiver> findByCountryNameAndNameIgnoreCaseAndValidateTrueAndAvailableTrueAndDeletedFalse(
+    List<FormalCaregiver> findByCountryNameAndName1IgnoreCaseAndValidateTrueAndAvailableTrueAndDeletedFalse(
             String countryName, String name);
-    List<FormalCaregiver> findByCountryNameAndNameLikeIgnoreCaseAndValidateTrueAndAvailableTrue(
+    List<FormalCaregiver> findByCountryNameAndName1LikeIgnoreCaseAndValidateTrueAndAvailableTrue(
             String countryName, String name);
-    List<FormalCaregiver> findByCountryNameAndNameLikeIgnoreCaseAndValidateTrueAndDeletedFalseAndAvailableTrue(
+    List<FormalCaregiver> findByCountryNameAndName1LikeIgnoreCaseAndValidateTrueAndDeletedFalseAndAvailableTrue(
             String countryName, String name);
-    List<FormalCaregiver> findByCountryNameAndValidateFalseAndAvailableTrueAndNameIgnoreCase(
+    List<FormalCaregiver> findByCountryNameAndValidateFalseAndAvailableTrueAndName1IgnoreCase(
             String countryName, String name);
-    List<FormalCaregiver> findByCountryNameAndNameIgnoreCaseAndValidateFalseAndDeletedFalseAndAvailableTrue(
+    List<FormalCaregiver> findByCountryNameAndName1IgnoreCaseAndValidateFalseAndDeletedFalseAndAvailableTrue(
             String countryName, String name);
-    List<FormalCaregiver> findByCountryNameAndNameLikeIgnoreCaseAndValidateFalseAndAvailableTrue(
+    List<FormalCaregiver> findByCountryNameAndName1LikeIgnoreCaseAndValidateFalseAndAvailableTrue(
             String countryName, String name);
-    List<FormalCaregiver> findByCountryNameAndNameLikeIgnoreCaseAndValidateFalseAndDeletedFalseAndAvailableTrue(
+    List<FormalCaregiver> findByCountryNameAndName1LikeIgnoreCaseAndValidateFalseAndDeletedFalseAndAvailableTrue(
             String countryName, String name);
 }

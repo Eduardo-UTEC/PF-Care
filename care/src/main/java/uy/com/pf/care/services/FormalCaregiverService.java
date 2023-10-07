@@ -284,16 +284,16 @@ public class FormalCaregiverService implements IFormalCaregiverService {
         try{
             if (withoutValidate) {
                 if (includeDeleted)
-                    return formalCaregiverRepo.findByCountryNameAndValidateFalseAndAvailableTrueAndNameIgnoreCase(countryName, name);
+                    return formalCaregiverRepo.findByCountryNameAndValidateFalseAndAvailableTrueAndName1IgnoreCase(countryName, name);
 
-                return formalCaregiverRepo.findByCountryNameAndNameIgnoreCaseAndValidateFalseAndDeletedFalseAndAvailableTrue(
+                return formalCaregiverRepo.findByCountryNameAndName1IgnoreCaseAndValidateFalseAndDeletedFalseAndAvailableTrue(
                         countryName, name);
             }
             // solo los validados
             if (includeDeleted)
-                return formalCaregiverRepo.findByCountryNameAndValidateTrueAndAvailableTrueAndNameIgnoreCase(countryName, name);
+                return formalCaregiverRepo.findByCountryNameAndValidateTrueAndAvailableTrueAndName1IgnoreCase(countryName, name);
 
-            return formalCaregiverRepo.findByCountryNameAndNameIgnoreCaseAndValidateTrueAndAvailableTrueAndDeletedFalse(
+            return formalCaregiverRepo.findByCountryNameAndName1IgnoreCaseAndValidateTrueAndAvailableTrueAndDeletedFalse(
                     countryName, name);
 
         }catch(Exception e){
@@ -308,16 +308,16 @@ public class FormalCaregiverService implements IFormalCaregiverService {
         try{
             if (witoutValidate) {
                 if (includeDeleted)
-                    return formalCaregiverRepo.findByCountryNameAndNameLikeIgnoreCaseAndValidateFalseAndAvailableTrue(countryName, name);
+                    return formalCaregiverRepo.findByCountryNameAndName1LikeIgnoreCaseAndValidateFalseAndAvailableTrue(countryName, name);
 
-                return formalCaregiverRepo.findByCountryNameAndNameLikeIgnoreCaseAndValidateFalseAndDeletedFalseAndAvailableTrue(
+                return formalCaregiverRepo.findByCountryNameAndName1LikeIgnoreCaseAndValidateFalseAndDeletedFalseAndAvailableTrue(
                         countryName, name);
             }
             //solo los validados
             if (includeDeleted)
-                return formalCaregiverRepo.findByCountryNameAndNameLikeIgnoreCaseAndValidateTrueAndAvailableTrue(countryName, name);
+                return formalCaregiverRepo.findByCountryNameAndName1LikeIgnoreCaseAndValidateTrueAndAvailableTrue(countryName, name);
 
-            return formalCaregiverRepo.findByCountryNameAndNameLikeIgnoreCaseAndValidateTrueAndDeletedFalseAndAvailableTrue(
+            return formalCaregiverRepo.findByCountryNameAndName1LikeIgnoreCaseAndValidateTrueAndDeletedFalseAndAvailableTrue(
                     countryName, name);
 
         }catch(Exception e){
