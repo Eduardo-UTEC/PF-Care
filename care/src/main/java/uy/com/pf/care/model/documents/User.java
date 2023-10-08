@@ -39,7 +39,7 @@ public class User extends LoginObjectRegister {
     @NotNull(message = "El apellido del Usuario no puede ser nulo")
     @NotEmpty(message = "El nombre del Usuario no puede ser vacío")
     @Size(max = 30, message = "El nombre del Usuario no puede exceder los 30 caracteres")
-    private String surName; // Si es empresa, queda en null
+    private String surname; // Si es empresa, queda en null
 
     //@NotNull(message = "User: El usuario debe tener al menos un rol")
     //@NotEmpty(message = "User: El usuario debe tener al menos un rol")

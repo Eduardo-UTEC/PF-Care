@@ -43,9 +43,6 @@ public class Patient extends PersonObject {
     //@Valid
     private List<InformalCaregiverObject> informalCaregivers = new ArrayList<>();
 
-    @NotNull(message = "Patient: La clave 'zone' no puede ser nula")
-    private ZoneObject zone;
-
     //@NotNull(message = "Patient: La clave 'healthProvider' no puede ser nula")
     //private HealthProviderObject healthProvider;
     private String healthProviderId;
@@ -57,6 +54,9 @@ public class Patient extends PersonObject {
     //@NotNull(message = "Patient: La clave 'residential' no puede ser nula")
     //private ResidentialObject residential;
     private String residentialId;
+
+    @NotNull(message = "Patient: La clave 'zone' no puede ser nula")
+    private ZoneObject zone;
 
     @BooleanFlag
     private Boolean validate;
