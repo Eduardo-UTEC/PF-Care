@@ -10,8 +10,8 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.CompoundIndex;
 import org.springframework.data.mongodb.core.index.CompoundIndexes;
 import org.springframework.data.mongodb.core.mapping.Document;
-import uy.com.pf.care.model.objects.DayTimeRangeObject;
-import uy.com.pf.care.model.objects.PatientLinkedReferentObject;
+//import uy.com.pf.care.model.objects.DayTimeRangeObject;
+//import uy.com.pf.care.model.objects.PatientLinkedReferentObject;
 import uy.com.pf.care.model.objects.PersonObject;
 import uy.com.pf.care.model.objects.ZoneObject;
 
@@ -43,9 +43,11 @@ public class ReferenceCaregiver extends PersonObject {
     //@NotNull(message = "ReferenceCaregiver: El Cuidador Referente debe estar vinculado al menos a un Paciente  (clave 'patientsId' no puede ser nula)")
     //@NotEmpty(message = "ReferenceCaregiver: El Cuidador Referente debe estar vinculado al menos a un Paciente (clave 'patientsId' no puede ser vacia)")
     @Valid
-    private List<PatientLinkedReferentObject> patients;
+    //private List<PatientLinkedReferentObject> patients;
+    private List<String> patients;
 
-    private List<DayTimeRangeObject> dayTimeRange = new ArrayList<>();  //Dias y rangos horarios semanales para el cuidado
+
+    //private List<DayTimeRangeObject> dayTimeRange = new ArrayList<>();  //Dias y rangos horarios semanales para el cuidado
 
     @NotNull(message = "ReferenceCaregiver: La clave 'zone' no puede ser nula")
     private ZoneObject zone;

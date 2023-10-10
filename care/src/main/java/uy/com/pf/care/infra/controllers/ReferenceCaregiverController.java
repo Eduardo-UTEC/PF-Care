@@ -51,7 +51,7 @@ public class ReferenceCaregiverController {
         }
     }
 
-    @PutMapping(
+    /*@PutMapping(
             value = "/changeRelationshipPatient/{referenceCaregiverId}/{patientId}/{ordinalRelationship}",
             produces = MediaType.APPLICATION_JSON_VALUE + ";charset=UTF-8")
     public ResponseEntity<Boolean> changeRelationshipPatient(
@@ -70,6 +70,8 @@ public class ReferenceCaregiverController {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, msg);
         }
     }
+
+     */
 
     @PutMapping(
             value = "/addPatient/{referenceCaregiverId}/{patientId}/{ordinalRelationship}",

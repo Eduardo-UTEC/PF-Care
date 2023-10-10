@@ -21,7 +21,7 @@ import uy.com.pf.care.model.enums.RelationshipEnum;
 import uy.com.pf.care.model.enums.RoleEnum;
 import uy.com.pf.care.model.globalFunctions.ForceEnumsToReferenceCaregiver;
 import uy.com.pf.care.model.globalFunctions.UpdateEntityId;
-import uy.com.pf.care.model.objects.PatientLinkedReferentObject;
+//import uy.com.pf.care.model.objects.PatientLinkedReferentObject;
 
 import java.util.Arrays;
 import java.util.List;
@@ -130,7 +130,9 @@ public class ReferenceCaregiverService implements IReferenceCaregiverService {
                 log.warning(msg);
                 throw new ReferenceCaregiverChangeRelationshipPatientException(msg);
             }
-            found.get().getPatients().add(new PatientLinkedReferentObject(patientId, relationship));
+            //found.get().getPatients().add(new PatientLinkedReferentObject(patientId, relationship));
+            found.get().getPatients().add(patientId);
+
             ForceEnumsToReferenceCaregiver.execute(found.get());
             referenceCaregiverRepo.save(found.get());
             log.warning("Paciente con el rol " + relationship.getName() + " vinculado con exito al Cuidador Referente");
@@ -142,7 +144,7 @@ public class ReferenceCaregiverService implements IReferenceCaregiverService {
         throw new ReferenceCaregiverNotFoundException(msg);
     }
 
-    @Override
+    /*@Override
     public Boolean changeRelationshipPatient(String referenceCaregiverId, String patientId, RelationshipEnum relationship) {
         Optional<ReferenceCaregiver> found = referenceCaregiverRepo.findById(referenceCaregiverId);
          if (found.isPresent()){
@@ -155,6 +157,7 @@ public class ReferenceCaregiverService implements IReferenceCaregiverService {
                      return true;
                  }
              }
+
              String msg = "El Cuidador Referente '" + referenceCaregiverId + "' no está vinculado al paciente '" + patientId +"'";
              log.warning(msg);
              throw new ReferenceCaregiverChangeRelationshipPatientException(msg);
@@ -164,6 +167,8 @@ public class ReferenceCaregiverService implements IReferenceCaregiverService {
         log.warning(msg);
         throw new ReferenceCaregiverNotFoundException(msg);
     }
+
+     */
 
     @Override
     public Optional<ReferenceCaregiver> findId(String id) {
@@ -239,9 +244,12 @@ public class ReferenceCaregiverService implements IReferenceCaregiverService {
     //Actualiza los Pacientes (segun su id), en la key referenceCaregiver, con el Id del Cuidador Referente
     private List<String> updateReferenceCaregiverOnPatients(ReferenceCaregiver referenceCaregiver){
 
-        List<String> patientIds = referenceCaregiver.getPatients().stream()
+        /*List<String> patientIds = referenceCaregiver.getPatients().stream()
                 .map(PatientLinkedReferentObject::getPatientId)
                 .collect(Collectors.toList());
+
+         */
+        List<String> patientIds = referenceCaregiver.getPatients();
 
         try {
             RestTemplate restTemplate = new RestTemplate();
@@ -255,10 +263,10 @@ public class ReferenceCaregiverService implements IReferenceCaregiverService {
             // Si hubo Pacientes no encontrados, borros sus referencias de la key "patients" del documento ReferenceCaregiver
             assert notFounds != null;
             if (! notFounds.isEmpty()){
-                referenceCaregiver.getPatients().removeIf(patientLinkedReferentObject ->
-                        notFounds.contains(patientLinkedReferentObject.getPatientId()));
+                //referenceCaregiver.getPatients().removeIf(patientLinkedReferentObject ->
+                //        notFounds.contains(patientLinkedReferentObject.getPatientId()));
+                referenceCaregiver.getPatients().removeIf(patientId -> notFounds.contains(patientId));
             }
-
             return notFounds;
 
         } catch (HttpClientErrorException e) {
@@ -282,8 +290,14 @@ public class ReferenceCaregiverService implements IReferenceCaregiverService {
     }
 
     private boolean patientLinked(ReferenceCaregiver referenceCaregiver, String patientId){
-        for (PatientLinkedReferentObject patient : referenceCaregiver.getPatients()){
+        /*for (PatientLinkedReferentObject patient : referenceCaregiver.getPatients()){
             if (patient.getPatientId().equals(patientId))
+                return true;
+        }
+
+         */
+        for (String patientIdStore : referenceCaregiver.getPatients()){
+            if (patientIdStore.equals(patientId))
                 return true;
         }
         return false;

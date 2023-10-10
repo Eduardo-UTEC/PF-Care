@@ -11,7 +11,7 @@ import uy.com.pf.care.model.enums.RelationshipEnum;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
-public class PatientLinkedReferentObject {
+public class PatientLinkedReferentObject_borrar {
     
     private String patientId;
     
