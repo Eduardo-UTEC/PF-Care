@@ -19,3 +19,8 @@ logging:
       #mongodb.driver: DEBUG
       springframework.data.mongodb: DEBUG
 
+# Parametrizaciones
+#
+
+protocol: http
+socket: localhost:8080
