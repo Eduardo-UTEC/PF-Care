@@ -9,6 +9,7 @@ spring:
       maxWaitTime: 200000     # tiempo maximo que la app espera para obtener un hilo de la bbdd, en milisegundos.
 
 server:
+  #port: 9096
   error:
     include-message: always
 
@@ -18,8 +19,3 @@ logging:
       #mongodb.driver: DEBUG
       springframework.data.mongodb: DEBUG
 
-# Parametrizaciones
-#
-
-protocol: http
-socket: localhost:8080
