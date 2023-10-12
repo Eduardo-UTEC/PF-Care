@@ -17,7 +17,7 @@ public class ForceEnumsToPatient {
         }
 
         //informalCaregiverObject.RelationshipEnum
-        patient.getInformalCaregivers().forEach(informalCaregiverObject -> {
+        /*patient.getInformalCaregivers().forEach(informalCaregiverObject -> {
             switch (informalCaregiverObject.getRelationship()){
                 case NOBODY -> informalCaregiverObject.setRelationship(RelationshipEnum.NOBODY);
                 case FATHER -> informalCaregiverObject.setRelationship(RelationshipEnum.FATHER);
@@ -37,6 +37,7 @@ public class ForceEnumsToPatient {
                 case COWORKER -> informalCaregiverObject.setRelationship(RelationshipEnum.COWORKER);
             }
         });
+        */
 
         //ReferenceCaregiver.RelatioshipEnum
         /*switch (patient.getReferenceCaregiver().getRelationship()){
