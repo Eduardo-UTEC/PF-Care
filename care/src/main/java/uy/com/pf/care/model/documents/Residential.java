@@ -45,9 +45,6 @@ public class Residential {
     @Size(max = 20 , message = "Residential: El telefono del Residencial no puede exceder los 20 caracteres")
     private String telephone;
 
-    @NotNull(message = "Residential: La direccion del Residencial no puede ser nula")
-    private AddressObject address;
-
     @BooleanFlag
     private Boolean deleted;
 
