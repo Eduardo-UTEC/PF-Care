@@ -112,6 +112,23 @@ public class PatientController {
         }
     }
 
+    @GetMapping(
+            value = "existIdentificationDocument/{document}/{countryName}",
+            produces = MediaType.APPLICATION_JSON_VALUE + ";charset=UTF-8")
+    public ResponseEntity<Boolean> existIdentificationDocument(
+            @PathVariable Integer document,
+            @PathVariable String countryName) {
+        try{
+            return ResponseEntity.ok(patientService.findIdentificationDocument(document, countryName).isPresent());
+
+        }catch(Exception e) {
+            String msg = "Error buscando paciente con documento de identificación " + document + " (" + countryName + ")";
+            log.warning(msg);
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, msg);
+        }
+    }
+
+
     @GetMapping(value = {
             "findName1/{name1}/{withoutValidate}/{includeDeleted}/{cityName}/{departmentName}/{countryName}",
             "findName1/{name1}/{withoutValidate}/{includeDeleted}/{neighborhoodName}/{cityName}/{departmentName}/{countryName}"
@@ -197,6 +214,18 @@ public class PatientController {
     public ResponseEntity<Optional<Patient>> findMail(@PathVariable String mail) {
         try{
             return ResponseEntity.ok(patientService.findMail(mail));
+
+        }catch(Exception e) {
+            String msg = "Error buscando por indice el paciente con mail: " + mail;
+            log.warning(msg);
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, msg);
+        }
+    }
+
+    @GetMapping(value = "existMail/{mail}", produces = MediaType.APPLICATION_JSON_VALUE + ";charset=UTF-8")
+    public ResponseEntity<Boolean> existMail(@PathVariable String mail) {
+        try{
+            return ResponseEntity.ok(patientService.findMail(mail).isPresent());
 
         }catch(Exception e) {
             String msg = "Error buscando por indice el paciente con mail: " + mail;

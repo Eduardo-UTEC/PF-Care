@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class LoginObjectAuthenticate {
-    private String userName;
+    //private String userName;
+    private Integer identificationDocument;
     private String pass;
 }

@@ -138,7 +138,7 @@ public class UserController {
         }
     }
 
-    @GetMapping("exist/{userName}")
+    /*@GetMapping("exist/{userName}")
     public ResponseEntity<Boolean> exist(@PathVariable String userName) {
         try{
             return ResponseEntity.ok(userService.existUserName(userName));
@@ -146,9 +146,22 @@ public class UserController {
         }catch(UserExistUserNameException e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
         }
+    }*/
+
+    @GetMapping("exist/{identificationDocument}/{countryName}")
+    public ResponseEntity<Boolean> exist(@PathVariable Integer identificationDocument, String countryName) {
+        try{
+            return ResponseEntity.ok(userService.findIdentificationDocument(identificationDocument, countryName)
+                    .isPresent());
+
+        }catch(UserExistDocumentException e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
+        }
     }
 
-    @GetMapping(value = "findUserName/{userName}", produces = MediaType.APPLICATION_JSON_VALUE + ";charset=UTF-8")
+
+
+    /*@GetMapping(value = "findUserName/{userName}", produces = MediaType.APPLICATION_JSON_VALUE + ";charset=UTF-8")
     public ResponseEntity<User> findUserName(@PathVariable String userName) {
         try{
             return ResponseEntity.ok(userService.findUserName(userName));
@@ -159,6 +172,8 @@ public class UserController {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
         }
     }
+
+     */
 
     @GetMapping(
             value = "findCity/{cityName}/{departmentName}/{countryName}",
