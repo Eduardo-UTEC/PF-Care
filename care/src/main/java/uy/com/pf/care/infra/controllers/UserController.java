@@ -113,7 +113,8 @@ public class UserController {
         }
     }
 
-    @GetMapping("findIdentificationDocument/{document}/{countryName}")
+    @GetMapping(value = "findIdentificationDocument/{document}/{countryName}",
+            produces = MediaType.APPLICATION_JSON_VALUE + ";charset=UTF-8")
     public ResponseEntity<Optional<User>> findIdentificationDocument(
             @PathVariable Integer document,
             @PathVariable String countryName) {
@@ -127,8 +128,9 @@ public class UserController {
         }
     }
 
-    @GetMapping("exist/{identificationDocument}/{countryName}")
-    public ResponseEntity<Boolean> exist(@PathVariable Integer identificationDocument, String countryName) {
+    @GetMapping(value = "exist/{identificationDocument}/{countryName}",
+            produces = MediaType.APPLICATION_JSON_VALUE + ";charset=UTF-8")
+    public ResponseEntity<Boolean> exist(@PathVariable Integer identificationDocument, @PathVariable String countryName) {
         try{
             return ResponseEntity.ok(userService.findIdentificationDocument(identificationDocument, countryName)
                     .isPresent());
