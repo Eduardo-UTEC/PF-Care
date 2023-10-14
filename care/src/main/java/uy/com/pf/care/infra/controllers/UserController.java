@@ -16,6 +16,7 @@ import uy.com.pf.care.model.objects.LoginObjectAuthenticate;
 import uy.com.pf.care.services.IUserService;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/users")
@@ -112,7 +113,7 @@ public class UserController {
         }
     }
 
-    /*@GetMapping("findIdentificationDocument/{document}/{countryName}")
+    @GetMapping("findIdentificationDocument/{document}/{countryName}")
     public ResponseEntity<Optional<User>> findIdentificationDocument(
             @PathVariable Integer document,
             @PathVariable String countryName) {
@@ -124,7 +125,18 @@ public class UserController {
                     "Error buscando usuario con documento de identificación " + document + " (" + countryName + ")");
 
         }
-    }*/
+    }
+
+    @GetMapping("exist/{identificationDocument}/{countryName}")
+    public ResponseEntity<Boolean> exist(@PathVariable Integer identificationDocument, String countryName) {
+        try{
+            return ResponseEntity.ok(userService.findIdentificationDocument(identificationDocument, countryName)
+                    .isPresent());
+
+        }catch(UserExistDocumentException e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
+        }
+    }
 
     @PostMapping(value = "login", produces = MediaType.APPLICATION_JSON_VALUE + ";charset=UTF-8")
     public ResponseEntity<User> login(@Valid @NotNull @RequestBody LoginObjectAuthenticate loginObjectAuthenticate) {
@@ -147,18 +159,6 @@ public class UserController {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
         }
     }*/
-
-    @GetMapping("exist/{identificationDocument}/{countryName}")
-    public ResponseEntity<Boolean> exist(@PathVariable Integer identificationDocument, String countryName) {
-        try{
-            return ResponseEntity.ok(userService.findIdentificationDocument(identificationDocument, countryName)
-                    .isPresent());
-
-        }catch(UserExistDocumentException e) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
-        }
-    }
-
 
 
     /*@GetMapping(value = "findUserName/{userName}", produces = MediaType.APPLICATION_JSON_VALUE + ";charset=UTF-8")

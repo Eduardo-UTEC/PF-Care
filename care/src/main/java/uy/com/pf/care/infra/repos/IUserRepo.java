@@ -9,7 +9,7 @@ import java.util.Optional;
 
 @Repository
 public interface IUserRepo extends MongoRepository<User, String> {
-    Optional<User> findByIdentificationDocumentAndZone_CountryName(Integer identificationDocument, String countryName);
+    Optional<User> findByIdentificationDocumentAndResidenceZone_CountryName(Integer identificationDocument, String countryName);
     //User findByUserName(String userName);
     User findByIdentificationDocument(Integer identificationDocument);
     List<User> findByResidenceZone_CountryName(String countryName);

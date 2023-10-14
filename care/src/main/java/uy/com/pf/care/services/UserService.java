@@ -218,7 +218,7 @@ public class UserService implements IUserService{
     @Override
      public Optional<User> findIdentificationDocument(Integer identificationDocument, String countryName) {
         try {
-            return userRepo.findByIdentificationDocumentAndZone_CountryName(identificationDocument, countryName);
+            return userRepo.findByIdentificationDocumentAndResidenceZone_CountryName(identificationDocument, countryName);
 
         }catch(Exception e){
             String msg = "ERROR BUSCANDO USUARIO CON DOCUMENTO '" + identificationDocument + "'";

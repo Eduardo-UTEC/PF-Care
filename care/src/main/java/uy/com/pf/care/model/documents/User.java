@@ -20,7 +20,9 @@ import java.util.List;
 
 @Document("Users")
 @CompoundIndexes({
-    @CompoundIndex(def = "{'userName':1}", unique = true)
+    //@CompoundIndex(def = "{'userName':1}", unique = true)
+    @CompoundIndex(def = "{'identificationDocument':1}", unique = true)
+
 })
 @Data
 @EqualsAndHashCode(callSuper=false)
