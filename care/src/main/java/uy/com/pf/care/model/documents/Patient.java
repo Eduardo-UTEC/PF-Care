@@ -18,7 +18,7 @@ import java.util.List;
 @Document("Patients")
 @CompoundIndexes({
         @CompoundIndex(def = "{'identificationDocument':1, 'zone.countryName':1}", unique = true),
-        @CompoundIndex(def = "{'mail':1}", unique = true),
+        @CompoundIndex(def = "{'mail':1}"), // los mails pueden omitirse, con lo cual debe aceptar nulos repetidos
         @CompoundIndex(def = "{'zone.countryName':1, 'zone.departmentName':1, 'zone.cityName':1, 'zone.neighborhoodName':1, " +
                         "'name1':1}")
 })
