@@ -113,26 +113,25 @@ public class UserController {
         }
     }
 
-    @GetMapping(value = "findIdentificationDocument/{document}/{countryName}",
+    @GetMapping(value = "findIdentificationDocument/{document}",
             produces = MediaType.APPLICATION_JSON_VALUE + ";charset=UTF-8")
     public ResponseEntity<Optional<User>> findIdentificationDocument(
-            @PathVariable Integer document,
-            @PathVariable String countryName) {
+            @PathVariable Integer document) {
         try{
-            return ResponseEntity.ok(userService.findIdentificationDocument(document, countryName));
+            return ResponseEntity.ok(userService.findIdentificationDocument(document));
 
         }catch(Exception e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
-                    "Error buscando usuario con documento de identificación " + document + " (" + countryName + ")");
+                    "Error buscando usuario con documento de identificación " + document);
 
         }
     }
 
-    @GetMapping(value = "exist/{identificationDocument}/{countryName}",
+    @GetMapping(value = "existIdentificationDocument/{identificationDocument}",
             produces = MediaType.APPLICATION_JSON_VALUE + ";charset=UTF-8")
-    public ResponseEntity<Boolean> exist(@PathVariable Integer identificationDocument, @PathVariable String countryName) {
+    public ResponseEntity<Boolean> exist(@PathVariable Integer identificationDocument) {
         try{
-            return ResponseEntity.ok(userService.findIdentificationDocument(identificationDocument, countryName)
+            return ResponseEntity.ok(userService.findIdentificationDocument(identificationDocument)
                     .isPresent());
 
         }catch(UserExistDocumentException e) {

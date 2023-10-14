@@ -185,9 +185,11 @@ public class UserService implements IUserService{
         try {
             CareSecurity careSecurity = new CareSecurity();
             //User userFound = userRepo.findByUserName(loginObjectAuthenticate.getUserName());
-            User userFound = userRepo.findByIdentificationDocument(loginObjectAuthenticate.getIdentificationDocument());
-            if (userFound != null && careSecurity.decrypt(userFound.getPass()).equals(loginObjectAuthenticate.getPass()))
-                return userFound;
+            Optional<User> userFound =
+                    userRepo.findByIdentificationDocument(loginObjectAuthenticate.getIdentificationDocument());
+            if (userFound.isPresent() &&
+                    careSecurity.decrypt(userFound.get().getPass()).equals(loginObjectAuthenticate.getPass()))
+                return userFound.get();
 
             String msg = "Credenciales inválidas";
             log.warning(msg);
@@ -216,9 +218,9 @@ public class UserService implements IUserService{
      */
 
     @Override
-     public Optional<User> findIdentificationDocument(Integer identificationDocument, String countryName) {
+     public Optional<User> findIdentificationDocument(Integer identificationDocument) {
         try {
-            return userRepo.findByIdentificationDocumentAndResidenceZone_CountryName(identificationDocument, countryName);
+            return userRepo.findByIdentificationDocument(identificationDocument);
 
         }catch(Exception e){
             String msg = "ERROR BUSCANDO USUARIO CON DOCUMENTO '" + identificationDocument + "'";

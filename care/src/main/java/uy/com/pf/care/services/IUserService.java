@@ -15,7 +15,7 @@ public interface IUserService {
     Boolean updateEntityIdInRolesList(String userId, RoleEnum roleOrdinal, String objectId);
     List<User> findAll(String countryName);
     User findId(String id);
-    Optional<User> findIdentificationDocument(Integer identificationDocument, String countryName);
+    Optional<User> findIdentificationDocument(Integer identificationDocument);
     User login(LoginObjectAuthenticate loginObjectAuthenticate);
     //Boolean existUserName(String userName);
     //User findUserName(String userName);
