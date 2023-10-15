@@ -18,7 +18,7 @@ import java.util.List;
 @Document("Patients")
 @CompoundIndexes({
         @CompoundIndex(def = "{'identificationDocument':1, 'zone.countryName':1}", unique = true),
-        @CompoundIndex(def = "{'mail':1}", unique = true),
+        @CompoundIndex(def = "{'mail':1}"), //no puede ser único para aceptar nulos (el mail es opcional)
         @CompoundIndex(def = "{'zone.countryName':1, 'zone.departmentName':1, 'zone.cityName':1, 'zone.neighborhoodName':1, " +
                         "'name1':1}")
 })
@@ -41,7 +41,7 @@ public class Patient extends PersonObject {
     private List<String> formalCaregiversId = new ArrayList<>();
 
     //@Valid
-    private List<InformalCaregiverObject> informalCaregivers = new ArrayList<>();
+    //private List<InformalCaregiverObject> informalCaregivers = new ArrayList<>();
 
     //@NotNull(message = "Patient: La clave 'healthProvider' no puede ser nula")
     //private HealthProviderObject healthProvider;

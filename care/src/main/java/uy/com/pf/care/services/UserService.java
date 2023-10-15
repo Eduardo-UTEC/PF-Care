@@ -184,9 +184,12 @@ public class UserService implements IUserService{
     public User login(LoginObjectAuthenticate loginObjectAuthenticate) {
         try {
             CareSecurity careSecurity = new CareSecurity();
-            User userFound = userRepo.findByUserName(loginObjectAuthenticate.getUserName());
-            if (userFound != null && careSecurity.decrypt(userFound.getPass()).equals(loginObjectAuthenticate.getPass()))
-                return userFound;
+            //User userFound = userRepo.findByUserName(loginObjectAuthenticate.getUserName());
+            Optional<User> userFound =
+                    userRepo.findByIdentificationDocument(loginObjectAuthenticate.getIdentificationDocument());
+            if (userFound.isPresent() &&
+                    careSecurity.decrypt(userFound.get().getPass()).equals(loginObjectAuthenticate.getPass()))
+                return userFound.get();
 
             String msg = "Credenciales inválidas";
             log.warning(msg);
@@ -201,7 +204,7 @@ public class UserService implements IUserService{
         }
     }
 
-    @Override
+    /*@Override
     public Boolean existUserName(String userName) {
         try {
             return userRepo.findByUserName(userName) != null;
@@ -212,14 +215,22 @@ public class UserService implements IUserService{
             throw new UserExistUserNameException(msg);
         }
     }
+     */
 
-    /* @Override
-     public Optional<User> findIdentificationDocument(Integer identificationDocument, String countryName) {
-         return Optional.ofNullable(
-                 userRepo.findByIdentificationDocumentAndZone_CountryName(identificationDocument, countryName));
-     }
- */
     @Override
+     public Optional<User> findIdentificationDocument(Integer identificationDocument) {
+        try {
+            return userRepo.findByIdentificationDocument(identificationDocument);
+
+        }catch(Exception e){
+            String msg = "ERROR BUSCANDO USUARIO CON DOCUMENTO '" + identificationDocument + "'";
+            log.warning(msg + ": " + e.getMessage());
+            throw new UserExistDocumentException(msg);
+        }
+
+     }
+
+    /*@Override
     public User findUserName(String userName) {
         try {
             //return Optional.ofNullable(userRepo.findByUserName(userName));
@@ -239,6 +250,8 @@ public class UserService implements IUserService{
             throw new UserFindUserNameException(msg);
         }
     }
+
+     */
 
     @Override
     public List<User> findCity(String cityName, String departmentName, String countryName) {

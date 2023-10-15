@@ -32,9 +32,9 @@ public class PersonObject {
     @NotNull(message = "PersonObject: La clave 'address' no puede ser nula")
     private AddressObject address;
 
-    @NotNull(message = "PersonObject: La clave 'telephone' no puede ser nula")
-    @NotEmpty(message = "PersonObject: La clave 'telephone' no puede ser vacía")
-    @Size(min = 7, max = 30, message = "PersonObject: La clave 'telephone' debe contener entre 7 y 30 caracteres")
+    //@NotNull(message = "PersonObject: La clave 'telephone' no puede ser nula")
+    //@NotEmpty(message = "PersonObject: La clave 'telephone' no puede ser vacía")
+    @Size(max = 30, message = "PersonObject: La clave 'telephone' debe contener un máximo de 30 caracteres")
     private String  telephone;
 
     //@NotNull(message = "PersonObject: La clave 'mail' no puede ser nula")
