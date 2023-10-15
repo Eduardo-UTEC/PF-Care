@@ -28,5 +28,5 @@ public class AddressObject {
     private String betweenStreet2;
 
     @NotNull(message = "AddressObject: La latitud y longitud  no pueden ser nulas")
-    private Long lat, lon;
+    private Double lat, lon;
 }
