@@ -333,4 +333,20 @@ public class VolunteerPersonController {
         }
     }
 
+    ///Devuelve true si el voluntario esta validado y no esta borrado
+    @GetMapping(value = "isValidated_notDeleted/{id}", produces = MediaType.APPLICATION_JSON_VALUE + ";charset=UTF-8")
+    public ResponseEntity<Boolean> isValidated(@PathVariable String id) {
+        try{
+            Optional<VolunteerPerson> found = volunteerPersonService.findId(id);
+            if (found.isPresent())
+                return ResponseEntity.ok(found.get().getValidate() && ! found.get().getDeleted());
+            return ResponseEntity.ok(false);
+
+        }catch(Exception e) {
+            String msg = "Error buscando persona voluntaria con id " + id;
+            log.warning(msg);
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, msg);
+        }
+    }
+
 }

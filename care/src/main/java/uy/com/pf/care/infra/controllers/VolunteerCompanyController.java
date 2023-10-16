@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import uy.com.pf.care.exceptions.*;
 import uy.com.pf.care.model.documents.VolunteerCompany;
-import uy.com.pf.care.model.documents.VolunteerPerson;
 import uy.com.pf.care.services.IVolunteerCompanyService;
 
 import java.util.List;
@@ -141,6 +140,22 @@ public class VolunteerCompanyController {
 
         }catch(Exception e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
+        }
+    }
+
+    ///Devuelve true si la empresa esta validada y no esta borrada
+    @GetMapping(value = "isValidated_notDeleted/{id}", produces = MediaType.APPLICATION_JSON_VALUE + ";charset=UTF-8")
+    public ResponseEntity<Boolean> isValidated(@PathVariable String id) {
+        try{
+            Optional<VolunteerCompany> found = volunteerCompanyService.findId(id);
+            if (found.isPresent())
+                return ResponseEntity.ok(found.get().getValidate() && ! found.get().getDeleted());
+            return ResponseEntity.ok(false);
+
+        }catch(Exception e) {
+            String msg = "Error buscando empresa con id " + id;
+            log.warning(msg);
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, msg);
         }
     }
 
