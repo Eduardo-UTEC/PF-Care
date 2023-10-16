@@ -96,6 +96,22 @@ public class PatientController {
         }
     }
 
+    ///Devuelve true si el paciente esta validado y no esta borrado
+    @GetMapping(value = "isValidated_notDeleted/{id}", produces = MediaType.APPLICATION_JSON_VALUE + ";charset=UTF-8")
+    public ResponseEntity<Boolean> isValidated(@PathVariable String id) {
+        try{
+            Optional<Patient> found = patientService.findId(id);
+            if (found.isPresent())
+                return ResponseEntity.ok(found.get().getValidate() && ! found.get().getDeleted());
+            return ResponseEntity.ok(false);
+
+        }catch(Exception e) {
+            String msg = "Error buscando paciente con id " + id;
+            log.warning(msg);
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, msg);
+        }
+    }
+
     @GetMapping(
             value = "findIdentificationDocument/{document}/{countryName}",
             produces = MediaType.APPLICATION_JSON_VALUE + ";charset=UTF-8")

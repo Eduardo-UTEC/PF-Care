@@ -9,6 +9,7 @@ spring:
       maxWaitTime: 200000     # tiempo maximo que la app espera para obtener un hilo de la bbdd, en milisegundos.
 
 server:
+  #port: 9096
   address: 0.0.0.0
   error:
     include-message: always
