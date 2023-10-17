@@ -11,6 +11,7 @@ import java.util.Optional;
 public interface IReferenceCaregiverRepo extends MongoRepository<ReferenceCaregiver, String> {
     Optional<ReferenceCaregiver> findByIdentificationDocumentAndZone_CountryName(
             Integer identificationDocument, String countryName);
+    Optional<ReferenceCaregiver> findByMailIgnoreCase(String mail);
     List<ReferenceCaregiver>
     findByZone_CountryNameAndZone_DepartmentNameAndZone_CityNameAndZone_NeighborhoodNameAndName1IgnoreCaseOrderByName1(
             String countryName, String departmentName, String cityName, String neighborhoodName, String name1);

@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import uy.com.pf.care.exceptions.*;
+import uy.com.pf.care.model.documents.Patient;
 import uy.com.pf.care.model.documents.ReferenceCaregiver;
 import uy.com.pf.care.model.enums.RelationshipEnum;
 import uy.com.pf.care.services.IReferenceCaregiverService;
@@ -74,15 +75,14 @@ public class ReferenceCaregiverController {
      */
 
     @PutMapping(
-            value = "/addPatient/{referenceCaregiverId}/{patientId}/{ordinalRelationship}",
+            value = "/addPatient/{referenceCaregiverId}/{patientId}",
             produces = MediaType.APPLICATION_JSON_VALUE + ";charset=UTF-8")
     public ResponseEntity<Boolean> addPatient(
             @PathVariable String referenceCaregiverId,
-            @PathVariable String patientId,
-            @PathVariable int ordinalRelationship) {
+            @PathVariable String patientId) {
+
         try {
-            return ResponseEntity.ok(referenceCaregiverService.addPatient(
-                    referenceCaregiverId, patientId, RelationshipEnum.values()[ordinalRelationship]));
+            return ResponseEntity.ok(referenceCaregiverService.addPatient(referenceCaregiverId, patientId));
 
         }catch (ReferenceCaregiverNotFoundException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
@@ -119,6 +119,47 @@ public class ReferenceCaregiverController {
         }catch(Exception e) {
             String msg = "Error buscando Cuidador Referente con documento de identificación " +
                     document + " (" + countryName + "): " + e.getMessage();
+            log.warning(msg);
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, msg);
+        }
+    }
+
+    @GetMapping(value = "findMail/{mail}", produces = MediaType.APPLICATION_JSON_VALUE + ";charset=UTF-8")
+    public ResponseEntity<Optional<ReferenceCaregiver>> findMail(@PathVariable String mail) {
+        try{
+            return ResponseEntity.ok(referenceCaregiverService.findMail(mail));
+
+        }catch(Exception e) {
+            String msg = "Error buscando cuidador referente con mail: " + mail;
+            log.warning(msg);
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, msg);
+        }
+    }
+
+    @GetMapping(value = "existMail/{mail}", produces = MediaType.APPLICATION_JSON_VALUE + ";charset=UTF-8")
+    public ResponseEntity<Boolean> existMail(@PathVariable String mail) {
+        try{
+            return ResponseEntity.ok(referenceCaregiverService.findMail(mail).isPresent());
+
+        }catch(Exception e) {
+            String msg = "Error buscando cuidador referente con mail: " + mail;
+            log.warning(msg);
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, msg);
+        }
+    }
+
+    //true si tiene por lo menos un paciente asignado
+    @GetMapping(value = "hasPatientAssigned/{referenceCareId}",
+            produces = MediaType.APPLICATION_JSON_VALUE + ";charset=UTF-8")
+    public ResponseEntity<Boolean> hasPatientAssigned(@PathVariable String referenceCareId) {
+        try{
+            Optional<ReferenceCaregiver> found = referenceCaregiverService.findId(referenceCareId);
+            if (found.isPresent())
+                return ResponseEntity.ok(! found.get().getPatients().isEmpty());
+            return ResponseEntity.ok(false);
+
+        }catch(Exception e) {
+            String msg = "Error buscando cuidador referente con mail: " + referenceCareId;
             log.warning(msg);
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, msg);
         }
