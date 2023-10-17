@@ -122,7 +122,7 @@ public class ReferenceCaregiverService implements IReferenceCaregiverService {
     }
 
     @Override
-    public Boolean addPatient(String referenceCaregiverId, String patientId, RelationshipEnum relationship) {
+    public Boolean addPatient(String referenceCaregiverId, String patientId) {
         Optional<ReferenceCaregiver> found = referenceCaregiverRepo.findById(referenceCaregiverId);
         if (found.isPresent()){
             if (this.patientLinked(found.get(), patientId)) {
@@ -132,11 +132,16 @@ public class ReferenceCaregiverService implements IReferenceCaregiverService {
             }
             //found.get().getPatients().add(new PatientLinkedReferentObject(patientId, relationship));
             found.get().getPatients().add(patientId);
-
             ForceEnumsToReferenceCaregiver.execute(found.get());
             referenceCaregiverRepo.save(found.get());
-            log.warning("Paciente con el rol " + relationship.getName() + " vinculado con exito al Cuidador Referente");
-            return true;
+
+            if (this.updateReferenceCaregiverOnPatients(found.get()).isEmpty()) {
+                log.warning("Paciente vinculado con exito al Cuidador Referente");
+                return true;
+
+            } else
+                return false;
+
         }
 
         String msg = "No se encontro el Cuidador Referente con id " + referenceCaregiverId;
@@ -173,6 +178,11 @@ public class ReferenceCaregiverService implements IReferenceCaregiverService {
     @Override
     public Optional<ReferenceCaregiver> findId(String id) {
         return referenceCaregiverRepo.findById(id);
+    }
+
+    @Override
+    public Optional<ReferenceCaregiver> findMail(String mail) {
+        return referenceCaregiverRepo.findByMailIgnoreCase(mail);
     }
 
     @Override
@@ -234,11 +244,11 @@ public class ReferenceCaregiverService implements IReferenceCaregiverService {
             log.warning(msg);
             throw new ReferenceCaregiverUserIdOmittedException(msg);
         }
-        if (referenceCaregiver.getPatients().isEmpty()){
+        /*if (referenceCaregiver.getPatients().isEmpty()){
             msg = "El Cuidador Referente debe estar vinculado al menos a un Paciente (clave 'patientsId' no puede ser nula ni vacia)";
             log.warning(msg);
             throw new ReferenceCaregiverPatientsIdOmittedException(msg);
-        }
+        }*/
     }
 
     //Actualiza los Pacientes (segun su id), en la key referenceCaregiver, con el Id del Cuidador Referente
@@ -266,6 +276,7 @@ public class ReferenceCaregiverService implements IReferenceCaregiverService {
                 //referenceCaregiver.getPatients().removeIf(patientLinkedReferentObject ->
                 //        notFounds.contains(patientLinkedReferentObject.getPatientId()));
                 referenceCaregiver.getPatients().removeIf(patientId -> notFounds.contains(patientId));
+                referenceCaregiverRepo.save(referenceCaregiver);
             }
             return notFounds;
 

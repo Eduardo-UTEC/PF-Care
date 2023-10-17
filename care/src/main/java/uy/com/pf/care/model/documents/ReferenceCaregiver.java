@@ -42,10 +42,10 @@ public class ReferenceCaregiver extends PersonObject {
 
     //@NotNull(message = "ReferenceCaregiver: El Cuidador Referente debe estar vinculado al menos a un Paciente  (clave 'patientsId' no puede ser nula)")
     //@NotEmpty(message = "ReferenceCaregiver: El Cuidador Referente debe estar vinculado al menos a un Paciente (clave 'patientsId' no puede ser vacia)")
-    @Valid
     //private List<PatientLinkedReferentObject> patients;
+    @Valid
+    @NotNull(message = "La clave 'patients' no puede ser nula")
     private List<String> patients;
-
 
     //private List<DayTimeRangeObject> dayTimeRange = new ArrayList<>();  //Dias y rangos horarios semanales para el cuidado
 
