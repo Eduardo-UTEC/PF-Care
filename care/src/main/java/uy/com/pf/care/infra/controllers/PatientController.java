@@ -98,7 +98,7 @@ public class PatientController {
 
     ///Devuelve true si el paciente esta validado y no esta borrado
     @GetMapping(value = "isValidated_notDeleted/{id}", produces = MediaType.APPLICATION_JSON_VALUE + ";charset=UTF-8")
-    public ResponseEntity<Boolean> isValidated(@PathVariable String id) {
+    public ResponseEntity<Boolean> isValidated_notDeleted(@PathVariable String id) {
         try{
             Optional<Patient> found = patientService.findId(id);
             if (found.isPresent())

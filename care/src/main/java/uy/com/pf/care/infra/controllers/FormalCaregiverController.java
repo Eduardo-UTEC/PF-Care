@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import uy.com.pf.care.exceptions.*;
 import uy.com.pf.care.model.documents.FormalCaregiver;
+import uy.com.pf.care.model.documents.Patient;
 import uy.com.pf.care.model.objects.DayTimeRangeObject;
 import uy.com.pf.care.services.IFormalCaregiverService;
 
@@ -177,6 +178,22 @@ public class FormalCaregiverController {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         }catch(FormalCaregiverSetDeletionException e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
+        }
+    }
+
+    ///Devuelve true si el cuidador esta validado y no esta borrado
+    @GetMapping(value = "isValidated_notDeleted/{id}", produces = MediaType.APPLICATION_JSON_VALUE + ";charset=UTF-8")
+    public ResponseEntity<Boolean> isValidated_notDeleted(@PathVariable String id) {
+        try{
+            Optional<FormalCaregiver> found = formalCaregiverService.findId(id);
+            if (found.isPresent())
+                return ResponseEntity.ok(found.get().getValidate() && ! found.get().getDeleted());
+            return ResponseEntity.ok(false);
+
+        }catch(Exception e) {
+            String msg = "Error buscando cuidador formal con id " + id;
+            log.warning(msg);
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, msg);
         }
     }
 
