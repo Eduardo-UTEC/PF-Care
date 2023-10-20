@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Data
-public class DayTimeRangeObject {
+public class    DayTimeRangeObject {
 
     @NotNull(message = "DayTimeRangeObject: La propiedad 'day' no puede ser nula")
     private DaysWeekEnum day;
