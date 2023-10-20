@@ -45,6 +45,6 @@ jar {
 	from sourceSets.main.output
 }
 
-/*tasks.named('test') {
+tasks.named('test') {
 	useJUnitPlatform()
-}*/
+}
