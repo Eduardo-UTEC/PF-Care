@@ -5,7 +5,7 @@
       <sourceFolder url="file://$MODULE_DIR$/../../care/build/generated/sources/annotationProcessor/java/test" isTestSource="true" generated="true" />
     </content>
   </component>
-  <component name="NewModuleRootManager" LANGUAGE_LEVEL="JDK_17">
+  <component name="NewModuleRootManager">
     <output-test url="file://$MODULE_DIR$/../../care/build/classes/java/test" />
     <exclude-output />
     <content url="file://$MODULE_DIR$/../../care/build/generated/sources/annotationProcessor/java/test">
