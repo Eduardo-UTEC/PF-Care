@@ -261,10 +261,10 @@ public class FormalCaregiverService implements IFormalCaregiverService {
     }
 
     @Override
-    public FormalCaregiver findMail(String mail) {
+    public Optional<FormalCaregiver> findMail(String mail) {
         try{
-            FormalCaregiver found = formalCaregiverRepo.findByMailIgnoreCase(mail);
-            if (found != null)
+            Optional<FormalCaregiver> found = formalCaregiverRepo.findByMailIgnoreCase(mail);
+            if (found.isPresent())
                 return found;
 
             String msg = "No se encontro un cuidador formal con email " + mail;
@@ -276,6 +276,25 @@ public class FormalCaregiverService implements IFormalCaregiverService {
         }catch(Exception e){
             log.warning("Error buscando cuidador formal con mail: " + mail + ". " + e.getMessage());
             throw new FormalCaregiverFindMailException("Error buscando cuidador formal con mail: " + mail);
+        }
+    }
+
+    @Override
+    public Optional<FormalCaregiver> findTelephone(String telephone) {
+        try{
+            Optional<FormalCaregiver> found = formalCaregiverRepo.findByTelephone(telephone);
+            if (found.isPresent())
+                return found;
+
+            String msg = "No se encontro un cuidador formal con teléfono " + telephone;
+            log.warning(msg);
+            throw new FormalCaregiverNotFoundException(msg);
+
+        }catch (FormalCaregiverNotFoundException e) {
+            throw new FormalCaregiverNotFoundException(e.getMessage());
+        }catch(Exception e){
+            log.warning("Error buscando cuidador formal con teléfono: " + telephone + ". " + e.getMessage());
+            throw new FormalCaregiverFindMailException("Error buscando cuidador formal con teléfono: " + telephone);
         }
     }
 
@@ -600,7 +619,6 @@ public class FormalCaregiverService implements IFormalCaregiverService {
     private void defaultValues(FormalCaregiver formalCaregiver){
         formalCaregiver.setVotes(new int[] {0,0,0,0,0});
         formalCaregiver.setValidate(false);
-        formalCaregiver.setAvailable(false);
         formalCaregiver.setDeleted(false);
     }
 

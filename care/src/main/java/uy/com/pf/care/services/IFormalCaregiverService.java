@@ -15,7 +15,8 @@ public interface IFormalCaregiverService {
     Boolean updateVotes(String formalCaregiverId, int previousScore, int currentScore);
     Optional<FormalCaregiver> findId(String id);
     List<FormalCaregiver> findAll(Boolean withoutValidate, Boolean includeDeleted, String countryName);
-    FormalCaregiver findMail(String mail);
+    Optional<FormalCaregiver> findMail(String mail);
+    Optional<FormalCaregiver> findTelephone(String telephone);
     List<FormalCaregiver> findName(Boolean withoutValidate, Boolean includeDeleted, String countryName, String name);
     List<FormalCaregiver> findNameLike(Boolean withoutValidate, Boolean includeDeleted, String countryName, String name);
     List<FormalCaregiver> findInterestZones_Neighborhood(

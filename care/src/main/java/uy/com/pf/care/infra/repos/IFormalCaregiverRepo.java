@@ -5,10 +5,12 @@ import org.springframework.stereotype.Repository;
 import uy.com.pf.care.model.documents.FormalCaregiver;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface IFormalCaregiverRepo extends MongoRepository<FormalCaregiver, String> {
-    FormalCaregiver findByMailIgnoreCase(String mail);
+    Optional<FormalCaregiver> findByMailIgnoreCase(String mail);
+    Optional<FormalCaregiver> findByTelephone(String telephone);
     List<FormalCaregiver> findByCountryNameAndValidateTrueAndAvailableTrue(String countryName);
     List<FormalCaregiver> findByCountryNameAndValidateFalseAndAvailableTrue(String countryName);
     List<FormalCaregiver> findByCountryNameAndValidateTrueAndDeletedFalseAndAvailableTrue(String countryName);

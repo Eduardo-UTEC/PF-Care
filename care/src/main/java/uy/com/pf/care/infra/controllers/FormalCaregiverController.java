@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import uy.com.pf.care.exceptions.*;
 import uy.com.pf.care.model.documents.FormalCaregiver;
-import uy.com.pf.care.model.documents.Patient;
 import uy.com.pf.care.model.objects.DayTimeRangeObject;
 import uy.com.pf.care.services.IFormalCaregiverService;
 
@@ -75,14 +74,50 @@ public class FormalCaregiverController {
     }
 
     @GetMapping(value = "findMail/{mail}", produces = MediaType.APPLICATION_JSON_VALUE + ";charset=UTF-8")
-    public ResponseEntity<FormalCaregiver> findByMail(@PathVariable String mail) {
+    public ResponseEntity<FormalCaregiver> findMail(@PathVariable String mail) {
         try{
-            return ResponseEntity.ok(formalCaregiverService.findMail(mail));
+            return ResponseEntity.ok(formalCaregiverService.findMail(mail).get());
 
         }catch (FormalCaregiverNotFoundException e){
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         }catch(FormalCaregiverFindMailException e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
+        }
+    }
+
+    @GetMapping(value = "existMail/{mail}", produces = MediaType.APPLICATION_JSON_VALUE + ";charset=UTF-8")
+    public ResponseEntity<Boolean> existMail(@PathVariable String mail) {
+        try{
+            return ResponseEntity.ok(formalCaregiverService.findMail(mail).isPresent());
+
+        }catch(Exception e) {
+            String msg = "Error buscando Cuidador Formal con mail: " + mail;
+            log.warning(msg);
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, msg);
+        }
+    }
+
+    @GetMapping(value = "findTelephone/{telephone}", produces = MediaType.APPLICATION_JSON_VALUE + ";charset=UTF-8")
+    public ResponseEntity<FormalCaregiver> findTelephone(@PathVariable String telephone) {
+        try{
+            return ResponseEntity.ok(formalCaregiverService.findTelephone(telephone).get());
+
+        }catch (FormalCaregiverNotFoundException e){
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+        }catch(FormalCaregiverFindMailException e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
+        }
+    }
+
+    @GetMapping(value = "existTelephone/{telephone}", produces = MediaType.APPLICATION_JSON_VALUE + ";charset=UTF-8")
+    public ResponseEntity<Boolean> existTelephone(@PathVariable String telephone) {
+        try{
+            return ResponseEntity.ok(formalCaregiverService.findTelephone(telephone).isPresent());
+
+        }catch(Exception e) {
+            String msg = "Error buscando Cuidador Formal con telefono: " + telephone;
+            log.warning(msg);
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, msg);
         }
     }
 
