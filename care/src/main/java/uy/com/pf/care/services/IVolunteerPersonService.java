@@ -18,6 +18,7 @@ public interface IVolunteerPersonService {
     Boolean setDeletion(String id, Boolean isDeleted);
     Optional<VolunteerPerson> findId(String id);
     VolunteerPerson findIdentificationNumber(String identificationDocument, String countryName);
+    Optional<VolunteerPerson> findTelephone(String telephone);
     List<VolunteerPerson> findAll(Boolean withoutValidate, Boolean includeDeleted, String countryName);
     VolunteerPerson findMail(String mail);
     List<VolunteerPerson> findName(Boolean withoutValidate, Boolean includeDeleted, String countryName, String name1);

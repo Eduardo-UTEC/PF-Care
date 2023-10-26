@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import uy.com.pf.care.exceptions.*;
+import uy.com.pf.care.model.documents.FormalCaregiver;
 import uy.com.pf.care.model.documents.VolunteerPerson;
 import uy.com.pf.care.model.objects.DayTimeRangeObject;
 import uy.com.pf.care.services.IVolunteerPersonService;
@@ -144,10 +145,54 @@ public class VolunteerPersonController {
         }
     }
 
+    @GetMapping(value = "findTelephone/{telephone}", produces = MediaType.APPLICATION_JSON_VALUE + ";charset=UTF-8")
+    public Optional<VolunteerPerson> findTelephone(@PathVariable  String telephone) {
+        try {
+            Optional<VolunteerPerson> found = volunteerPersonService.findTelephone(telephone);
+            if (found.isPresent())
+                return found;
+
+            String msg = "No se encontro un voluntario con teléfono " + telephone;
+            log.warning(msg);
+            throw new VolunteerPersonNotFoundException(msg);
+
+        } catch (VolunteerPersonNotFoundException e) {
+            throw new VolunteerPersonNotFoundException(e.getMessage());
+        } catch(Exception e) {
+            log.warning("Error buscando voluntario con teléfono: " + telephone + ". " + e.getMessage());
+            throw new VolunteerPersonFindTelephoneException("Error buscando cuidador formal con teléfono: " + telephone);
+        }
+    }
+
+    @GetMapping(value = "existTelephone/{telephone}", produces = MediaType.APPLICATION_JSON_VALUE + ";charset=UTF-8")
+    public ResponseEntity<Boolean> existTelephone(@PathVariable String telephone) {
+        try{
+            return ResponseEntity.ok(volunteerPersonService.findTelephone(telephone).isPresent());
+
+        } catch (VolunteerPersonNotFoundException e) {
+            throw new VolunteerPersonNotFoundException(e.getMessage());
+        } catch(Exception e) {
+            log.warning("Error buscando voluntario con teléfono: " + telephone + ". " + e.getMessage());
+            throw new VolunteerPersonFindTelephoneException("Error buscando cuidador formal con teléfono: " + telephone);
+        }
+    }
+
     @GetMapping(value = "findMail/{mail}", produces = MediaType.APPLICATION_JSON_VALUE + ";charset=UTF-8")
     public ResponseEntity<VolunteerPerson> findMail(@PathVariable String mail) {
         try{
             return ResponseEntity.ok(volunteerPersonService.findMail(mail));
+
+        }catch(VolunteerPersonNotFoundException e){
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+        }catch(Exception e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
+        }
+    }
+
+    @GetMapping(value = "existMail/{mail}", produces = MediaType.APPLICATION_JSON_VALUE + ";charset=UTF-8")
+    public ResponseEntity<Boolean> existMail(@PathVariable String mail) {
+        try{
+            return ResponseEntity.ok(volunteerPersonService.findMail(mail) != null);
 
         }catch(VolunteerPersonNotFoundException e){
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());

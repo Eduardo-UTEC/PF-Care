@@ -313,6 +313,25 @@ public class VolunteerPersonService implements IVolunteerPersonService{
     }
 
     @Override
+    public Optional<VolunteerPerson> findTelephone(String telephone) {
+            try{
+                Optional<VolunteerPerson> found = volunteerPersonRepo.findByTelephone(telephone);
+                if (found.isPresent())
+                    return found;
+
+                String msg = "No se encontro un Voluntario con teléfono " + telephone;
+                log.warning(msg);
+                throw new VolunteerPersonNotFoundException(msg);
+
+            }catch (VolunteerPersonNotFoundException e) {
+                throw new VolunteerPersonNotFoundException(e.getMessage());
+            }catch(Exception e){
+                log.warning("Error buscando voluntario con teléfono: " + telephone + ". " + e.getMessage());
+                throw new VolunteerPersonFindTelephoneException("Error buscando cuidador formal con teléfono: " + telephone);
+            }
+    }
+
+    @Override
     public List<VolunteerPerson> findAll(Boolean withoutValidate, Boolean includeDeleted, String countryName) {
 
         if (withoutValidate) {

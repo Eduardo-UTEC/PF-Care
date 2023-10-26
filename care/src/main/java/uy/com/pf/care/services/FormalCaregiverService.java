@@ -294,7 +294,7 @@ public class FormalCaregiverService implements IFormalCaregiverService {
             throw new FormalCaregiverNotFoundException(e.getMessage());
         }catch(Exception e){
             log.warning("Error buscando cuidador formal con teléfono: " + telephone + ". " + e.getMessage());
-            throw new FormalCaregiverFindMailException("Error buscando cuidador formal con teléfono: " + telephone);
+            throw new FormalCaregiverFindTelephoneException("Error buscando cuidador formal con teléfono: " + telephone);
         }
     }
 

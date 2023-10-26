@@ -104,7 +104,7 @@ public class FormalCaregiverController {
 
         }catch (FormalCaregiverNotFoundException e){
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
-        }catch(FormalCaregiverFindMailException e) {
+        }catch(FormalCaregiverFindTelephoneException e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
         }
     }

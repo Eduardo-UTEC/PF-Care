@@ -2,6 +2,7 @@ package uy.com.pf.care.infra.repos;
 
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
+import uy.com.pf.care.model.documents.FormalCaregiver;
 import uy.com.pf.care.model.documents.VolunteerPerson;
 
 import java.util.List;
@@ -9,6 +10,7 @@ import java.util.Optional;
 
 @Repository
 public interface IVolunteerPersonRepo extends MongoRepository<VolunteerPerson, String> {
+    Optional<VolunteerPerson> findByTelephone(String telephone);
     Optional<VolunteerPerson> findByCountryNameAndIdentificationDocument(
             String countryName, String identificationDocument);
     Optional<VolunteerPerson> findByMailIgnoreCase(String mail);
