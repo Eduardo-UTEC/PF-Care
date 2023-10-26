@@ -55,7 +55,7 @@ public class VolunteerPerson extends PersonObject {
     private Byte[] photo;
 
     @NotNull(message = "VolunteerPerson: La clave 'training' no puede ser nula")
-    @Size(max = 50, message = "VolunteerPerson: la formación no debe exceder los 50 caracteres")
+    @Size(max = 100, message = "VolunteerPerson: la formación no debe exceder los 100 caracteres")
     private String training;
 
     @NotNull(message = "VolunteerPerson: La clave 'experience' no puede ser nula")
