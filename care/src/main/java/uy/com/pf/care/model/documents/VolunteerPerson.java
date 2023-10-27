@@ -21,7 +21,7 @@ import java.util.List;
 @Document("VolunteerPeople")
 @CompoundIndexes({
         @CompoundIndex(def = "{'countryName':1, 'identificationDocument':1}", unique = true),
-        @CompoundIndex(def = "{'mail':1}", unique = true),
+        @CompoundIndex(def = "{'mail':1}"), //admite nulos
         @CompoundIndex(def = "{'telephone':1}", unique = true),
         @CompoundIndex(def = "{'countryName':1, 'name1':1}")
 })
