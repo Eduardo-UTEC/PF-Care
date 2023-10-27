@@ -313,9 +313,9 @@ public class VolunteerPersonService implements IVolunteerPersonService{
     }
 
     @Override
-    public Optional<VolunteerPerson> findTelephone(String telephone) {
+    public Optional<VolunteerPerson> findTelephone(String countryName, String telephone) {
             try{
-                Optional<VolunteerPerson> found = volunteerPersonRepo.findByTelephone(telephone);
+                Optional<VolunteerPerson> found = volunteerPersonRepo.findByCountryNameAndTelephone(countryName, telephone);
                 if (found.isPresent())
                     return found;
 

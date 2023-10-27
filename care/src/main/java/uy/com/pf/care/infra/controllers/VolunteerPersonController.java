@@ -145,10 +145,11 @@ public class VolunteerPersonController {
         }
     }
 
-    @GetMapping(value = "findTelephone/{telephone}", produces = MediaType.APPLICATION_JSON_VALUE + ";charset=UTF-8")
-    public Optional<VolunteerPerson> findTelephone(@PathVariable  String telephone) {
+    @GetMapping(value = "findTelephone/{countryName}/{telephone}", produces = MediaType.APPLICATION_JSON_VALUE + ";charset=UTF-8")
+    public Optional<VolunteerPerson> findTelephone(
+            @PathVariable String countryName, @PathVariable String telephone) {
         try {
-            Optional<VolunteerPerson> found = volunteerPersonService.findTelephone(telephone);
+            Optional<VolunteerPerson> found = volunteerPersonService.findTelephone(countryName, telephone);
             if (found.isPresent())
                 return found;
 
@@ -164,10 +165,11 @@ public class VolunteerPersonController {
         }
     }
 
-    @GetMapping(value = "existTelephone/{telephone}", produces = MediaType.APPLICATION_JSON_VALUE + ";charset=UTF-8")
-    public ResponseEntity<Boolean> existTelephone(@PathVariable String telephone) {
+    @GetMapping(value = "existTelephone/{countryName}/{telephone}", produces = MediaType.APPLICATION_JSON_VALUE + ";charset=UTF-8")
+    public ResponseEntity<Boolean> existTelephone(
+            @PathVariable String countryName, @PathVariable String telephone) {
         try{
-            return ResponseEntity.ok(volunteerPersonService.findTelephone(telephone).isPresent());
+            return ResponseEntity.ok(volunteerPersonService.findTelephone(countryName, telephone).isPresent());
 
         } catch (VolunteerPersonNotFoundException e) {
             throw new VolunteerPersonNotFoundException(e.getMessage());

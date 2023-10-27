@@ -10,7 +10,7 @@ import java.util.Optional;
 
 @Repository
 public interface IVolunteerPersonRepo extends MongoRepository<VolunteerPerson, String> {
-    Optional<VolunteerPerson> findByTelephone(String telephone);
+    Optional<VolunteerPerson> findByCountryNameAndTelephone(String countryName, String telephone);
     Optional<VolunteerPerson> findByCountryNameAndIdentificationDocument(
             String countryName, String identificationDocument);
     Optional<VolunteerPerson> findByMailIgnoreCase(String mail);
