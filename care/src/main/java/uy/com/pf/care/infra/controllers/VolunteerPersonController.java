@@ -145,9 +145,9 @@ public class VolunteerPersonController {
         }
     }
 
-    @GetMapping(value = "findTelephone/{countryName}/{telephone}", produces = MediaType.APPLICATION_JSON_VALUE + ";charset=UTF-8")
+    @GetMapping(value = "findTelephone/{telephone}/{countryName}", produces = MediaType.APPLICATION_JSON_VALUE + ";charset=UTF-8")
     public Optional<VolunteerPerson> findTelephone(
-            @PathVariable String countryName, @PathVariable String telephone) {
+            @PathVariable String telephone, @PathVariable String countryName) {
         try {
             Optional<VolunteerPerson> found = volunteerPersonService.findTelephone(countryName, telephone);
             if (found.isPresent())
@@ -165,9 +165,9 @@ public class VolunteerPersonController {
         }
     }
 
-    @GetMapping(value = "existTelephone/{countryName}/{telephone}", produces = MediaType.APPLICATION_JSON_VALUE + ";charset=UTF-8")
+    @GetMapping(value = "existTelephone/{telephone}/{countryName}", produces = MediaType.APPLICATION_JSON_VALUE + ";charset=UTF-8")
     public ResponseEntity<Boolean> existTelephone(
-            @PathVariable String countryName, @PathVariable String telephone) {
+            @PathVariable String telephone, @PathVariable String countryName) {
         try{
             return ResponseEntity.ok(volunteerPersonService.findTelephone(countryName, telephone).isPresent());
 
