@@ -51,7 +51,7 @@ public class VolunteerPerson extends PersonObject {
     //List<VolunteerActivityObject> activities = new ArrayList<>();
     private List<String> volunteerActivitiesId = new ArrayList<>();
 
-    @NotNull(message = "VolunteerPerson: La clave 'photo' no puede ser nula")
+    //@NotNull(message = "VolunteerPerson: La clave 'photo' no puede ser nula")
     private Byte[] photo;
 
     @NotNull(message = "VolunteerPerson: La clave 'training' no puede ser nula")
