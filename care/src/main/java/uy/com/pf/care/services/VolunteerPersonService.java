@@ -13,6 +13,7 @@ import uy.com.pf.care.infra.repos.IVolunteerPersonRepo;
 import uy.com.pf.care.model.documents.VolunteerPerson;
 import uy.com.pf.care.model.enums.RoleEnum;
 import uy.com.pf.care.model.globalFunctions.ForceEnumsToVolunteerPerson;
+import uy.com.pf.care.model.globalFunctions.SetMatch;
 import uy.com.pf.care.model.globalFunctions.UpdateEntityId;
 import uy.com.pf.care.model.objects.DayTimeRangeObject;
 import uy.com.pf.care.model.objects.NeighborhoodObject;
@@ -27,6 +28,8 @@ public class VolunteerPersonService implements IVolunteerPersonService{
     private IVolunteerPersonRepo volunteerPersonRepo;
     @Autowired
     private UpdateEntityId updateEntityId;
+    @Autowired
+    private SetMatch setMatch;
     @Autowired
     private ParamConfig paramConfig;
 
@@ -291,6 +294,129 @@ public class VolunteerPersonService implements IVolunteerPersonService{
     }
 
     @Override
+    public Boolean receivePatientRequest (String volunteerPersonId, String patientId) {
+        try {
+            Optional<VolunteerPerson> volunteerPerson = this.findId(volunteerPersonId);
+            if (volunteerPerson.isPresent()) {
+
+                if (volunteerPerson.get().getMatchPatientsId().contains(patientId)) {
+                    String msg = "El paciente ya estaba matcheado.";
+                    log.info(msg);
+                    throw new VolunteerPersonPatientAlreadyMatchException(msg);
+                }
+                if (volunteerPerson.get().getMatchRequestPatientsId().contains(patientId)) {
+                    String msg = "El paciente ya había enviado una solicitud.";
+                    log.info(msg);
+                    throw new VolunteerPersonPatientAlreadyRequestException(msg);
+                }
+                volunteerPerson.get().getMatchRequestPatientsId().add(patientId);
+                volunteerPersonRepo.save(volunteerPerson.get());
+                log.info("Se agregó con éxito la solicitud de contacto del paciente con la persona voluntaria");
+                return true;
+
+            } else {
+                String msg = "Persona voluntaria con id " + volunteerPersonId + " no encontrada.";
+                log.info(msg);
+                throw new VolunteerPersonNotFoundException(msg);
+            }
+
+        } catch (VolunteerPersonPatientAlreadyMatchException e) {
+            throw new VolunteerPersonPatientAlreadyMatchException(e.getMessage());
+        } catch (VolunteerPersonPatientAlreadyRequestException e) {
+            throw new VolunteerPersonPatientAlreadyRequestException(e.getMessage());
+        } catch (VolunteerPersonNotFoundException e) {
+            throw new VolunteerPersonNotFoundException(e.getMessage());
+        } catch (Exception e) {
+            String msg = "Error seteando solicitud de contacto del paciente con la persona voluntaria";
+            log.warning(msg + ": " + e.getMessage());
+            throw new VolunteerPersonRecievePatientRequestException(msg);
+        }
+    }
+
+
+    @Override
+    public Boolean setMatchPatient(String volunteerPersonId, String patientId, Boolean isMatch) {
+        try {
+            Optional<VolunteerPerson> volunteerPerson = this.findId(volunteerPersonId);
+            if (volunteerPerson.isPresent()) {
+
+                //Esta matcheado?
+                if (volunteerPerson.get().getMatchPatientsId().contains(patientId)) {
+                    if (isMatch) {
+                        String msg = "El paciente ya estaba matcheado.";
+                        log.info(msg);
+                        throw new VolunteerPersonPatientAlreadyMatchException(msg);
+
+                        //Deja de estar matcheado
+                    } else {
+
+                        //Quito el match en "paciente"
+                        ResponseEntity<Boolean> response =
+                                setMatch.execute(patientId, volunteerPersonId, RoleEnum.VOLUNTEER_PERSON, false);
+
+                        if (response.getStatusCode() == HttpStatus.OK) {
+                            //Quito el match en "voluntario"
+                            volunteerPerson.get().getMatchPatientsId().remove(patientId);
+                            volunteerPersonRepo.save(volunteerPerson.get());
+                            log.info("Match quitado con éxito del lado del voluntario");
+                            return true;
+
+                        } else
+                            return false;
+                    }
+                }
+
+                //Ya hay una solicitud de matcheo?
+                if (volunteerPerson.get().getMatchRequestPatientsId().contains(patientId)) {
+                    if (! isMatch) {
+                        //Quita la solicitud de matcheo en Voluntario
+                        volunteerPerson.get().getMatchRequestPatientsId().remove(patientId);
+                        volunteerPersonRepo.save(volunteerPerson.get());
+                        log.info("Solicitud de matcheo quitada con éxito del lado del voluntario");
+                        return true;
+                    }
+
+                } else {
+                    String msg = "No hay una solicitud registrada del paciente " + patientId +
+                            " con el voluntario " + volunteerPersonId;
+                    log.info(msg);
+                    throw new VolunteerPersonPatientNotRequestException(msg);
+                }
+
+                //Confirma el match del lado del paciente
+                ResponseEntity<Boolean> response =
+                        setMatch.execute(patientId, volunteerPersonId, RoleEnum.VOLUNTEER_PERSON, true);
+
+                if (response.getStatusCode() == HttpStatus.OK) {
+                    //Confirma el match del lado del voluntario
+                    volunteerPerson.get().getMatchPatientsId().add(patientId);
+                    volunteerPerson.get().getMatchRequestPatientsId().remove(patientId);
+                    volunteerPersonRepo.save(volunteerPerson.get());
+                    log.info("Match realizado con éxito del lado de la persona voluntaria");
+                    return true;
+                } else
+                    return false;
+
+            } else {
+                String msg = "Persona voluntaria con id " + volunteerPersonId + " no encontrada.";
+                log.info(msg);
+                throw new VolunteerPersonNotFoundException(msg);
+            }
+
+        } catch (VolunteerPersonPatientAlreadyMatchException e) {
+            throw new VolunteerPersonPatientAlreadyMatchException(e.getMessage());
+        } catch (VolunteerPersonPatientNotRequestException e) {
+            throw new VolunteerPersonPatientNotRequestException(e.getMessage());
+        } catch (VolunteerPersonNotFoundException e) {
+            throw new VolunteerPersonNotFoundException(e.getMessage());
+        } catch (Exception e) {
+            String msg = "Error seteando solicitud de contacto del paciente con la persona voluntaria";
+            log.warning(msg + ": " + e.getMessage());
+            throw new VolunteerPersonRecievePatientRequestException(msg);
+        }
+    }
+
+    @Override
     public Optional<VolunteerPerson> findId(String id) {
         Optional<VolunteerPerson> found = volunteerPersonRepo.findById(id);
         if (found.isPresent())
@@ -314,21 +440,21 @@ public class VolunteerPersonService implements IVolunteerPersonService{
 
     @Override
     public Optional<VolunteerPerson> findTelephone(String countryName, String telephone) {
-            try{
-                Optional<VolunteerPerson> found = volunteerPersonRepo.findByCountryNameAndTelephone(countryName, telephone);
-                if (found.isPresent())
-                    return found;
+        try{
+            Optional<VolunteerPerson> found = volunteerPersonRepo.findByCountryNameAndTelephone(countryName, telephone);
+            if (found.isPresent())
+                return found;
 
-                String msg = "No se encontro un Voluntario con teléfono " + telephone;
-                log.warning(msg);
-                throw new VolunteerPersonNotFoundException(msg);
+            String msg = "No se encontro un Voluntario con teléfono " + telephone;
+            log.warning(msg);
+            throw new VolunteerPersonNotFoundException(msg);
 
-            }catch (VolunteerPersonNotFoundException e) {
-                throw new VolunteerPersonNotFoundException(e.getMessage());
-            }catch(Exception e){
-                log.warning("Error buscando voluntario con teléfono: " + telephone + ". " + e.getMessage());
-                throw new VolunteerPersonFindTelephoneException("Error buscando cuidador formal con teléfono: " + telephone);
-            }
+        }catch (VolunteerPersonNotFoundException e) {
+            throw new VolunteerPersonNotFoundException(e.getMessage());
+        }catch(Exception e){
+            log.warning("Error buscando voluntario con teléfono: " + telephone + ". " + e.getMessage());
+            throw new VolunteerPersonFindTelephoneException("Error buscando cuidador formal con teléfono: " + telephone);
+        }
     }
 
     @Override
@@ -651,6 +777,8 @@ public class VolunteerPersonService implements IVolunteerPersonService{
     private void defaultValues(VolunteerPerson volunteerPerson){
         volunteerPerson.setValidate(false);
         volunteerPerson.setDeleted(false);
+        volunteerPerson.setMatchPatientsId(new ArrayList<>());
+        volunteerPerson.setMatchRequestPatientsId(new ArrayList<>());
     }
 
     private void defaultValues(VolunteerPerson volunteerPerson, VolunteerPerson oldVolunteerPerson){
@@ -659,6 +787,8 @@ public class VolunteerPersonService implements IVolunteerPersonService{
         volunteerPerson.setAvailable(oldVolunteerPerson.getAvailable());
         volunteerPerson.setValidate(oldVolunteerPerson.getValidate());
         volunteerPerson.setDeleted(oldVolunteerPerson.getDeleted());
+        volunteerPerson.setMatchPatientsId(oldVolunteerPerson.getMatchPatientsId());
+        volunteerPerson.setMatchRequestPatientsId(oldVolunteerPerson.getMatchRequestPatientsId());
     }
 
     private void notFound(String volunteerPersonId){

@@ -51,6 +51,15 @@ public class VolunteerPerson extends PersonObject {
     //List<VolunteerActivityObject> activities = new ArrayList<>();
     private List<String> volunteerActivitiesId = new ArrayList<>();
 
+    @Builder.Default
+    private List<ContactMethodsEnum> contactMethods = new ArrayList<>();
+
+    @Builder.Default
+    private List<String> matchPatientsId = new ArrayList<>();   //Pacientes matcheados
+
+    @Builder.Default
+    private List<String> matchRequestPatientsId = new ArrayList<>(); //Solicitudes de matcheo de pacientes
+
     //@NotNull(message = "VolunteerPerson: La clave 'photo' no puede ser nula")
     private Byte[] photo;
 
@@ -65,8 +74,6 @@ public class VolunteerPerson extends PersonObject {
     @NotNull(message = "VolunteerPerson: La clave 'reasonToVolunteer' no puede ser nula")
     @Size(max = 100, message = "VolunteerPerson: la razon de ser voluntario no debe exceder los 100 caracteres")
     private String reasonToVolunteer;
-
-    private List<ContactMethodsEnum> contactMethods;
 
     @BooleanFlag
     private Boolean available;  // Si es False, implica que sus servicios no estan disponibles momentáneamente

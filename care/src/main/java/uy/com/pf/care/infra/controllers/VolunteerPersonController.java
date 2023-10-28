@@ -52,6 +52,37 @@ public class VolunteerPersonController {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
         }
     }
+
+    @PutMapping("/receivePatientRequest/{volunteerPersonId}/{patientId}")
+    public ResponseEntity<Boolean> receivePatientRequests(
+            @PathVariable String volunteerPersonId, @PathVariable String patientId){
+        try {
+            return ResponseEntity.ok(volunteerPersonService.receivePatientRequest(volunteerPersonId, patientId));
+
+        }catch (VolunteerPersonPatientAlreadyMatchException | VolunteerPersonPatientAlreadyRequestException e) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, e.getMessage());
+        }catch (VolunteerPersonNotFoundException e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+        }catch(VolunteerPersonRecievePatientRequestException e){
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
+        }
+    }
+
+    @PutMapping("/setMatchPatient/{volunteerPersonId}/{patientId}/{isMatch}")
+    public ResponseEntity<Boolean> setMatchPatient(
+            @PathVariable String volunteerPersonId, @PathVariable String patientId, @PathVariable Boolean isMatch) {
+        try {
+            return ResponseEntity.ok(volunteerPersonService.setMatchPatient(volunteerPersonId, patientId, isMatch));
+
+        }catch (VolunteerPersonPatientAlreadyMatchException | VolunteerPersonPatientNotRequestException e) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, e.getMessage());
+        }catch (VolunteerPersonNotFoundException e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+        }catch(VolunteerPersonRecievePatientRequestException e){
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
+        }
+    }
+
     @PutMapping("/addActivities/{volunteerPersonId}")
     public ResponseEntity<Boolean> addVolunteerActivitiesId(
             @PathVariable String volunteerPersonId,

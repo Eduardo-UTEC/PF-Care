@@ -9,10 +9,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
-import uy.com.pf.care.exceptions.PatientNotFoundException;
-import uy.com.pf.care.exceptions.PatientSaveException;
-import uy.com.pf.care.exceptions.PatientUpdateException;
-import uy.com.pf.care.exceptions.UserUpdateEntityIdInRolesListException;
+import uy.com.pf.care.exceptions.*;
 import uy.com.pf.care.model.documents.Patient;
 import uy.com.pf.care.services.IPatientService;
 
@@ -277,6 +274,35 @@ public class PatientController {
             String msg = "Error seteando borrado lógico de paciente con id " + id;
             log.warning(msg + ": " + e.getMessage());
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, msg);
+        }
+    }
+
+    @GetMapping(
+            value = "sendRequestVolunteerPerson/{patientId}/{volunteerPersonId}",
+            produces = MediaType.APPLICATION_JSON_VALUE + ";charset=UTF-8")
+    public ResponseEntity<Boolean> sendRequestVolunteerPerson(
+            @PathVariable String patientId, @PathVariable String volunteerPersonId) {
+        try {
+            return ResponseEntity.ok(patientService.sendRequestVolunteerPerson(patientId, volunteerPersonId));
+
+        } catch (SendRequestVolunteerPersonException e) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, e.getMessage());
+        } catch(SetMatchException e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
+        }
+    }
+
+
+    @PutMapping("setMatchVolunteerPerson/{patientId}/{volunteerPersonId}/{isMatch}")
+    public ResponseEntity<Boolean> setMatchVolunteerPerson (
+            @PathVariable String patientId, @PathVariable String volunteerPersonId, @PathVariable Boolean isMatch) {
+        try {
+            return ResponseEntity.ok(patientService.setMatchVolunteerPerson(patientId, volunteerPersonId, isMatch));
+
+        }catch (PatientNotFoundException e){
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+        }catch(PatientSetMatchException e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
         }
     }
 

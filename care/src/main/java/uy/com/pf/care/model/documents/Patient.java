@@ -37,8 +37,9 @@ public class Patient extends PersonObject {
 
     private String referenceCaregiverId;
 
-        //@Valid
+    //@Valid
     private List<String> formalCaregiversId = new ArrayList<>();
+    private List<VolunteerPersonMatchObject> volunteerPeople = new ArrayList<>();
 
     //@Valid
     //private List<InformalCaregiverObject> informalCaregivers = new ArrayList<>();

@@ -16,6 +16,8 @@ public interface IVolunteerPersonService {
     Boolean setAvailability(String id, Boolean isAvailable);
     Boolean setValidation(String id, Boolean isValidated);
     Boolean setDeletion(String id, Boolean isDeleted);
+    Boolean receivePatientRequest(String volunteerPersonId, String patientId);
+    Boolean setMatchPatient(String volunteerPersonId, String patientId, Boolean isMatch);
     Optional<VolunteerPerson> findId(String id);
     VolunteerPerson findIdentificationNumber(String identificationDocument, String countryName);
     Optional<VolunteerPerson> findTelephone(String countryName, String telephone);
