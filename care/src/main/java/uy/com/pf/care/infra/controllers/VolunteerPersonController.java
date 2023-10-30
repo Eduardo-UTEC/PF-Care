@@ -309,7 +309,7 @@ public class VolunteerPersonController {
         }
     }
 
-    @GetMapping(
+    @PostMapping(
             value = "findInterestZones_Neighborhood/" +
                     "{withoutValidate}/" +
                     "{includeDeleted}/" +
@@ -324,7 +324,8 @@ public class VolunteerPersonController {
             @PathVariable String interestNeighborhoodName,
             @PathVariable String interestCityName,
             @PathVariable String interestDepartmentName,
-            @PathVariable String countryName){
+            @PathVariable String countryName,
+            @RequestBody(required = false) List<String> excludedVolunteerIds) {
 
         try{
             return ResponseEntity.ok(volunteerPersonService.findInterestZones_Neighborhood(
@@ -333,7 +334,9 @@ public class VolunteerPersonController {
                     interestNeighborhoodName,
                     interestCityName,
                     interestDepartmentName,
-                    countryName));
+                    countryName,
+                    excludedVolunteerIds
+                    ));
 
         }catch(VolunteerPersonFindInterestZones_NeighborhoodException e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());

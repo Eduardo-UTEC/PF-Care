@@ -18,7 +18,9 @@ import uy.com.pf.care.model.globalFunctions.UpdateEntityId;
 import uy.com.pf.care.model.objects.DayTimeRangeObject;
 import uy.com.pf.care.model.objects.NeighborhoodObject;
 
+import java.awt.*;
 import java.util.*;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @Service
@@ -532,7 +534,8 @@ public class VolunteerPersonService implements IVolunteerPersonService{
             String interestNeighborhoodName,
             String interestCityName,
             String interestDepartmentName,
-            String countryName) {
+            String countryName,
+            List<String> excludedVolunteerIds) {
 
         try{
             RestTemplate restTemplate = new RestTemplate();
@@ -553,17 +556,23 @@ public class VolunteerPersonService implements IVolunteerPersonService{
                 //        false, includeDeleted, interestCityName, interestDepartmentName, countryName)
                 //        .stream().filter(
                 listReturn = this.findAll(withoutValidate, includeDeleted, countryName).stream().filter(
-                        volunteerPerson -> volunteerPerson.getInterestZones().isEmpty() ||
-                                !volunteerPerson.getInterestZones().stream().filter(interestZonesObject ->
-                                        interestZonesObject.getDepartmentName().equals(interestDepartmentName) &&
-                                                (interestZonesObject.getCities().isEmpty() ||
-                                                        !interestZonesObject.getCities().stream().filter(cityObject ->
-                                                                cityObject.getCityName().equals(interestCityName) &&
-                                                                        (cityObject.getNeighborhoodNames().isEmpty() ||
-                                                                                cityObject.getNeighborhoodNames().
-                                                                                        contains(interestNeighborhoodName))
-                                                        ).toList().isEmpty())
-                                ).toList().isEmpty()
+                        volunteerPerson -> {
+                            if (excludedVolunteerIds != null && excludedVolunteerIds.contains(volunteerPerson.getVolunteerPersonId()))
+                                return false;
+                            else {
+                                return volunteerPerson.getInterestZones().isEmpty() ||
+                                        !volunteerPerson.getInterestZones().stream().filter(interestZonesObject ->
+                                                interestZonesObject.getDepartmentName().equals(interestDepartmentName) &&
+                                                        (interestZonesObject.getCities().isEmpty() ||
+                                                                !interestZonesObject.getCities().stream().filter(cityObject ->
+                                                                        cityObject.getCityName().equals(interestCityName) &&
+                                                                                (cityObject.getNeighborhoodNames().isEmpty() ||
+                                                                                        cityObject.getNeighborhoodNames().
+                                                                                                contains(interestNeighborhoodName))
+                                                                ).toList().isEmpty())
+                                        ).toList().isEmpty();
+                            }
+                        }
                 ).toList();
             }
             return listReturn;
@@ -687,13 +696,15 @@ public class VolunteerPersonService implements IVolunteerPersonService{
                         interestDepartmentName,
                         countryName);
             else
+                //busco por barrio sin excluir ningun voluntario
                 volunteerPersonList = this.findInterestZones_Neighborhood(
                         false,
                         false,
                         interestNeighborhoodName,
                         interestCityName,
                         interestDepartmentName,
-                        countryName);
+                        countryName,
+                        new ArrayList<>());
 
             if (dayTimeRange.isEmpty()) // Todos los dias y horarios
                 return volunteerPersonList;

@@ -32,7 +32,8 @@ public interface IVolunteerPersonService {
             String interestNeighborhoodName,
             String interestCityName,
             String interestDepartmentName,
-            String countryName);
+            String countryName,
+            List<String> excludedVolunteerIds);
 
     List<VolunteerPerson> findInterestZones_City(
             Boolean validateCity,
