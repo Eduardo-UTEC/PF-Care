@@ -391,7 +391,7 @@ public class VolunteerPersonController {
         }
     }
 
-    @GetMapping(
+    @PostMapping(
             value = "findDateTimeRange/" +
                     "{interestNeighborhoodName}/" +
                     "{interestCityName}/" +
@@ -403,11 +403,17 @@ public class VolunteerPersonController {
             @PathVariable String interestCityName,
             @PathVariable String interestDepartmentName,
             @PathVariable String countryName,
-            @Valid @NotNull @RequestBody List<DayTimeRangeObject> dayTimeRange){
+            @Valid @NotNull @RequestBody List<DayTimeRangeObject> dayTimeRange,
+            @RequestBody(required = false) List<String> excludedVolunteerIds){
 
         try{
             return ResponseEntity.ok(volunteerPersonService.findDateTimeRange(
-                    dayTimeRange, interestNeighborhoodName, interestCityName, interestDepartmentName, countryName));
+                    dayTimeRange,
+                    interestNeighborhoodName,
+                    interestCityName,
+                    interestDepartmentName,
+                    countryName,
+                    excludedVolunteerIds));
 
         }catch(VolunteerPersonFindDateTimeRangeException e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());

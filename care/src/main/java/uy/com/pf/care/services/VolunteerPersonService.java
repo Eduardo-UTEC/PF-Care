@@ -682,7 +682,8 @@ public class VolunteerPersonService implements IVolunteerPersonService{
             String interestNeighborhoodName,
             String interestCityName,
             String interestDepartmentName,
-            String countryName) {
+            String countryName,
+            List<String> excludedVolunteerIds) {
 
         try{
             List<VolunteerPerson> volunteerPersonList;
@@ -696,7 +697,6 @@ public class VolunteerPersonService implements IVolunteerPersonService{
                         interestDepartmentName,
                         countryName);
             else
-                //busco por barrio sin excluir ningun voluntario
                 volunteerPersonList = this.findInterestZones_Neighborhood(
                         false,
                         false,
@@ -704,7 +704,7 @@ public class VolunteerPersonService implements IVolunteerPersonService{
                         interestCityName,
                         interestDepartmentName,
                         countryName,
-                        new ArrayList<>());
+                        excludedVolunteerIds);
 
             if (dayTimeRange.isEmpty()) // Todos los dias y horarios
                 return volunteerPersonList;
