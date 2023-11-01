@@ -288,7 +288,7 @@ public class PatientController {
         } catch (SendRequestVolunteerPersonException e) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, e.getMessage());
         } catch(SetMatchException e) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
+git             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
         }
     }
 

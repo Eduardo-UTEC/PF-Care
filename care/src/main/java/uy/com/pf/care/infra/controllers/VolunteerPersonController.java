@@ -14,6 +14,7 @@ import uy.com.pf.care.exceptions.*;
 import uy.com.pf.care.model.documents.FormalCaregiver;
 import uy.com.pf.care.model.documents.VolunteerPerson;
 import uy.com.pf.care.model.objects.DayTimeRangeObject;
+import uy.com.pf.care.model.objects.ParamsDayTimeRangeAndExcludedIdsObject;
 import uy.com.pf.care.services.IVolunteerPersonService;
 
 import java.util.List;
@@ -391,6 +392,8 @@ public class VolunteerPersonController {
         }
     }
 
+
+    //@
     @PostMapping(
             value = "findDateTimeRange/" +
                     "{interestNeighborhoodName}/" +
@@ -403,17 +406,28 @@ public class VolunteerPersonController {
             @PathVariable String interestCityName,
             @PathVariable String interestDepartmentName,
             @PathVariable String countryName,
-            @Valid @NotNull @RequestBody List<DayTimeRangeObject> dayTimeRange,
-            @RequestBody(required = false) List<String> excludedVolunteerIds){
+            //@Valid @NotNull @RequestBody List<DayTimeRangeObject> dayTimeRange,
+            //@RequestBody(required = false) List<String> excludedVolunteerIds){
+            @RequestBody ParamsDayTimeRangeAndExcludedIdsObject lists) { //Se agrega objeto para aceptar ambas listas en el body
 
         try{
             return ResponseEntity.ok(volunteerPersonService.findDateTimeRange(
+                    lists.getDayTimeRange(),
+                    interestNeighborhoodName,
+                    interestCityName,
+                    interestDepartmentName,
+                    countryName,
+                    lists.getExcludedVolunteerIds()));
+
+            /*return ResponseEntity.ok(volunteerPersonService.findDateTimeRange(
                     dayTimeRange,
                     interestNeighborhoodName,
                     interestCityName,
                     interestDepartmentName,
                     countryName,
                     excludedVolunteerIds));
+
+             */
 
         }catch(VolunteerPersonFindDateTimeRangeException e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
