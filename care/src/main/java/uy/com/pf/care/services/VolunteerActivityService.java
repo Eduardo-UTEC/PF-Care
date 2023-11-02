@@ -107,6 +107,11 @@ public class VolunteerActivityService implements IVolunteerActivityService{
     }
 
     @Override
+    public List<VolunteerActivity> findIds(List<String> volunteersActivitiesId) {
+        return volunteerActivityRepo.findAllById(volunteersActivitiesId);
+    }
+
+    @Override
     public Boolean exist(String name, String departmentName, String countryName) {
         return volunteerActivityRepo.findByCountryNameAndDepartmentNameAndNameIgnoreCase(
                 countryName, departmentName, name).isPresent();

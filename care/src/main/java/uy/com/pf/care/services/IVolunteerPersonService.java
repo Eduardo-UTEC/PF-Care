@@ -19,6 +19,7 @@ public interface IVolunteerPersonService {
     Boolean receivePatientRequest(String volunteerPersonId, String patientId);
     Boolean setMatchPatient(String volunteerPersonId, String patientId, Boolean isMatch);
     Optional<VolunteerPerson> findId(String id);
+    List<VolunteerPerson> findIds(List<String> volunteersPersonId);
     VolunteerPerson findIdentificationNumber(String identificationDocument, String countryName);
     Optional<VolunteerPerson> findTelephone(String countryName, String telephone);
     List<VolunteerPerson> findAll(Boolean withoutValidate, Boolean includeDeleted, String countryName);

@@ -11,9 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import uy.com.pf.care.exceptions.*;
-import uy.com.pf.care.model.documents.FormalCaregiver;
 import uy.com.pf.care.model.documents.VolunteerPerson;
-import uy.com.pf.care.model.objects.DayTimeRangeObject;
 import uy.com.pf.care.model.objects.ParamsDayTimeRangeAndExcludedIdsObject;
 import uy.com.pf.care.services.IVolunteerPersonService;
 
@@ -158,6 +156,19 @@ public class VolunteerPersonController {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         }catch(Exception e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
+        }
+    }
+
+    @PostMapping(value = "findIds", produces = MediaType.APPLICATION_JSON_VALUE + ";charset=UTF-8")
+    public ResponseEntity<List<VolunteerPerson>> findIds(
+            @Valid @NotNull @RequestBody List<String> volunteersPersonId) {
+        try {
+            return ResponseEntity.ok(volunteerPersonService.findIds(volunteersPersonId));
+
+        }catch(Exception e) {
+            String msg = "Error buscando personas voluntarias por id";
+            log.warning(msg + ": " + e.getMessage());
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, msg);
         }
     }
 
@@ -392,8 +403,6 @@ public class VolunteerPersonController {
         }
     }
 
-
-    //@
     @PostMapping(
             value = "findDateTimeRange/" +
                     "{interestNeighborhoodName}/" +

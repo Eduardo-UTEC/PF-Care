@@ -14,6 +14,7 @@ import uy.com.pf.care.exceptions.VolunteerActivityNotFoundException;
 import uy.com.pf.care.exceptions.VolunteerActivitySaveException;
 import uy.com.pf.care.exceptions.VolunteerActivityUpdateException;
 import uy.com.pf.care.model.documents.VolunteerActivity;
+import uy.com.pf.care.model.documents.VolunteerPerson;
 import uy.com.pf.care.services.IVolunteerActivityService;
 
 import java.util.List;
@@ -109,6 +110,19 @@ public class VolunteerActivityController {
         }catch(Exception e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
                     "Error buscando Actividad de Voluntario con id " + id);
+        }
+    }
+
+    @PostMapping(value = "findIds", produces = MediaType.APPLICATION_JSON_VALUE + ";charset=UTF-8")
+    public ResponseEntity<List<VolunteerActivity>> findIds(
+            @Valid @NotNull @RequestBody List<String> volunteersActivitiesId) {
+        try {
+            return ResponseEntity.ok(volunteerActivityService.findIds(volunteersActivitiesId));
+
+        }catch(Exception e) {
+            String msg = "Error buscando actividades del voluntario por id";
+            log.warning(msg + ": " + e.getMessage());
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, msg);
         }
     }
 

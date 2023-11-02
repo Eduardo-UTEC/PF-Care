@@ -429,6 +429,11 @@ public class VolunteerPersonService implements IVolunteerPersonService{
     }
 
     @Override
+    public List<VolunteerPerson> findIds(List<String> volunteersPersonId) {
+        return volunteerPersonRepo.findAllById(volunteersPersonId);
+    }
+
+    @Override
     public VolunteerPerson findIdentificationNumber(String identificationDocument, String countryName) {
         Optional<VolunteerPerson> found = volunteerPersonRepo.
                 findByCountryNameAndIdentificationDocument(identificationDocument, countryName);
