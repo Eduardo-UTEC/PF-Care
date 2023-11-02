@@ -67,6 +67,7 @@ public class VolunteerPersonController {
         }
     }
 
+    ///El paciente envía una solicitud de contacto. El voluntario la acepta o rechaza en este servicio.
     @PutMapping("/setMatchPatient/{volunteerPersonId}/{patientId}/{isMatch}")
     public ResponseEntity<Boolean> setMatchPatient(
             @PathVariable String volunteerPersonId, @PathVariable String patientId, @PathVariable Boolean isMatch) {

@@ -109,8 +109,6 @@ public class PatientService implements IPatientService{
         return ret;
     }
 
-    //@
-    //Envía o reenvía una solicitud de contacto a una persona voluntaria
     @Override
     public Boolean sendRequestVolunteerPerson(String patientId, String volunteerPersonId) {
         Optional<Patient> patient = patientRepo.findById(patientId);

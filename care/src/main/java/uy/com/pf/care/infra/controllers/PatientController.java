@@ -277,6 +277,8 @@ public class PatientController {
         }
     }
 
+    //Envía o reenvía una solicitud de contacto a una persona voluntaria.
+    //El proceso de matcheo comienza en este punto.
     @GetMapping(
             value = "sendRequestVolunteerPerson/{patientId}/{volunteerPersonId}",
             produces = MediaType.APPLICATION_JSON_VALUE + ";charset=UTF-8")
@@ -293,6 +295,8 @@ public class PatientController {
     }
 
 
+    //Este servicio se expone para ser llamado desde el voluntario (no debe llamarse solo). El voluntario llama
+    //a este servicio desde: /vounteer_people/setMatchPatient
     @PutMapping("setMatchVolunteerPerson/{patientId}/{volunteerPersonId}/{isMatch}")
     public ResponseEntity<Boolean> setMatchVolunteerPerson (
             @PathVariable String patientId, @PathVariable String volunteerPersonId, @PathVariable Boolean isMatch) {
