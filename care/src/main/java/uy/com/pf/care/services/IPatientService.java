@@ -14,6 +14,7 @@ public interface IPatientService {
     Boolean setValidation(String id, Boolean isValidated);
     Boolean setDeletion(String id, Boolean isDeleted);
     Optional<Patient> findId(String id);
+    List<Patient> findIds(List<String> patientsId);
     Optional<Patient> findIdentificationDocument(Integer identificationDocument, String countryName);
     Optional<Patient> findMail(String mail);
     List<Patient> findName1(

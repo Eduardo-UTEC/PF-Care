@@ -266,6 +266,11 @@ public class PatientService implements IPatientService{
     }
 
     @Override
+    public List<Patient> findIds(List<String> patientsId) {
+        return patientRepo.findAllById(patientsId);
+    }
+
+    @Override
     public Optional<Patient> findIdentificationDocument(Integer identificationDocument, String countryName) {
         return patientRepo.findByIdentificationDocumentAndZone_CountryName(identificationDocument, countryName);
     }

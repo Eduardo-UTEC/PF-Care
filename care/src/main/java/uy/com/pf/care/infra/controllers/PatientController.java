@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import uy.com.pf.care.exceptions.*;
 import uy.com.pf.care.model.documents.Patient;
+import uy.com.pf.care.model.documents.VolunteerPerson;
 import uy.com.pf.care.services.IPatientService;
 
 import java.util.List;
@@ -92,6 +93,20 @@ public class PatientController {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, msg);
         }
     }
+
+    @PostMapping(value = "findIds", produces = MediaType.APPLICATION_JSON_VALUE + ";charset=UTF-8")
+    public ResponseEntity<List<Patient>> findIds(
+            @Valid @NotNull @RequestBody List<String> patientsId) {
+        try {
+            return ResponseEntity.ok(patientService.findIds(patientsId));
+
+        }catch(Exception e) {
+            String msg = "Error buscando pacientes por id";
+            log.warning(msg + ": " + e.getMessage());
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, msg);
+        }
+    }
+
 
     ///Devuelve true si el paciente esta validado y no esta borrado
     @GetMapping(value = "isValidated_notDeleted/{id}", produces = MediaType.APPLICATION_JSON_VALUE + ";charset=UTF-8")
