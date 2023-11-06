@@ -14,6 +14,7 @@ public interface IVideoService {
     Boolean changeRole(String videoId, RoleEnum oldOrdinalRole, RoleEnum newOrdinalRole);
     Boolean delRoles(String videoId, List<RoleEnum> ordinalRoles);
     Optional<Video> findId(String id);
+    List<VideoObject> findTitle(String title, Integer ordinalRole, String countryName, String departmentName);
     List<Video> findAll(String countryName, String departmentName);
     List<VideoObject> findByRole(Integer ordinalRole, String countryName, String departmentName);
 

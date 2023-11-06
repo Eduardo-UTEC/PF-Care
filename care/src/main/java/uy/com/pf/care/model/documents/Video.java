@@ -26,6 +26,9 @@ public class Video {
     @Id
     private String videoId;
 
+    @Size(max = 30 , message = "VideoObject: El título del video no puede exceder los 30 caracteres")
+    private String title;
+
     @Size(max = 100 , message = "VideoObject: La descripcion del video no puede exceder los 100 caracteres")
     private String description;
 

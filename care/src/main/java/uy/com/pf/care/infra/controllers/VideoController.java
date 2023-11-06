@@ -139,5 +139,20 @@ public class VideoController {
         }
     }
 
+    @GetMapping(
+            value = "findTitle/{title}/{ordinalRole}/{departmentName}/{countryName}",
+            produces = MediaType.APPLICATION_JSON_VALUE + ";charset=UTF-8")
+    public ResponseEntity<List<VideoObject>> findTitle(
+            @PathVariable String title,
+            @PathVariable Integer ordinalRole,
+            @PathVariable String countryName,
+            @PathVariable String departmentName){
+        try{
+            return ResponseEntity.ok(videoService.findTitle(title, ordinalRole, countryName, departmentName));
+
+        }catch(VideoFindByRoleException e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
+        }
+    }
 
 }

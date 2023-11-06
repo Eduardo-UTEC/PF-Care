@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 
 @Service
 @Log
@@ -229,6 +230,24 @@ public class VideoService implements IVideoService{
         }
     }
 
+    @Override
+    public List<VideoObject> findTitle(String title, Integer ordinalRole, String countryName, String departmentName) {
+        try {
+            List<VideoObject> videosByRol = this.findByRole(ordinalRole, countryName, departmentName);
+            if (videosByRol.isEmpty()) {
+                log.info("No se encontraron videos para el " + RoleEnum.values()[ordinalRole].getName());
+                return videosByRol;
+            }
+            String titleUpper = title.toUpperCase();
+            return videosByRol.stream()
+                    .filter(videoObject -> videoObject.getTitle().toUpperCase().contains(titleUpper))
+                    .toList();
+
+        } catch (VideoFindByRoleException e) {
+            throw new VideoFindByRoleException(e.getMessage());
+        }
+    }
+
     private void notFound(String videoId){
         String msg = "No se encontro el video con id " + videoId;
         log.warning(msg);
@@ -236,7 +255,7 @@ public class VideoService implements IVideoService{
     }
 
     private VideoObject toVideoObject(Video video){
-        return new VideoObject(video.getVideoId(), video.getDescription(), video.getUrl());
+        return new VideoObject(video.getVideoId(), video.getTitle(), video.getDescription(), video.getUrl());
     }
 
     private void saveValidate(Video video){

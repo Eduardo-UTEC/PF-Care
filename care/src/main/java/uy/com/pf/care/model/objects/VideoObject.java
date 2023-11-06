@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class VideoObject {
     private String videoId;
+    private String title;
     private String description;
     private String url;
 }
