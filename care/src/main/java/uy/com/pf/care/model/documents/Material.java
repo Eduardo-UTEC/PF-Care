@@ -13,6 +13,8 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.CompoundIndex;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.time.LocalDate;
+
 @Document("Materials")
 @CompoundIndex(def = "{'countryName':1, 'name':1}", unique = true)
 @Data
@@ -33,6 +35,9 @@ public class Material {
     private String description;
 
     private Byte[] photo;
+
+    //Se toma al persistir.
+    private LocalDate registrationDate;
 
     @NotNull(message = "El país de registro del material no puede ser nulo")
     @NotEmpty(message = "El país de registro del material no puede ser vacío")

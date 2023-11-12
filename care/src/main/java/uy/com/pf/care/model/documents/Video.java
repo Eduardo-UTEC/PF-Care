@@ -9,6 +9,7 @@ import org.springframework.data.mongodb.core.index.CompoundIndex;
 import org.springframework.data.mongodb.core.index.CompoundIndexes;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,7 +27,7 @@ public class Video {
     @Id
     private String videoId;
 
-    @Size(max = 30 , message = "VideoObject: El título del video no puede exceder los 30 caracteres")
+    @Size(max = 50 , message = "VideoObject: El título del video no puede exceder los 50 caracteres")
     private String title;
 
     @Size(max = 100 , message = "VideoObject: La descripcion del video no puede exceder los 100 caracteres")
@@ -35,6 +36,9 @@ public class Video {
     @NotNull(message = "VideoObject: la url del video no puede ser nula")
     @NotEmpty(message = "VideoObject: la url del video no puede ser vacia")
     private String url;
+
+    //Se toma al persistir.
+    private LocalDate registrationDate;
 
     @Builder.Default
     @NotNull(message = "Role: La propiedad 'roles' no puede ser nula")

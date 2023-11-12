@@ -8,15 +8,17 @@ import org.springframework.stereotype.Service;
 import uy.com.pf.care.exceptions.*;
 import uy.com.pf.care.infra.repos.IPatientRepo;
 import uy.com.pf.care.model.documents.Patient;
+import uy.com.pf.care.model.dtos.StatisticPatientWithOthersDTO;
 import uy.com.pf.care.model.enums.RoleEnum;
 import uy.com.pf.care.model.globalFunctions.ForceEnumsToPatient;
+import uy.com.pf.care.model.globalFunctions.MonthlyRequestStats;
 import uy.com.pf.care.model.globalFunctions.SetMatch;
 import uy.com.pf.care.model.globalFunctions.UpdateEntityId;
 import uy.com.pf.care.model.objects.VolunteerPersonMatchObject;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.time.LocalDate;
+import java.time.Month;
+import java.util.*;
 
 @Service
 @Log
@@ -28,6 +30,8 @@ public class PatientService implements IPatientService{
     private UpdateEntityId updateEntityId;
     @Autowired
     private SetMatch setMatch;
+    //@Autowired
+    //private MonthlyRequestStats monthlyRequestStats;
 
     @Override
     public String save(Patient patient) {
@@ -121,17 +125,21 @@ public class PatientService implements IPatientService{
                         setMatch.execute(patientId, volunteerPersonId, RoleEnum.PATIENT, null);
 
                 if (response.getStatusCode() == HttpStatus.OK) {
-                    ordinalVolunteer = existVolunteer(volunteerPersonId, patient.get().getVolunteerPeople());
+                    ordinalVolunteer = ordinalVolunteer(volunteerPersonId, patient.get().getVolunteerPeople());
                     if (ordinalVolunteer == -1) {
                         patient.get().getVolunteerPeople().add(
-                                new VolunteerPersonMatchObject(volunteerPersonId, false));
+                                new VolunteerPersonMatchObject(
+                                        volunteerPersonId, false, LocalDate.now(), null));
                         patientRepo.save(patient.get());
                         log.info("Solicitud de contacto del paciente " + patientId + " enviada con éxito al " +
                                 "voluntario " + volunteerPersonId);
 
                     } else {
+                        //Inicializa confirmationDate en null
+                        patient.get().getVolunteerPeople().get(ordinalVolunteer).setConfirmationDate(null);
+                        patientRepo.save(patient.get());
                         log.info("Se reenvió con éxito la solicitud de contacto del paciente " + patientId +
-                                "al voluntario " + volunteerPersonId);
+                                " al voluntario " + volunteerPersonId);
                     }
                     return true;
 
@@ -143,37 +151,6 @@ public class PatientService implements IPatientService{
                 log.info(msg);
                 return false;
             }
-
-
-            /*if (patient.isPresent()) {
-                ordinalVolunteer = existVolunteer(volunteerPersonId, patient.get().getVolunteerPeople());
-                if (ordinalVolunteer == -1) {
-                    //Envía solicitud de contacto al voluntario
-                    ResponseEntity<Boolean> response =
-                            setMatch.execute(patientId, volunteerPersonId, RoleEnum.PATIENT, null);
-                    if (response.getStatusCode() == HttpStatus.OK) {
-                        patient.get().getVolunteerPeople().add(
-                                new VolunteerPersonMatchObject(volunteerPersonId, false));
-                        patientRepo.save(patient.get());
-                        log.info("Solicitud de contacto del paciente " + patientId + " enviada con éxito al " +
-                                "voluntario " + volunteerPersonId);
-                        return true;
-
-                    } else
-                        return false;
-
-                } else {
-                    String msg = "El paciente " + patientId +
-                            " ya había enviado una solicitud de contacto al voluntario " + volunteerPersonId;
-                    log.info(msg);
-                    throw new SendRequestVolunteerPersonException(msg);
-                }
-
-            } else {
-                String msg = "No se encontró el paciente con id " + patientId;
-                log.info(msg);
-                return false;
-            }*/
 
         } catch (SendRequestVolunteerPersonException e) {
             throw new SendRequestVolunteerPersonException(e.getMessage());
@@ -188,11 +165,15 @@ public class PatientService implements IPatientService{
         try {
             Optional<Patient> patient = this.findId(patientId);
             if (patient.isPresent()) {
-                ordinalVolunteer = existVolunteer(volunteerPersonId, patient.get().getVolunteerPeople());
+                ordinalVolunteer = ordinalVolunteer(volunteerPersonId, patient.get().getVolunteerPeople());
                 if ( ordinalVolunteer != -1) {
+                    //Actualiza match y fecha de confirmacion.
+                    //Si match=false y hay un confirmationDate, implica que el voluntario rechazó la solicitud
+                    //de contacto. Si match=false y confirmationDate es null, el voluntario aún no aceptó ni rechazó.
                     patient.get().getVolunteerPeople().get(ordinalVolunteer).setMatch(isMatch);
+                    patient.get().getVolunteerPeople().get(ordinalVolunteer).setConfirmationDate(LocalDate.now());
                     patientRepo.save(patient.get());
-                    log.info("Match " + (isMatch ? "realizado" : "quitado") + " con éxito del lado del paciente");
+                    log.info("Match " + (isMatch ? "realizado" : "cancelado") + " con éxito del lado del paciente");
                     return true;
                 }
                 String msg = "El paciente " + patientId +  " no tiene una solicitud de contacto con la persona " +
@@ -329,7 +310,8 @@ public class PatientService implements IPatientService{
     }
 
     @Override
-    public List<Patient> findCity(Boolean withoutValidate, Boolean includeDeleted, String cityName, String departmentName, String countryName) {
+    public List<Patient> findCity(
+            Boolean withoutValidate, Boolean includeDeleted, String cityName, String departmentName, String countryName) {
 
         if (withoutValidate) {
             if (includeDeleted)
@@ -351,7 +333,8 @@ public class PatientService implements IPatientService{
     }
 
     @Override
-    public List<Patient> findDepartment(Boolean withoutValidate, Boolean includeDeleted, String departmentName, String countryName) {
+    public List<Patient> findDepartment(
+            Boolean withoutValidate, Boolean includeDeleted, String departmentName, String countryName) {
 
         if (withoutValidate) {
             if (includeDeleted)
@@ -408,6 +391,7 @@ public class PatientService implements IPatientService{
 
     // Asigna los valores por default a la entidad
     private void defaultValues(Patient patient){
+        patient.setRegistrationDate(LocalDate.now());
         patient.setValidate(false);
         patient.setDeleted(false);
     }
@@ -434,7 +418,6 @@ public class PatientService implements IPatientService{
         }
     }
 
-    //Valida las key requeridas para guardar un nuevo Cuidador Referente
     private void saveValidate(Patient patient){
         String msg;
         if (patient.getUserId() == null || patient.getUserId().isBlank()){
@@ -444,21 +427,77 @@ public class PatientService implements IPatientService{
         }
     }
 
-    //Devuelve el oridnal del volunteerPersonId especificado, en la lista 'volunteerPeople'
-    private int existVolunteer(String volunteerPersonId, List<VolunteerPersonMatchObject> volunteerPeople ) {
+    //Devuelve el ordinal del volunteerPersonId especificado, en la lista 'volunteerPeople'
+    private int ordinalVolunteer(String volunteerPersonId, List<VolunteerPersonMatchObject> volunteerPeople ) {
         for (int i = 0; i < volunteerPeople.size(); i++) {
             if (volunteerPeople.get(i).getVolunteerPersonId().equals(volunteerPersonId))
                 return i;
         }
         return -1;
+    }
 
-        /*for (VolunteerPersonMatchObject volunteerPersonMatchObject : volunteerPeople) {
-            if (volunteerPersonMatchObject.getVolunteerPersonId().equals(volunteerPersonId)) {
-                return volunteerPersonMatchObject.isMatch();
+    public List<StatisticPatientWithOthersDTO> getMonthlyRequestStatsForLastSixMonths(
+            Boolean withoutValidate, Boolean includeDeleted, String departmentName, String countryName) {
+
+        Map<Month, MonthlyRequestStats> statsMap = new HashMap<>();
+
+        for (Patient patient : this.findDepartment(withoutValidate, includeDeleted, departmentName, countryName)) {
+
+            // Obtener las solicitudes de voluntarios enviadas en los últimos 6 meses
+            List<VolunteerPersonMatchObject> recentRequests = patient.getVolunteerPeople().stream()
+                    .filter(request -> request.getShippingDate() != null &&
+                            request.getShippingDate().isAfter(LocalDate.now().minusMonths(6)))
+                    .toList();
+
+            // Calcular estadísticas mensuales
+            //statsMap = new HashMap<>();
+            for (VolunteerPersonMatchObject request : recentRequests) {
+                Month month = request.getShippingDate().getMonth();
+                MonthlyRequestStats stats = statsMap.getOrDefault(month, new MonthlyRequestStats());
+
+                stats.setMonth(month.getValue());
+                stats.incrementTotalRequests();
+                if (request.getConfirmationDate() != null) {
+                    if (request.isMatch())
+                        stats.incrementMatchedRequests();
+                    else
+                        stats.incrementUnmatchedRequests();
+                } else {
+                    stats.incrementPendingRequests();
+                }
+
+                statsMap.put(month, stats);
             }
-        }
-        return false;
-        */
+
+            // Calcular porcentajes
+            for (MonthlyRequestStats stats : statsMap.values()) {
+                stats.calculatePercentages();
+            }
+
+            //return new ArrayList<>(statsMap.values());
+        };
+
+        return statsPatientVolunteerToDTOList(statsMap.values());
+    }
+
+    private List<StatisticPatientWithOthersDTO> statsPatientVolunteerToDTOList(Collection<MonthlyRequestStats> stats) {
+        return stats.stream()
+                .map(this::mapPatientVolunteerToDTO)
+                .toList();
+
+    }
+
+    private StatisticPatientWithOthersDTO mapPatientVolunteerToDTO(MonthlyRequestStats stats) {
+        StatisticPatientWithOthersDTO dto = new StatisticPatientWithOthersDTO();
+        dto.setMonth(stats.getMonth());
+        dto.setTotalRequests(stats.getTotalRequests());
+        dto.setMatchedRequests((int) stats.getMatchedRequests());
+        dto.setUnmatchedRequests((int) stats.getUnmatchedRequests());
+        dto.setPendingRequests((int) stats.getPendingRequests());
+        dto.setMatchPercentage(stats.getMatchPercentage());
+        dto.setUnmatchPercentage(stats.getUnmatchPercentage());
+        dto.setPendingPercentage(stats.getPendingPercentage());
+        return dto;
     }
 
 }

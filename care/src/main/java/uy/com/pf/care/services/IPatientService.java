@@ -1,6 +1,7 @@
 package uy.com.pf.care.services;
 
 import uy.com.pf.care.model.documents.Patient;
+import uy.com.pf.care.model.dtos.StatisticPatientWithOthersDTO;
 
 import java.util.List;
 import java.util.Optional;
@@ -33,6 +34,8 @@ public interface IPatientService {
             String countryName);
     List<Patient> findDepartment(Boolean withoutValidate, Boolean includeDeleted, String departmentName, String countryName);
     List<Patient> findAll(Boolean withoutValidate, Boolean includeDeleted, String countryName);
+    List<StatisticPatientWithOthersDTO> getMonthlyRequestStatsForLastSixMonths(
+            Boolean withoutValidate, Boolean includeDeleted, String departmentName, String countryName);
 
 //    Optional<Patient> findIdentificationDocument(Integer identificationDocument, String countryName);
 //    List<Patient> findName1Like(String name1, String cityName, String departmentName, String countryName);

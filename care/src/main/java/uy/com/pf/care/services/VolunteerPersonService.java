@@ -19,6 +19,7 @@ import uy.com.pf.care.model.objects.DayTimeRangeObject;
 import uy.com.pf.care.model.objects.NeighborhoodObject;
 
 import java.awt.*;
+import java.time.LocalDate;
 import java.util.*;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -352,7 +353,8 @@ public class VolunteerPersonService implements IVolunteerPersonService{
                         //Deja de estar matcheado
                     } else {
 
-                        //Quito el match en "paciente"
+                        //Cancelo el match en "paciente" y actualizo la fecha de confirmacion, indicando así que
+                        //es un "rechazo de solicitud"
                         ResponseEntity<Boolean> response =
                                 setMatch.execute(patientId, volunteerPersonId, RoleEnum.VOLUNTEER_PERSON, false);
 
@@ -360,7 +362,7 @@ public class VolunteerPersonService implements IVolunteerPersonService{
                             //Quito el match en "voluntario"
                             volunteerPerson.get().getMatchPatientsId().remove(patientId);
                             volunteerPersonRepo.save(volunteerPerson.get());
-                            log.info("Match quitado con éxito del lado del voluntario");
+                            log.info("Match cancelado con éxito del lado del voluntario");
                             return true;
 
                         } else
@@ -371,11 +373,22 @@ public class VolunteerPersonService implements IVolunteerPersonService{
                 //Ya hay una solicitud de matcheo?
                 if (volunteerPerson.get().getMatchRequestPatientsId().contains(patientId)) {
                     if (! isMatch) {
-                        //Quita la solicitud de matcheo en Voluntario
-                        volunteerPerson.get().getMatchRequestPatientsId().remove(patientId);
-                        volunteerPersonRepo.save(volunteerPerson.get());
-                        log.info("Solicitud de matcheo quitada con éxito del lado del voluntario");
-                        return true;
+
+                        //Cancelo el match en "paciente" y actualizo la fecha de confirmacion, indicando así que
+                        //es un "rechazo de solicitud"
+                        ResponseEntity<Boolean> response =
+                                setMatch.execute(patientId, volunteerPersonId, RoleEnum.VOLUNTEER_PERSON, false);
+
+                        if (response.getStatusCode() == HttpStatus.OK) {
+                            //Quita la solicitud de matcheo en Voluntario
+                            volunteerPerson.get().getMatchRequestPatientsId().remove(patientId);
+                            volunteerPersonRepo.save(volunteerPerson.get());
+                            log.info("Solicitud de matcheo quitada con éxito del lado del voluntario");
+                            return true;
+
+                        } else {
+                            return false;
+                        }
                     }
 
                 } else {
@@ -791,6 +804,7 @@ public class VolunteerPersonService implements IVolunteerPersonService{
     }
 
     private void defaultValues(VolunteerPerson volunteerPerson){
+        volunteerPerson.setRegistrationDate(LocalDate.now());
         volunteerPerson.setValidate(false);
         volunteerPerson.setDeleted(false);
         volunteerPerson.setMatchPatientsId(new ArrayList<>());

@@ -14,6 +14,7 @@ import uy.com.pf.care.model.globalFunctions.ForceEnumsToUser;
 import uy.com.pf.care.model.objects.LoginObjectAuthenticate;
 import uy.com.pf.care.model.objects.UserObject;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -34,6 +35,7 @@ public class UserService implements IUserService{
 
         try {
             ForceEnumsToUser.execute(newUser);
+            this.defaultValues(newUser);
             this.encrypt(newUser);
             String id = userRepo.save(newUser).getUserId();
             log.info("*** Usuario guardado con exito: " + LocalDateTime.now());
@@ -301,6 +303,8 @@ public class UserService implements IUserService{
             throw new UserSaveException(msg);
         }
     }
+
+    private void defaultValues(User user) {user.setRegistrationDate(LocalDate.now());}
 
     private void defaultValues(User newUser, User oldUser){
         newUser.setRoles(oldUser.getRoles());

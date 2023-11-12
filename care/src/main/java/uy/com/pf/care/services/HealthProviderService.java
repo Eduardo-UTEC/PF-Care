@@ -9,6 +9,7 @@ import uy.com.pf.care.exceptions.HealthProviderUpdateException;
 import uy.com.pf.care.infra.repos.IHealthProviderRepo;
 import uy.com.pf.care.model.documents.HealthProvider;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -121,6 +122,7 @@ public class HealthProviderService implements IHealthProviderService {
 
     // Asigna los valores por default a la entitdad
     private void defaultValues(HealthProvider healthProvider){
+        healthProvider.setRegistrationDate(LocalDate.now());
         healthProvider.setDeleted(false);
     }
 

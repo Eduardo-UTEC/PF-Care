@@ -23,6 +23,7 @@ import uy.com.pf.care.model.globalFunctions.ForceEnumsToReferenceCaregiver;
 import uy.com.pf.care.model.globalFunctions.UpdateEntityId;
 //import uy.com.pf.care.model.objects.PatientLinkedReferentObject;
 
+import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -57,6 +58,7 @@ public class ReferenceCaregiverService implements IReferenceCaregiverService {
                 log.warning(msg);
             }
 
+            this.defaultValues(referenceCaregiver);
             newReferenceCaregiverId = referenceCaregiverRepo.save(referenceCaregiver).getReferenceCaregiverId();
 
             ResponseEntity<Boolean> response = updateEntityId.execute(
@@ -228,6 +230,11 @@ public class ReferenceCaregiverService implements IReferenceCaregiverService {
                     "e ingresarlo nuevamente. ");
             throw new ReferenceCaregiverPhysicallyDeleteException("No se pudo eliminar el Cuidador Referente con Id: " + id);
         }
+    }
+
+    //Valores por defecto para el Add
+    private void defaultValues(ReferenceCaregiver referenceCaregiver) {
+        referenceCaregiver.setRegistrationDate(LocalDate.now());
     }
 
     //Valores por defecto para el Update

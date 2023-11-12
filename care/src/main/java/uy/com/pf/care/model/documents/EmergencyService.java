@@ -13,6 +13,8 @@ import org.springframework.data.mongodb.core.index.CompoundIndex;
 import org.springframework.data.mongodb.core.index.CompoundIndexes;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.time.LocalDate;
+
 @Document("EmergencyServices")
 
 @CompoundIndexes({
@@ -54,4 +56,7 @@ public class EmergencyService {
     @Size(max = 15,
             message = "EmergencyService: El pais  del Servicio de Emergencia no puede exceder los 15 caracteres")
     private String countryName;
+
+    //Se toma al persistir.
+    private LocalDate registrationDate;
 }

@@ -16,6 +16,7 @@ import uy.com.pf.care.model.objects.LoginObjectRegister;
 import uy.com.pf.care.model.objects.UserObject;
 import uy.com.pf.care.model.objects.ZoneObject;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Document("Users")
@@ -47,6 +48,9 @@ public class User extends LoginObjectRegister {
     //@NotEmpty(message = "User: El usuario debe tener al menos un rol")
     @Valid
     private List<UserObject> roles;
+
+    //Se toma al persistir.
+    private LocalDate registrationDate;
 
     //Zona donde vive el usuario (si es empresa, es la zona donde está ubicada)
     @NotNull(message = "User: La clave 'residenceZone' no puede ser nula")

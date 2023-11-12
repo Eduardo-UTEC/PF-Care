@@ -7,6 +7,7 @@ import uy.com.pf.care.exceptions.*;
 import uy.com.pf.care.infra.repos.IMaterialRepo;
 import uy.com.pf.care.model.documents.Material;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -104,6 +105,7 @@ public class MaterialService implements IMaterialService{
     }
 
     private void defaultValues(Material material){
+        material.setRegistrationDate(LocalDate.now());
         material.setDeleted(false);
     }
 

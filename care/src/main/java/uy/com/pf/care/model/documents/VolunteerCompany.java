@@ -14,6 +14,7 @@ import uy.com.pf.care.model.enums.ContactMethodsEnum;
 import uy.com.pf.care.model.objects.AddressObject;
 import uy.com.pf.care.model.objects.InterestZonesObject;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -63,6 +64,9 @@ public class VolunteerCompany {
 
     @NotNull(message = "La clave 'photo' no puede ser nula")
     private Byte[] photo;
+
+    //Se toma al persistir.
+    private LocalDate registrationDate;
 
     @BooleanFlag
     private Boolean available;  // Si es False, implica que sus servicios no estan disponibles momentáneamente

@@ -14,6 +14,8 @@ import org.springframework.data.mongodb.core.index.CompoundIndexes;
 import org.springframework.data.mongodb.core.mapping.Document;
 import uy.com.pf.care.model.objects.AddressObject;
 
+import java.time.LocalDate;
+
 @Document("Residential")
 @CompoundIndexes({
         @CompoundIndex(def =
@@ -44,6 +46,9 @@ public class Residential {
     @NotEmpty(message = "Residential: El telefono del Residencial no puede ser vacio")
     @Size(max = 20 , message = "Residential: El telefono del Residencial no puede exceder los 20 caracteres")
     private String telephone;
+
+    //Se toma al persistir.
+    private LocalDate registrationDate;
 
     @BooleanFlag
     private Boolean deleted;

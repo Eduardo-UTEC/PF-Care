@@ -12,6 +12,7 @@ import org.springframework.web.server.ResponseStatusException;
 import uy.com.pf.care.exceptions.*;
 import uy.com.pf.care.model.documents.Patient;
 import uy.com.pf.care.model.documents.VolunteerPerson;
+import uy.com.pf.care.model.dtos.StatisticPatientWithOthersDTO;
 import uy.com.pf.care.services.IPatientService;
 
 import java.util.List;
@@ -310,8 +311,8 @@ public class PatientController {
     }
 
 
-    //Este servicio se expone para ser llamado desde el voluntario (no debe llamarse solo). El voluntario llama
-    //a este servicio desde: /vounteer_people/setMatchPatient
+    //Este servicio se expone para ser llamado desde el voluntario (no debe llamarse desde un cliente).
+    //El voluntario llama a este servicio desde: /vounteer_people/setMatchPatient
     @PutMapping("setMatchVolunteerPerson/{patientId}/{volunteerPersonId}/{isMatch}")
     public ResponseEntity<Boolean> setMatchVolunteerPerson (
             @PathVariable String patientId, @PathVariable String volunteerPersonId, @PathVariable Boolean isMatch) {
@@ -324,6 +325,29 @@ public class PatientController {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
         }
     }
+
+    // public List<StatisticPatientWithOthersDTO> getMonthlyRequestStatsForLastSixMonths(
+    //            Boolean withoutValidate, Boolean includeDeleted, String departmentName, String countryName) {
+
+    @GetMapping(
+            value = "getMonthlyRequestStatsForLastSixMonths/" +
+                    "{withoutValidate}/{includeDeleted}/{departmentName}/{countryName}",
+            produces = MediaType.APPLICATION_JSON_VALUE + ";charset=UTF-8")
+    public ResponseEntity<List<StatisticPatientWithOthersDTO>> getMonthlyRequestStatsForLastSixMonths(
+            @PathVariable Boolean withoutValidate,
+            @PathVariable Boolean includeDeleted,
+            @PathVariable String departmentName,
+            @PathVariable String countryName) {
+
+        try {
+            return ResponseEntity.ok(patientService.getMonthlyRequestStatsForLastSixMonths(
+                    withoutValidate, includeDeleted, departmentName, countryName));
+
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
+        }
+    }
+
 
     /*@GetMapping("findName1Like/{name1}/{cityName}/{departmentName}/{countryName}")
     public ResponseEntity<List<Patient>> findName1Like( @PathVariable String name1,

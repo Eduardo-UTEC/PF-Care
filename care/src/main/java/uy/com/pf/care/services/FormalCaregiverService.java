@@ -21,6 +21,7 @@ import uy.com.pf.care.model.globalFunctions.UpdateEntityId;
 import uy.com.pf.care.model.objects.DayTimeRangeObject;
 import uy.com.pf.care.model.objects.NeighborhoodObject;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -617,6 +618,7 @@ public class FormalCaregiverService implements IFormalCaregiverService {
 
     // Asigna los valores por default a la entitdad
     private void defaultValues(FormalCaregiver formalCaregiver){
+        formalCaregiver.setRegistrationDate(LocalDate.now());
         formalCaregiver.setVotes(new int[] {0,0,0,0,0});
         formalCaregiver.setValidate(false);
         formalCaregiver.setDeleted(false);

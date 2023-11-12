@@ -9,6 +9,7 @@ import uy.com.pf.care.exceptions.EmergencyServiceUpdateException;
 import uy.com.pf.care.infra.repos.IEmergencyServiceRepo;
 import uy.com.pf.care.model.documents.EmergencyService;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -127,6 +128,7 @@ public class EmergencyServiceService implements IEmergencyServiceService{
 
     // Asigna los valores por default a la entitdad
     private void defaultValues(EmergencyService emergencyService){
+        emergencyService.setRegistrationDate(LocalDate.now());
         emergencyService.setDeleted(false);
     }
 

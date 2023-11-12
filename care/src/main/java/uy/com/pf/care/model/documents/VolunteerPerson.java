@@ -15,6 +15,7 @@ import uy.com.pf.care.model.objects.DayTimeRangeObject;
 import uy.com.pf.care.model.objects.InterestZonesObject;
 import uy.com.pf.care.model.objects.PersonObject;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -74,6 +75,9 @@ public class VolunteerPerson extends PersonObject {
     @NotNull(message = "VolunteerPerson: La clave 'reasonToVolunteer' no puede ser nula")
     @Size(max = 100, message = "VolunteerPerson: la razon de ser voluntario no debe exceder los 100 caracteres")
     private String reasonToVolunteer;
+
+    //Se toma al persistir.
+    private LocalDate registrationDate;
 
     @BooleanFlag
     private Boolean available;  // Si es False, implica que sus servicios no estan disponibles momentáneamente

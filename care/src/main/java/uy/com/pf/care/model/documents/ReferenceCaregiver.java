@@ -15,6 +15,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import uy.com.pf.care.model.objects.PersonObject;
 import uy.com.pf.care.model.objects.ZoneObject;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -46,6 +47,9 @@ public class ReferenceCaregiver extends PersonObject {
     @Valid
     @NotNull(message = "La clave 'patients' no puede ser nula")
     private List<String> patients;
+
+    //Se toma al persistir.
+    private LocalDate registrationDate;
 
     //private List<DayTimeRangeObject> dayTimeRange = new ArrayList<>();  //Dias y rangos horarios semanales para el cuidado
 

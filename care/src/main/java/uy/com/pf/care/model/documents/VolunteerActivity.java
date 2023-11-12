@@ -12,6 +12,8 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.CompoundIndex;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.time.LocalDate;
+
 @Document("VolunteerActivities")
 @CompoundIndex(def = "{'countryName':1, 'departmentName':1, 'name':1}", unique = true)
 
@@ -34,6 +36,9 @@ public class VolunteerActivity{
     @Size(max = 100 , message =
             "VolunteerActivity: La descripcion de la actividad del voluntario no puede exceder los 100 caracteres")
     private String description;
+
+    //Se toma al persistir.
+    private LocalDate registrationDate;
 
     @BooleanFlag
     private Boolean deleted;

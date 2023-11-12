@@ -10,6 +10,7 @@ import uy.com.pf.care.exceptions.ResidentialUpdateException;
 import uy.com.pf.care.infra.repos.IResidentialRepo;
 import uy.com.pf.care.model.documents.Residential;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -131,6 +132,7 @@ public class ResidentialService implements IResidentialService{
 
     // Asigna los valores por default a la entitdad
     private void defaultValues(Residential residential){
+        residential.setRegistrationDate(LocalDate.now());
         residential.setDeleted(false);
     }
 

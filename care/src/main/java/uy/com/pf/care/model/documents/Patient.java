@@ -12,6 +12,7 @@ import org.springframework.data.mongodb.core.index.CompoundIndexes;
 import org.springframework.data.mongodb.core.mapping.Document;
 import uy.com.pf.care.model.objects.*;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -55,6 +56,9 @@ public class Patient extends PersonObject {
     //@NotNull(message = "Patient: La clave 'residential' no puede ser nula")
     //private ResidentialObject residential;
     private String residentialId;
+
+    //Se toma al persistir.
+    private LocalDate registrationDate;
 
     @NotNull(message = "Patient: La clave 'zone' no puede ser nula")
     private ZoneObject zone;

@@ -14,6 +14,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import uy.com.pf.care.model.objects.FormalCaregiverObject;
 import uy.com.pf.care.model.objects.InterestZonesObject;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -56,6 +57,9 @@ public class FormalCaregiver extends FormalCaregiverObject {
     @Size(max = 100,
             message = "FormalCaregiver: Los comentarios del Cuidador Formal no pueden exceder los 100 caracteres")
     private String comments;
+
+    //Se toma al persistir.
+    private LocalDate registrationDate;
 
     /* Votos por cada puntaje.
        votes[0..4], donde: votes[n] es la cantidad de votos para el puntaje "n", con n=[0, 4].

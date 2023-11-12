@@ -16,6 +16,7 @@ import uy.com.pf.care.model.globalFunctions.ForceEnumsToVolunteerCompany;
 import uy.com.pf.care.model.globalFunctions.ForceEnumsToVolunteerPerson;
 import uy.com.pf.care.model.globalFunctions.UpdateEntityId;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -271,6 +272,7 @@ public class VolunteerCompanyService implements IVolunteerCompanyService{
     }
 
     private void defaultValues(VolunteerCompany volunteerCompany){
+        volunteerCompany.setRegistrationDate(LocalDate.now());
         volunteerCompany.setDonationsRequestId(new ArrayList<>());
         volunteerCompany.setValidate(false);
         volunteerCompany.setDeleted(false);

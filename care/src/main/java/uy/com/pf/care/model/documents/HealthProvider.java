@@ -13,6 +13,8 @@ import org.springframework.data.mongodb.core.index.CompoundIndex;
 import org.springframework.data.mongodb.core.index.CompoundIndexes;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.time.LocalDate;
+
 @Document("HealthProviders")
 @CompoundIndexes({
         @CompoundIndex(def = "{'countryName':1, 'departmentName':1, 'cityName':1, 'name':1}", unique = true)
@@ -49,5 +51,8 @@ public class HealthProvider {
     @NotEmpty(message = "HealthProvider: La propiedad 'countryName' no puede ser vacía")
     @Size(max = 15 , message = "HealthProvider: El pais del Proveedor de Salud no puede exceder los 15 caracteres")
     private String countryName;
+
+    //Se toma al persistir.
+    private LocalDate registrationDate;
 
 }

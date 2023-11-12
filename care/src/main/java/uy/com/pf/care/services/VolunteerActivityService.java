@@ -11,6 +11,7 @@ import uy.com.pf.care.exceptions.VolunteerActivityUpdateException;
 import uy.com.pf.care.infra.repos.IVolunteerActivityRepo;
 import uy.com.pf.care.model.documents.VolunteerActivity;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -118,6 +119,7 @@ public class VolunteerActivityService implements IVolunteerActivityService{
     }
 
     private void defaultValues(VolunteerActivity volunteerActivity){
+        volunteerActivity.setRegistrationDate(LocalDate.now());
         volunteerActivity.setDeleted(false);
     }
 

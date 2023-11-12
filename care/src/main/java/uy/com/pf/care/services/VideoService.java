@@ -10,6 +10,7 @@ import uy.com.pf.care.model.documents.Video;
 import uy.com.pf.care.model.enums.RoleEnum;
 import uy.com.pf.care.model.objects.VideoObject;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -29,6 +30,7 @@ public class VideoService implements IVideoService{
         this.saveValidate(video);
 
         try {
+            this.defaultValues(video);
             String id = videoRepo.save(video).getVideoId();
             log.info("*** Video guardado con exito");
             return id;
@@ -267,6 +269,9 @@ public class VideoService implements IVideoService{
 
     }
 
+    private void defaultValues(Video video) {
+        video.setRegistrationDate(LocalDate.now());
+    }
     // Asigna los valores a la nueva entitdad, tomados de la vieja entidad (de la persistida)
     private void defaultValues(Video newVideo, Video oldVideo){
         newVideo.setOrdinalRoles(oldVideo.getOrdinalRoles());
