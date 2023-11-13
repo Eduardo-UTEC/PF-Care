@@ -13,7 +13,8 @@ import org.springframework.stereotype.Component;
 @AllArgsConstructor
 public class MonthlyRequestStats {
     private int month;
-    private int totalRequests = 0;
+    private float totalRequests = 0;
+    private int totalRequestsPercentage = 0; //Se carga a nivel superior
     private float matchedRequests = 0;
     private float unmatchedRequests = 0;
     private float pendingRequests = 0;

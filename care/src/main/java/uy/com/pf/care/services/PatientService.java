@@ -20,6 +20,8 @@ import java.time.LocalDate;
 import java.time.Month;
 import java.util.*;
 
+import static java.lang.Math.round;
+
 @Service
 @Log
 public class PatientService implements IPatientService{
@@ -474,10 +476,27 @@ public class PatientService implements IPatientService{
                 stats.calculatePercentages();
             }
 
-            //return new ArrayList<>(statsMap.values());
         };
 
-        return statsPatientVolunteerToDTOList(statsMap.values());
+        //Determinar total de solicitudes de contacto en el periodo
+        int generalTotalRequests = 0;
+        for (MonthlyRequestStats stats : statsMap.values())
+            generalTotalRequests += stats.getTotalRequests();
+
+        //Setear porcentaje del total en cada mes
+        for (MonthlyRequestStats stats : statsMap.values())
+            stats.setTotalRequestsPercentage(round(stats.getTotalRequests() / generalTotalRequests * 100));
+
+        //return statsPatientVolunteerToDTOList(statsMap.values());
+        /*List<StatisticPatientWithOthersDTO> resultList = statsPatientVolunteerToDTOList(statsMap.values());
+        resultList.sort(Comparator.comparingInt(StatisticPatientWithOthersDTO::getMonth));
+        return resultList;
+
+         */
+
+        List<StatisticPatientWithOthersDTO> resultList = new ArrayList<>(statsPatientVolunteerToDTOList(statsMap.values()));
+        resultList.sort(Comparator.comparingInt(StatisticPatientWithOthersDTO::getMonth));
+        return resultList;
     }
 
     private List<StatisticPatientWithOthersDTO> statsPatientVolunteerToDTOList(Collection<MonthlyRequestStats> stats) {
@@ -490,7 +509,8 @@ public class PatientService implements IPatientService{
     private StatisticPatientWithOthersDTO mapPatientVolunteerToDTO(MonthlyRequestStats stats) {
         StatisticPatientWithOthersDTO dto = new StatisticPatientWithOthersDTO();
         dto.setMonth(stats.getMonth());
-        dto.setTotalRequests(stats.getTotalRequests());
+        dto.setTotalRequests((int) stats.getTotalRequests());
+        dto.setTotalRequestsPercentage(stats.getTotalRequestsPercentage());
         dto.setMatchedRequests((int) stats.getMatchedRequests());
         dto.setUnmatchedRequests((int) stats.getUnmatchedRequests());
         dto.setPendingRequests((int) stats.getPendingRequests());

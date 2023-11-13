@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 public class StatisticPatientWithOthersDTO {
     private int month;
     private int totalRequests;
+    private int totalRequestsPercentage;
     private int matchedRequests;
     private int unmatchedRequests;
     private int pendingRequests;
