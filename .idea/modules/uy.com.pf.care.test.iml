@@ -12,13 +12,19 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="uy.com.pf.care.main" />
+    <orderEntry type="library" name="Gradle: org.openjfx:javafx-fxml:17" level="project" />
+    <orderEntry type="library" name="Gradle: org.openjfx:javafx-fxml:win:17" level="project" />
+    <orderEntry type="library" name="Gradle: org.openjfx:javafx-controls:17" level="project" />
+    <orderEntry type="library" name="Gradle: org.openjfx:javafx-controls:win:17" level="project" />
+    <orderEntry type="library" name="Gradle: org.openjfx:javafx-graphics:17" level="project" />
+    <orderEntry type="library" name="Gradle: org.openjfx:javafx-graphics:win:17" level="project" />
+    <orderEntry type="library" name="Gradle: org.openjfx:javafx-base:17" level="project" />
+    <orderEntry type="library" name="Gradle: org.openjfx:javafx-base:win:17" level="project" />
     <orderEntry type="library" name="Gradle: org.springframework.boot:spring-boot-starter-data-mongodb:3.0.5" level="project" />
     <orderEntry type="library" name="Gradle: org.springframework.boot:spring-boot-starter-web:3.0.5" level="project" />
     <orderEntry type="library" name="Gradle: org.springframework.boot:spring-boot-starter-webflux:3.0.5" level="project" />
     <orderEntry type="library" name="Gradle: org.springframework.boot:spring-boot-starter-validation:3.0.5" level="project" />
     <orderEntry type="library" name="Gradle: com.github.ulisesbocchio:jasypt-spring-boot-starter:3.0.5" level="project" />
-    <orderEntry type="library" name="Gradle: org.openjfx:javafx-fxml:17" level="project" />
-    <orderEntry type="library" name="Gradle: org.openjfx:javafx-controls:17" level="project" />
     <orderEntry type="library" name="Gradle: org.projectlombok:lombok:1.18.26" level="project" />
     <orderEntry type="library" name="Gradle: org.springframework.boot:spring-boot-starter-test:3.0.5" level="project" />
     <orderEntry type="library" name="Gradle: org.springframework.boot:spring-boot-starter:3.0.5" level="project" />
@@ -33,7 +39,6 @@
     <orderEntry type="library" name="Gradle: org.apache.tomcat.embed:tomcat-embed-el:10.1.7" level="project" />
     <orderEntry type="library" name="Gradle: org.hibernate.validator:hibernate-validator:8.0.0.Final" level="project" />
     <orderEntry type="library" name="Gradle: com.github.ulisesbocchio:jasypt-spring-boot:3.0.5" level="project" />
-    <orderEntry type="library" name="Gradle: org.openjfx:javafx-graphics:17" level="project" />
     <orderEntry type="library" name="Gradle: org.springframework.boot:spring-boot-test-autoconfigure:3.0.5" level="project" />
     <orderEntry type="library" name="Gradle: org.springframework.boot:spring-boot-test:3.0.5" level="project" />
     <orderEntry type="library" name="Gradle: com.jayway.jsonpath:json-path:2.7.0" level="project" />
@@ -74,7 +79,6 @@
     <orderEntry type="library" name="Gradle: org.jboss.logging:jboss-logging:3.5.0.Final" level="project" />
     <orderEntry type="library" name="Gradle: com.fasterxml:classmate:1.5.1" level="project" />
     <orderEntry type="library" name="Gradle: org.jasypt:jasypt:1.9.3" level="project" />
-    <orderEntry type="library" name="Gradle: org.openjfx:javafx-base:17" level="project" />
     <orderEntry type="library" name="Gradle: net.minidev:json-smart:2.4.10" level="project" />
     <orderEntry type="library" name="Gradle: jakarta.activation:jakarta.activation-api:2.1.1" level="project" />
     <orderEntry type="library" name="Gradle: net.bytebuddy:byte-buddy:1.12.23" level="project" />
