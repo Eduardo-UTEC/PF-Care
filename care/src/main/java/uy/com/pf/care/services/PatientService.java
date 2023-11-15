@@ -527,35 +527,6 @@ public class PatientService implements IPatientService{
                 getMostDemandedVolunteerActivities(patients, 4);
 
         return mostDemandedVolunteerServicesToDTOList(mostDemandedVolunteerServices);
-
-        /*Map<String, Long> demandCountMap = patients.stream()
-                .flatMap(patient -> patient.getVolunteerPeople().stream())
-                .filter(request -> mostDemandedVolunteerServices.contains(request.getVolunteerPersonId()))
-                .flatMap(request -> volunteerActivityService.findIds(Collections.singletonList(request.getVolunteerPersonId()))
-                        .stream()
-                        .map(VolunteerActivity::getName)
-                )
-                .collect(Collectors.groupingBy(Function.identity(), Collectors.counting()));
-
-        // Contar la demanda de cada servicio
-       /* Map<String, Long> demandCountMap = patients.stream()
-                .flatMap(patient -> patient.getVolunteerPeople().stream())
-                .filter(request -> mostDemandedVolunteerServices.contains(request.getVolunteerPersonId()))
-                .flatMap(request -> volunteerActivityService.findIds(Collections.singletonList(request.getVolunteerPersonId()))
-                        .stream()
-                        .map(VolunteerActivity::getName)
-                )
-                .collect(Collectors.groupingBy(Function.identity(), Collectors.counting()));
-
-        // Crear lista de DTO con los servicios más demandados y su cuenta
-        return demandCountMap.entrySet().stream()
-                .sorted(Map.Entry.<String, Long>comparingByValue().reversed())
-                .limit(4)
-                .map(entry -> new MostDemandedServicesVolunteerDTO(entry.getKey(), entry.getValue()))
-                .collect(Collectors.toList());
-
-        */
-        //return new ArrayList<>();
     }
 
     private List<MostDemandedServicesVolunteerDTO> mostDemandedVolunteerServicesToDTOList(

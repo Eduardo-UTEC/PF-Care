@@ -542,20 +542,6 @@ public class VolunteerPersonService implements IVolunteerPersonService {
 
         return result;
 
-        /*return patients.stream()
-                .flatMap(patient -> patient.getVolunteerPeople().stream())
-                .flatMap(volunteerPersonMatchObject ->
-                        this.findId(volunteerPersonMatchObject.getVolunteerPersonId()).stream())
-                .flatMap(volunteerPerson -> volunteerActivity.findIds(volunteerPerson.getVolunteerActivitiesId()).stream()
-                        .map(VolunteerActivity::getName)
-                )
-                .collect(Collectors.groupingBy(Function.identity(), Collectors.summingInt(e -> 1)))
-                .entrySet().stream()
-                .sorted(Map.Entry.<String, Integer>comparingByValue().reversed())
-                .limit(limit)
-                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new));
-*/
-
     }
 
     @Override
