@@ -481,18 +481,11 @@ public class PatientService implements IPatientService{
         //Determinar total de solicitudes de contacto en el periodo
         int generalTotalRequests = 0;
         for (MonthlyRequestStats stats : statsMap.values())
-            generalTotalRequests += stats.getTotalRequests();
+            generalTotalRequests += (int) stats.getTotalRequests();
 
         //Setear porcentaje del total en cada mes
         for (MonthlyRequestStats stats : statsMap.values())
             stats.setTotalRequestsPercentage(round(stats.getTotalRequests() / generalTotalRequests * 100));
-
-        //return statsPatientVolunteerToDTOList(statsMap.values());
-        /*List<StatisticPatientWithOthersDTO> resultList = statsPatientVolunteerToDTOList(statsMap.values());
-        resultList.sort(Comparator.comparingInt(StatisticPatientWithOthersDTO::getMonth));
-        return resultList;
-
-         */
 
         List<StatisticPatientWithOthersDTO> resultList = new ArrayList<>(statsPatientVolunteerToDTOList(statsMap.values()));
         resultList.sort(Comparator.comparingInt(StatisticPatientWithOthersDTO::getMonth));
@@ -514,9 +507,9 @@ public class PatientService implements IPatientService{
         dto.setMatchedRequests((int) stats.getMatchedRequests());
         dto.setUnmatchedRequests((int) stats.getUnmatchedRequests());
         dto.setPendingRequests((int) stats.getPendingRequests());
-        dto.setMatchPercentage(stats.getMatchPercentage());
-        dto.setUnmatchPercentage(stats.getUnmatchPercentage());
-        dto.setPendingPercentage(stats.getPendingPercentage());
+        dto.setMatchPercentage(stats.getMatchRequestsPercentage());
+        dto.setUnmatchPercentage(stats.getUnmatchRequestsPercentage());
+        dto.setPendingPercentage(stats.getPendingRequestsPercentage());
         return dto;
     }
 
