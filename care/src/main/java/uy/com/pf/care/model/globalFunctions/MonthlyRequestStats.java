@@ -6,7 +6,6 @@ import lombok.AllArgsConstructor;
 
 import static java.lang.Math.*;
 
-//@Component //Componente de spring para poder ser inyectado con @Autowired
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

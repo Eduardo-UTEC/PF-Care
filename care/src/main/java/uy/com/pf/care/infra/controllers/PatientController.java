@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import uy.com.pf.care.exceptions.*;
 import uy.com.pf.care.model.documents.Patient;
+import uy.com.pf.care.model.dtos.MostDemandedServicesVolunteerDTO;
 import uy.com.pf.care.model.dtos.StatisticPatientWithOthersDTO;
 import uy.com.pf.care.services.IPatientService;
 
@@ -337,6 +338,25 @@ public class PatientController {
 
         try {
             return ResponseEntity.ok(patientService.getMonthlyRequestStatsForLastSixMonths(
+                    withoutValidate, includeDeleted, departmentName, countryName));
+
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
+        }
+    }
+
+    @GetMapping(
+            value = "getMostDemandedVolunteerServices/" +
+                    "{withoutValidate}/{includeDeleted}/{departmentName}/{countryName}",
+            produces = MediaType.APPLICATION_JSON_VALUE + ";charset=UTF-8")
+    public ResponseEntity<List<MostDemandedServicesVolunteerDTO>> getMostDemandedVolunteerServices(
+            @PathVariable Boolean withoutValidate,
+            @PathVariable Boolean includeDeleted,
+            @PathVariable String departmentName,
+            @PathVariable String countryName) {
+
+        try {
+            return ResponseEntity.ok(patientService.getMostDemandedVolunteerServices(
                     withoutValidate, includeDeleted, departmentName, countryName));
 
         } catch (Exception e) {

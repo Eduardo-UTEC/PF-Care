@@ -1,9 +1,12 @@
 package uy.com.pf.care.services;
 
+import uy.com.pf.care.model.documents.Patient;
 import uy.com.pf.care.model.documents.VolunteerPerson;
+import uy.com.pf.care.model.globalFunctions.MostDemandedServicesVolunteerRequestStats;
 import uy.com.pf.care.model.objects.DayTimeRangeObject;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 public interface IVolunteerPersonService {
@@ -24,6 +27,9 @@ public interface IVolunteerPersonService {
     Optional<VolunteerPerson> findTelephone(String countryName, String telephone);
     List<VolunteerPerson> findAll(Boolean withoutValidate, Boolean includeDeleted, String countryName);
     VolunteerPerson findMail(String mail);
+    //getMostDemandedVolunteerActivities: Uso interno. No se expone en el Controller
+    Map<String, MostDemandedServicesVolunteerRequestStats> getMostDemandedVolunteerActivities(
+            List<Patient> patients, long limit);
     List<VolunteerPerson> findName(Boolean withoutValidate, Boolean includeDeleted, String countryName, String name1);
     List<VolunteerPerson> findNameLike(Boolean withoutValidate, Boolean includeDeleted, String countryName, String name1);
 

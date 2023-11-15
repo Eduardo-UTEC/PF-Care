@@ -10,23 +10,29 @@ import org.springframework.web.client.RestTemplate;
 import uy.com.pf.care.exceptions.*;
 import uy.com.pf.care.infra.config.ParamConfig;
 import uy.com.pf.care.infra.repos.IVolunteerPersonRepo;
+import uy.com.pf.care.model.documents.Patient;
+import uy.com.pf.care.model.documents.VolunteerActivity;
 import uy.com.pf.care.model.documents.VolunteerPerson;
 import uy.com.pf.care.model.enums.RoleEnum;
 import uy.com.pf.care.model.globalFunctions.ForceEnumsToVolunteerPerson;
+import uy.com.pf.care.model.globalFunctions.MostDemandedServicesVolunteerRequestStats;
 import uy.com.pf.care.model.globalFunctions.SetMatch;
 import uy.com.pf.care.model.globalFunctions.UpdateEntityId;
 import uy.com.pf.care.model.objects.DayTimeRangeObject;
 import uy.com.pf.care.model.objects.NeighborhoodObject;
+import uy.com.pf.care.model.objects.VolunteerPersonMatchObject;
 
 import java.awt.*;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Service
 @Log
-public class VolunteerPersonService implements IVolunteerPersonService{
+public class VolunteerPersonService implements IVolunteerPersonService {
     @Autowired
     private IVolunteerPersonRepo volunteerPersonRepo;
     @Autowired
@@ -35,6 +41,8 @@ public class VolunteerPersonService implements IVolunteerPersonService{
     private SetMatch setMatch;
     @Autowired
     private ParamConfig paramConfig;
+    @Autowired
+    private VolunteerActivityService volunteerActivity;
 
     @Override
     public String save(VolunteerPerson volunteerPerson) {
@@ -503,6 +511,53 @@ public class VolunteerPersonService implements IVolunteerPersonService{
         throw new VolunteerPersonNotFoundException(msg);
     }
 
+    //Devuelve las 4 actividades mas demandadas, ordenadas descendente
+    @Override
+    public Map<String, MostDemandedServicesVolunteerRequestStats> getMostDemandedVolunteerActivities(
+            List<Patient> patients, long limit) {
+
+        Map<String, MostDemandedServicesVolunteerRequestStats> result = patients.stream()
+                .flatMap(patient -> patient.getVolunteerPeople().stream())
+                .flatMap(volunteerPersonMatchObject ->
+                        this.findId(volunteerPersonMatchObject.getVolunteerPersonId()).stream())
+                .flatMap(volunteerPerson -> volunteerActivity.findIds(volunteerPerson.getVolunteerActivitiesId()).stream()
+                        .map(VolunteerActivity::getName)
+                )
+                .collect(Collectors.groupingBy(Function.identity(), Collectors.summingInt(e -> 1)))
+                .entrySet().stream()
+                .sorted(Map.Entry.<String, Integer>comparingByValue().reversed())
+                .limit(limit)
+                .collect(Collectors.toMap(Map.Entry::getKey,
+                        entry -> new MostDemandedServicesVolunteerRequestStats(entry.getKey(), entry.getValue(), 0),
+                        (e1, e2) -> e1, LinkedHashMap::new));
+
+        // Calcular porcentajes
+        int totalDemands = result.values().stream()
+                .mapToInt(MostDemandedServicesVolunteerRequestStats::getDemandCount).sum();
+        result.values().forEach(stats -> {
+            int demandCount = stats.getDemandCount();
+            double percentage = (double) demandCount / totalDemands * 100;
+            stats.setDemandPercentage((int) Math.round(percentage));
+        });
+
+        return result;
+
+        /*return patients.stream()
+                .flatMap(patient -> patient.getVolunteerPeople().stream())
+                .flatMap(volunteerPersonMatchObject ->
+                        this.findId(volunteerPersonMatchObject.getVolunteerPersonId()).stream())
+                .flatMap(volunteerPerson -> volunteerActivity.findIds(volunteerPerson.getVolunteerActivitiesId()).stream()
+                        .map(VolunteerActivity::getName)
+                )
+                .collect(Collectors.groupingBy(Function.identity(), Collectors.summingInt(e -> 1)))
+                .entrySet().stream()
+                .sorted(Map.Entry.<String, Integer>comparingByValue().reversed())
+                .limit(limit)
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new));
+*/
+
+    }
+
     @Override
     public List<VolunteerPerson> findName(
             Boolean withoutValidate, Boolean includeDeleted, String countryName, String name1) {
@@ -826,4 +881,5 @@ public class VolunteerPersonService implements IVolunteerPersonService{
         log.info(msg);
         throw new VolunteerPersonNotFoundException(msg);
     }
+
 }

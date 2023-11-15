@@ -1,6 +1,7 @@
 package uy.com.pf.care.services;
 
 import uy.com.pf.care.model.documents.Patient;
+import uy.com.pf.care.model.dtos.MostDemandedServicesVolunteerDTO;
 import uy.com.pf.care.model.dtos.StatisticPatientWithOthersDTO;
 
 import java.util.List;
@@ -18,14 +19,16 @@ public interface IPatientService {
     List<Patient> findIds(List<String> patientsId);
     Optional<Patient> findIdentificationDocument(Integer identificationDocument, String countryName);
     Optional<Patient> findMail(String mail);
+    List<MostDemandedServicesVolunteerDTO> getMostDemandedVolunteerServices(
+            Boolean withoutValidate, Boolean includeDeleted, String departmentName, String countryName);
     List<Patient> findName1(
-            String name1,
-            Boolean withoutValidate,
-            Boolean includeDeleted,
-            String neighborhoodName,
-            String cityName,
-            String departmentName,
-            String countryName);
+        String name1,
+        Boolean withoutValidate,
+        Boolean includeDeleted,
+        String neighborhoodName,
+        String cityName,
+        String departmentName,
+        String countryName);
     List<Patient> findCity(
             Boolean withoutValidate,
             Boolean includeDeleted,

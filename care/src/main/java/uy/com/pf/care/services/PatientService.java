@@ -8,17 +8,17 @@ import org.springframework.stereotype.Service;
 import uy.com.pf.care.exceptions.*;
 import uy.com.pf.care.infra.repos.IPatientRepo;
 import uy.com.pf.care.model.documents.Patient;
+import uy.com.pf.care.model.dtos.MostDemandedServicesVolunteerDTO;
 import uy.com.pf.care.model.dtos.StatisticPatientWithOthersDTO;
 import uy.com.pf.care.model.enums.RoleEnum;
-import uy.com.pf.care.model.globalFunctions.ForceEnumsToPatient;
-import uy.com.pf.care.model.globalFunctions.MonthlyRequestStats;
-import uy.com.pf.care.model.globalFunctions.SetMatch;
-import uy.com.pf.care.model.globalFunctions.UpdateEntityId;
+import uy.com.pf.care.model.globalFunctions.*;
 import uy.com.pf.care.model.objects.VolunteerPersonMatchObject;
 
 import java.time.LocalDate;
 import java.time.Month;
 import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import static java.lang.Math.round;
 
@@ -32,8 +32,10 @@ public class PatientService implements IPatientService{
     private UpdateEntityId updateEntityId;
     @Autowired
     private SetMatch setMatch;
-    //@Autowired
-    //private MonthlyRequestStats monthlyRequestStats;
+    @Autowired
+    private VolunteerPersonService volunteerPersonService;
+    @Autowired
+    private VolunteerActivityService volunteerActivityService;
 
     @Override
     public String save(Patient patient) {
@@ -468,6 +470,7 @@ public class PatientService implements IPatientService{
                     stats.incrementPendingRequests();
                 }
 
+                //Actualiza estaddisticas del mes
                 statsMap.put(month, stats);
             }
 
@@ -476,7 +479,7 @@ public class PatientService implements IPatientService{
                 stats.calculatePercentages();
             }
 
-        };
+        }
 
         //Determinar total de solicitudes de contacto en el periodo
         int generalTotalRequests = 0;
@@ -487,18 +490,17 @@ public class PatientService implements IPatientService{
         for (MonthlyRequestStats stats : statsMap.values())
             stats.setTotalRequestsPercentage(round(stats.getTotalRequests() / generalTotalRequests * 100));
 
-        List<StatisticPatientWithOthersDTO> resultList = new ArrayList<>(statsPatientVolunteerToDTOList(statsMap.values()));
+        //Devuelve lista ordenada por mes
+        List<StatisticPatientWithOthersDTO> resultList =
+                new ArrayList<>(statsPatientVolunteerToDTOList(statsMap.values()));
         resultList.sort(Comparator.comparingInt(StatisticPatientWithOthersDTO::getMonth));
         return resultList;
     }
-
-
 
     private List<StatisticPatientWithOthersDTO> statsPatientVolunteerToDTOList(Collection<MonthlyRequestStats> stats) {
         return stats.stream()
                 .map(this::mapPatientVolunteerToDTO)
                 .toList();
-
     }
 
     private StatisticPatientWithOthersDTO mapPatientVolunteerToDTO(MonthlyRequestStats stats) {
@@ -513,6 +515,63 @@ public class PatientService implements IPatientService{
         dto.setUnmatchPercentage(stats.getUnmatchRequestsPercentage());
         dto.setPendingPercentage(stats.getPendingRequestsPercentage());
         return dto;
+    }
+
+    public List<MostDemandedServicesVolunteerDTO> getMostDemandedVolunteerServices(
+            Boolean withoutValidate, Boolean includeDeleted, String departmentName, String countryName) {
+
+        List<Patient> patients = findDepartment(withoutValidate, includeDeleted, departmentName, countryName);
+
+        // Obtener servicios de voluntarios más demandados
+        Map<String, MostDemandedServicesVolunteerRequestStats> mostDemandedVolunteerServices = volunteerPersonService.
+                getMostDemandedVolunteerActivities(patients, 4);
+
+        return mostDemandedVolunteerServicesToDTOList(mostDemandedVolunteerServices);
+
+        /*Map<String, Long> demandCountMap = patients.stream()
+                .flatMap(patient -> patient.getVolunteerPeople().stream())
+                .filter(request -> mostDemandedVolunteerServices.contains(request.getVolunteerPersonId()))
+                .flatMap(request -> volunteerActivityService.findIds(Collections.singletonList(request.getVolunteerPersonId()))
+                        .stream()
+                        .map(VolunteerActivity::getName)
+                )
+                .collect(Collectors.groupingBy(Function.identity(), Collectors.counting()));
+
+        // Contar la demanda de cada servicio
+       /* Map<String, Long> demandCountMap = patients.stream()
+                .flatMap(patient -> patient.getVolunteerPeople().stream())
+                .filter(request -> mostDemandedVolunteerServices.contains(request.getVolunteerPersonId()))
+                .flatMap(request -> volunteerActivityService.findIds(Collections.singletonList(request.getVolunteerPersonId()))
+                        .stream()
+                        .map(VolunteerActivity::getName)
+                )
+                .collect(Collectors.groupingBy(Function.identity(), Collectors.counting()));
+
+        // Crear lista de DTO con los servicios más demandados y su cuenta
+        return demandCountMap.entrySet().stream()
+                .sorted(Map.Entry.<String, Long>comparingByValue().reversed())
+                .limit(4)
+                .map(entry -> new MostDemandedServicesVolunteerDTO(entry.getKey(), entry.getValue()))
+                .collect(Collectors.toList());
+
+        */
+        //return new ArrayList<>();
+    }
+
+    private List<MostDemandedServicesVolunteerDTO> mostDemandedVolunteerServicesToDTOList(
+            Map<String, MostDemandedServicesVolunteerRequestStats> mostDemandedVolunteerServices) {
+
+        List<MostDemandedServicesVolunteerDTO> dtoList = new ArrayList<>();
+
+        mostDemandedVolunteerServices.forEach((serviceName, stats) -> {
+            MostDemandedServicesVolunteerDTO dto = new MostDemandedServicesVolunteerDTO();
+            dto.setVolunteerServiceName(serviceName);
+            dto.setDemandCount(stats.getDemandCount());
+            dto.setDemandPercentage(stats.getDemandPercentage());
+            dtoList.add(dto);
+        });
+
+        return dtoList;
     }
 
 
