@@ -326,10 +326,7 @@ public class PatientController {
         }
     }
 
-    // public List<StatisticPatientWithOthersDTO> getMonthlyRequestStatsForLastSixMonths(
-    //            Boolean withoutValidate, Boolean includeDeleted, String departmentName, String countryName) {
-
-    @GetMapping(
+   /* @GetMapping(
             value = "getMonthlyRequestStatsForLastSixMonths/" +
                     "{withoutValidate}/{includeDeleted}/{departmentName}/{countryName}",
             produces = MediaType.APPLICATION_JSON_VALUE + ";charset=UTF-8")
@@ -347,7 +344,7 @@ public class PatientController {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
         }
     }
-
+*/
 
     /*@GetMapping("findName1Like/{name1}/{cityName}/{departmentName}/{countryName}")
     public ResponseEntity<List<Patient>> findName1Like( @PathVariable String name1,

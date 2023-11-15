@@ -1,4 +1,4 @@
-package uy.com.pf.care.model.globalFunctions;
+/*package uy.com.pf.care.model.globalFunctions;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -42,3 +42,4 @@ public class MonthlyRequestStats {
         }
     }
 }
+*/
