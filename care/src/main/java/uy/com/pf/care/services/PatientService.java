@@ -8,10 +8,10 @@ import org.springframework.stereotype.Service;
 import uy.com.pf.care.exceptions.*;
 import uy.com.pf.care.infra.repos.IPatientRepo;
 import uy.com.pf.care.model.documents.Patient;
-//import uy.com.pf.care.model.dtos.StatisticPatientWithOthersDTO;
+import uy.com.pf.care.model.dtos.StatisticPatientWithOthersDTO;
 import uy.com.pf.care.model.enums.RoleEnum;
 import uy.com.pf.care.model.globalFunctions.ForceEnumsToPatient;
-//import uy.com.pf.care.model.globalFunctions.MonthlyRequestStats;
+import uy.com.pf.care.model.globalFunctions.MonthlyRequestStats;
 import uy.com.pf.care.model.globalFunctions.SetMatch;
 import uy.com.pf.care.model.globalFunctions.UpdateEntityId;
 import uy.com.pf.care.model.objects.VolunteerPersonMatchObject;
@@ -438,7 +438,7 @@ public class PatientService implements IPatientService{
         return -1;
     }
 
-    /*public List<StatisticPatientWithOthersDTO> getMonthlyRequestStatsForLastSixMonths(
+    public List<StatisticPatientWithOthersDTO> getMonthlyRequestStatsForLastSixMonths(
             Boolean withoutValidate, Boolean includeDeleted, String departmentName, String countryName) {
 
         Map<Month, MonthlyRequestStats> statsMap = new HashMap<>();
@@ -515,7 +515,7 @@ public class PatientService implements IPatientService{
         return dto;
     }
 
-     */
+
 
 }
 
