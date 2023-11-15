@@ -24,6 +24,7 @@ import uy.com.pf.care.model.objects.VolunteerPersonMatchObject;
 
 import java.awt.*;
 import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -514,10 +515,14 @@ public class VolunteerPersonService implements IVolunteerPersonService {
     //Devuelve las 4 actividades mas demandadas, ordenadas descendente
     @Override
     public Map<String, MostDemandedServicesVolunteerRequestStats> getMostDemandedVolunteerActivities(
-            List<Patient> patients, long limit) {
+            List<Patient> patients, long monthsAgo, long limit) {
+
+        LocalDate sixMonthsAgo = LocalDate.now().minusMonths(monthsAgo);
 
         Map<String, MostDemandedServicesVolunteerRequestStats> result = patients.stream()
                 .flatMap(patient -> patient.getVolunteerPeople().stream())
+                .filter(volunteerPersonMatchObject ->
+                        volunteerPersonMatchObject.getShippingDate().isAfter(sixMonthsAgo))
                 .flatMap(volunteerPersonMatchObject ->
                         this.findId(volunteerPersonMatchObject.getVolunteerPersonId()).stream())
                 .flatMap(volunteerPerson -> volunteerActivity.findIds(volunteerPerson.getVolunteerActivitiesId()).stream()

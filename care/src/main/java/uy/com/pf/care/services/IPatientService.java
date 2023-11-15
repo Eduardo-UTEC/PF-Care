@@ -19,7 +19,7 @@ public interface IPatientService {
     List<Patient> findIds(List<String> patientsId);
     Optional<Patient> findIdentificationDocument(Integer identificationDocument, String countryName);
     Optional<Patient> findMail(String mail);
-    List<MostDemandedServicesVolunteerDTO> getMostDemandedVolunteerServices(
+    List<MostDemandedServicesVolunteerDTO> getMostDemandedVolunteerActivities(
             Boolean withoutValidate, Boolean includeDeleted, String departmentName, String countryName);
     List<Patient> findName1(
         String name1,

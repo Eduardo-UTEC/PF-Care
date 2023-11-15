@@ -29,7 +29,7 @@ public interface IVolunteerPersonService {
     VolunteerPerson findMail(String mail);
     //getMostDemandedVolunteerActivities: Uso interno. No se expone en el Controller
     Map<String, MostDemandedServicesVolunteerRequestStats> getMostDemandedVolunteerActivities(
-            List<Patient> patients, long limit);
+            List<Patient> patients, long monthsAgo, long limit);
     List<VolunteerPerson> findName(Boolean withoutValidate, Boolean includeDeleted, String countryName, String name1);
     List<VolunteerPerson> findNameLike(Boolean withoutValidate, Boolean includeDeleted, String countryName, String name1);
 

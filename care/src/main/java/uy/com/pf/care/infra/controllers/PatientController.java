@@ -346,17 +346,17 @@ public class PatientController {
     }
 
     @GetMapping(
-            value = "getMostDemandedVolunteerServices/" +
+            value = "getMostDemandedVolunteerActivities/" +
                     "{withoutValidate}/{includeDeleted}/{departmentName}/{countryName}",
             produces = MediaType.APPLICATION_JSON_VALUE + ";charset=UTF-8")
-    public ResponseEntity<List<MostDemandedServicesVolunteerDTO>> getMostDemandedVolunteerServices(
+    public ResponseEntity<List<MostDemandedServicesVolunteerDTO>> getMostDemandedVolunteerActivities(
             @PathVariable Boolean withoutValidate,
             @PathVariable Boolean includeDeleted,
             @PathVariable String departmentName,
             @PathVariable String countryName) {
 
         try {
-            return ResponseEntity.ok(patientService.getMostDemandedVolunteerServices(
+            return ResponseEntity.ok(patientService.getMostDemandedVolunteerActivities(
                     withoutValidate, includeDeleted, departmentName, countryName));
 
         } catch (Exception e) {

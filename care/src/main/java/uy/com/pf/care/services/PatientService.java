@@ -517,14 +517,14 @@ public class PatientService implements IPatientService{
         return dto;
     }
 
-    public List<MostDemandedServicesVolunteerDTO> getMostDemandedVolunteerServices(
+    public List<MostDemandedServicesVolunteerDTO> getMostDemandedVolunteerActivities(
             Boolean withoutValidate, Boolean includeDeleted, String departmentName, String countryName) {
 
         List<Patient> patients = findDepartment(withoutValidate, includeDeleted, departmentName, countryName);
 
         // Obtener servicios de voluntarios más demandados
         Map<String, MostDemandedServicesVolunteerRequestStats> mostDemandedVolunteerServices = volunteerPersonService.
-                getMostDemandedVolunteerActivities(patients, 4);
+                getMostDemandedVolunteerActivities(patients, 6, 4);
 
         return mostDemandedVolunteerServicesToDTOList(mostDemandedVolunteerServices);
     }
