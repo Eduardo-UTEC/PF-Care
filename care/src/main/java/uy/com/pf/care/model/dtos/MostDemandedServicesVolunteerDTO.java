@@ -10,6 +10,6 @@ import lombok.NoArgsConstructor;
 public class MostDemandedServicesVolunteerDTO {
     //private String volunteerServiceId;
     private String volunteerServiceName;
-    private int demandCount;
-    private int demandPercentage;
+    private int offerCount;
+    private int offerPercentage;
 }

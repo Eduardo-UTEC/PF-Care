@@ -17,8 +17,6 @@ import uy.com.pf.care.model.objects.VolunteerPersonMatchObject;
 import java.time.LocalDate;
 import java.time.Month;
 import java.util.*;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 import static java.lang.Math.round;
 
@@ -537,8 +535,8 @@ public class PatientService implements IPatientService{
         mostDemandedVolunteerServices.forEach((serviceName, stats) -> {
             MostDemandedServicesVolunteerDTO dto = new MostDemandedServicesVolunteerDTO();
             dto.setVolunteerServiceName(serviceName);
-            dto.setDemandCount(stats.getDemandCount());
-            dto.setDemandPercentage(stats.getDemandPercentage());
+            dto.setOfferCount(stats.getDemandCount());
+            dto.setOfferPercentage(stats.getDemandPercentage());
             dtoList.add(dto);
         });
 
