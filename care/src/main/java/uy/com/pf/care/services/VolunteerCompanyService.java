@@ -76,15 +76,15 @@ public class VolunteerCompanyService implements IVolunteerCompanyService{
     }
 
     @Override
-    public Boolean update(VolunteerCompany newVolunteerCompany) {
+    public String update(VolunteerCompany newVolunteerCompany) {
         try {
             Optional<VolunteerCompany> entityFound = volunteerCompanyRepo.findById(newVolunteerCompany.getVolunteerCompanyId());
             if (entityFound.isPresent()) {
                 this.defaultValues(newVolunteerCompany, entityFound.get());
                 ForceEnumsToVolunteerCompany.execute(newVolunteerCompany);
-                volunteerCompanyRepo.save(newVolunteerCompany);
+                String id = volunteerCompanyRepo.save(newVolunteerCompany).getVolunteerCompanyId();
                 log.info("Empresa Voluntaria actualizada con éxito");
-                return true;
+                return id;
             }
             this.notFound(newVolunteerCompany.getVolunteerCompanyId());
             return null;

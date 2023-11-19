@@ -38,17 +38,17 @@ public class ResidentialService implements IResidentialService{
     }
 
     @Override
-    public Boolean update(Residential newResidential) {
+    public String update(Residential newResidential) {
         try {
             Optional<Residential> entityFound = residentialRepo.findById(newResidential.getResidentialId());
             if (entityFound.isPresent()) {
                 this.defaultValues(entityFound.get(), newResidential);
-                residentialRepo.save(newResidential);
+                String id = residentialRepo.save(newResidential).getResidentialId();
                 log.info("Residencial actualizado con exito");
-                return true;
+                return id;
             }
             this.notFound(newResidential.getResidentialId());
-            return false;
+            return null;
 
         }catch(ResidentialNotFoundException e){
             throw new ResidentialNotFoundException(e.getMessage());

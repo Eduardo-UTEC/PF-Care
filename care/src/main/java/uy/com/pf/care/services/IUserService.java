@@ -9,7 +9,7 @@ import java.util.Optional;
 
 public interface IUserService {
     String save(User user);
-    Boolean update(User newUser);
+    String update(User newUser);
     //Boolean addNewRol(String userId, String roleId, RoleEnum rol);
     Boolean addNewRol(String userId, RoleEnum rol);
     Boolean updateEntityIdInRolesList(String userId, RoleEnum roleOrdinal, String objectId);

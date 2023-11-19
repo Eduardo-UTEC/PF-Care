@@ -8,7 +8,7 @@ import java.util.Optional;
 
 public interface IFormalCaregiverService {
     String save(FormalCaregiver formalCaregiver);
-    Boolean update(FormalCaregiver newFormalCaregiver);
+    String update(FormalCaregiver newFormalCaregiver);
     Boolean setAvailability(String id, Boolean isAvailable);
     Boolean setValidation(String id, Boolean isValidated);
     Boolean setDeletion(String id, Boolean isDeleted);

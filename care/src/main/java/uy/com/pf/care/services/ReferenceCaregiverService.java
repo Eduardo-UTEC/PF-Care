@@ -98,16 +98,16 @@ public class ReferenceCaregiverService implements IReferenceCaregiverService {
     }
 
     @Override
-    public Boolean update(ReferenceCaregiver newReferenceCaregiver) {
+    public String update(ReferenceCaregiver newReferenceCaregiver) {
         try{
             Optional<ReferenceCaregiver> entityFound =
                     referenceCaregiverRepo.findById(newReferenceCaregiver.getReferenceCaregiverId());
             if (entityFound.isPresent()) {
                 this.defaultValues(newReferenceCaregiver, entityFound.get());
                 ForceEnumsToReferenceCaregiver.execute(newReferenceCaregiver);
-                referenceCaregiverRepo.save(newReferenceCaregiver);
+                String id = referenceCaregiverRepo.save(newReferenceCaregiver).getReferenceCaregiverId();
                 log.info("Cuidador Referente actualizado con exito");
-                return true;
+                return id;
             }
             String msg = "No se encontro el Cuidador Referente con id " + newReferenceCaregiver.getReferenceCaregiverId();
             log.info(msg);

@@ -37,16 +37,16 @@ public class EmergencyServiceService implements IEmergencyServiceService{
     }
 
     @Override
-    public Boolean update(EmergencyService newEmergencyService) {
+    public String update(EmergencyService newEmergencyService) {
         try {
             Optional<EmergencyService> entityFound = emergencyServiceRepo.
                     findById(newEmergencyService.getEmergencyServiceId());
 
             if (entityFound.isPresent()) {
                 this.defaultValues(entityFound.get(), newEmergencyService);
-                emergencyServiceRepo.save(newEmergencyService);
+                String id = emergencyServiceRepo.save(newEmergencyService).getEmergencyServiceId();
                 log.info("Servicio de emergencia actualizado con exito");
-                return true;
+                return id;
             }
 
             String msg = "No se encontro el servicio de emergencia con id: " + newEmergencyService.getEmergencyServiceId();

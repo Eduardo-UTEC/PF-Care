@@ -79,15 +79,15 @@ public class FormalCaregiverService implements IFormalCaregiverService {
     }
 
     @Override
-    public Boolean update(FormalCaregiver newFormalCaregiver) {
+    public String update(FormalCaregiver newFormalCaregiver) {
         try {
             Optional<FormalCaregiver> entityFound = formalCaregiverRepo.findById(newFormalCaregiver.getFormalCaregiverId());
             if (entityFound.isPresent()) {
                 this.defaultValues(entityFound.get(), newFormalCaregiver);
                 ForceEnumsToFormalCaregivers.execute(newFormalCaregiver);
-                formalCaregiverRepo.save(newFormalCaregiver);
+                String id = formalCaregiverRepo.save(newFormalCaregiver).getFormalCaregiverId();
                 log.info("Cuidador formal actualizado con exito");
-                return true;
+                return id;
             }
 
             String msg = "No se encontro el cuidador formal con id " + newFormalCaregiver.getFormalCaregiverId();

@@ -9,7 +9,7 @@ import java.util.Optional;
 
 public interface IVideoService {
     String save(Video video);
-    Boolean update(Video newVideo);
+    String update(Video newVideo);
     Boolean addRoles(String videoId, List<RoleEnum> ordinalRoles);
     Boolean changeRole(String videoId, RoleEnum oldOrdinalRole, RoleEnum newOrdinalRole);
     Boolean delRoles(String videoId, List<RoleEnum> ordinalRoles);

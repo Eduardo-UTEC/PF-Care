@@ -37,7 +37,7 @@ public class HealthProviderController {
     }
 
     @PutMapping("/update")
-    public ResponseEntity<Boolean> update(@Valid @NotNull @RequestBody HealthProvider newHealthProvider){
+    public ResponseEntity<String> update(@Valid @NotNull @RequestBody HealthProvider newHealthProvider){
         try {
             return ResponseEntity.ok(healthProviderService.update(newHealthProvider));
 

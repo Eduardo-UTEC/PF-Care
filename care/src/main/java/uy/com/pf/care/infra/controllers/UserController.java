@@ -79,7 +79,7 @@ public class UserController {
     }
 
     @PutMapping("/update")
-    public ResponseEntity<Boolean> update(@Valid @NotNull @RequestBody User newUser){
+    public ResponseEntity<String> update(@Valid @NotNull @RequestBody User newUser){
         try {
             return ResponseEntity.ok(userService.update(newUser));
 

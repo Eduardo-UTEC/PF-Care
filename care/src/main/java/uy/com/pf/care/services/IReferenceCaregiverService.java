@@ -9,7 +9,7 @@ import java.util.Optional;
 public interface IReferenceCaregiverService {
 
     String save(ReferenceCaregiver referenceCaregiver);
-    Boolean update(ReferenceCaregiver newReferenceCaregiver);
+    String update(ReferenceCaregiver newReferenceCaregiver);
     Boolean addPatient(String referenceCaregiverId, String patientId);
     //Boolean changeRelationshipPatient(String referenceCaregiverId, String patientId, RelationshipEnum relationship);
     Optional<ReferenceCaregiver> findId(String id);

@@ -41,7 +41,7 @@ public class ReferenceCaregiverController {
     }
 
     @PutMapping("/update")
-    public ResponseEntity<Boolean> update(@Valid @NotNull @RequestBody ReferenceCaregiver referenceCaregiver){
+    public ResponseEntity<String> update(@Valid @NotNull @RequestBody ReferenceCaregiver referenceCaregiver){
         try {
             return ResponseEntity.ok(referenceCaregiverService.update(referenceCaregiver));
 

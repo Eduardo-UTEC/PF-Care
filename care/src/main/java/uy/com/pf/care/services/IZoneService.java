@@ -8,7 +8,7 @@ import java.util.Optional;
 
 public interface IZoneService {
     String save(Zone zone);
-    Boolean update(Zone newZone);
+    String update(Zone newZone);
     List<Zone> findAll(Boolean includeDeleted, String countryName);
     Optional<Zone> findId(String id);
     List<NeighborhoodObject> findNeighborhoods(

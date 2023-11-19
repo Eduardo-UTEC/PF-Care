@@ -36,7 +36,7 @@ public class PatientController {
     }
 
     @PutMapping("/update")
-    public ResponseEntity<Boolean> update(@Valid @NotNull @RequestBody Patient newPatient){
+    public ResponseEntity<String> update(@Valid @NotNull @RequestBody Patient newPatient){
         try {
             return ResponseEntity.ok(patientService.update(newPatient));
 

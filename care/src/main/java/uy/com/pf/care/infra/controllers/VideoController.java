@@ -38,7 +38,7 @@ public class VideoController {
     }
 
     @PutMapping("/update")
-    public ResponseEntity<Boolean> update(@Valid @NotNull @RequestBody Video newVideo){
+    public ResponseEntity<String> update(@Valid @NotNull @RequestBody Video newVideo){
         try {
             return ResponseEntity.ok(videoService.update(newVideo));
 

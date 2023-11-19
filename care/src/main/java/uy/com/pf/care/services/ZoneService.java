@@ -49,17 +49,17 @@ public class ZoneService implements IZoneService{
     }
 
     @Override
-    public Boolean update(Zone newZone) {
+    public String update(Zone newZone) {
         try{
             Optional<Zone> entityFound = zoneRepo.findById(newZone.getZoneId());
             if (entityFound.isPresent()){
                 this.defaultValues(newZone, entityFound.get());
-                zoneRepo.save(newZone);
+                String id = zoneRepo.save(newZone).getZoneId();
                 log.info("Zona actualizada con exito");
-                return true;
+                return id;
             }
             log.info("No se encontro la zona con id " + newZone.getZoneId());
-            return false;
+            return null;
 
         }catch(DuplicateKeyException e){
             String msg = "Error actualizando zona (clave duplicada)";

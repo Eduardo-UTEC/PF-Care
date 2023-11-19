@@ -54,16 +54,16 @@ public class UserService implements IUserService{
     }
 
     @Override
-    public Boolean update(User user) {
+    public String update(User user) {
         try {
             Optional<User> oldUser = userRepo.findById(user.getUserId());
             if (oldUser.isPresent()) {
                 this.defaultValues(user, oldUser.get());
                 ForceEnumsToUser.execute(user);
                 this.encrypt(user);
-                userRepo.save(user);
+                String id = userRepo.save(user).getUserId();
                 log.info("Usuario actualizado con exito");
-                return true;
+                return id;
             }
             String msg = "No se encontro el usuario con id " + user.getUserId();
             log.info(msg);

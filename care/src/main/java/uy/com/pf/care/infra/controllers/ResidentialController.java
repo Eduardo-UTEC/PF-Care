@@ -38,7 +38,7 @@ public class ResidentialController {
     }
 
     @PutMapping("/update")
-    public ResponseEntity<Boolean> update(@Valid @NotNull @RequestBody Residential newResidential){
+    public ResponseEntity<String> update(@Valid @NotNull @RequestBody Residential newResidential){
         try {
             return ResponseEntity.ok(residentialService.update(newResidential));
 

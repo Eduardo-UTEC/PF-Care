@@ -41,15 +41,15 @@ public class VolunteerActivityService implements IVolunteerActivityService{
     }
 
     @Override
-    public Boolean update(VolunteerActivity newVolunteerActivity) {
+    public String update(VolunteerActivity newVolunteerActivity) {
         try {
             Optional<VolunteerActivity> entityFound =
                     volunteerActivityRepo.findById(newVolunteerActivity.getVolunteerActivityId());
             if (entityFound.isPresent()) {
                 this.defaultValues(newVolunteerActivity, entityFound.get());
-                volunteerActivityRepo.save(newVolunteerActivity);
+                String id = volunteerActivityRepo.save(newVolunteerActivity).getVolunteerActivityId();
                 log.info("Actividad del Voluntario actualizada con exito");
-                return true;
+                return id;
             }
             String msg = "No se encontro la Actividad del Voluntario con id " + newVolunteerActivity.getVolunteerActivityId();
             log.info(msg);

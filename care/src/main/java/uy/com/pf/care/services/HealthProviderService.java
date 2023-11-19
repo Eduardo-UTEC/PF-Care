@@ -37,14 +37,14 @@ public class HealthProviderService implements IHealthProviderService {
     }
 
     @Override
-    public Boolean update(HealthProvider newHealthProvider) {
+    public String update(HealthProvider newHealthProvider) {
         try {
             Optional<HealthProvider> entityFound = healthProviderRepo.findById(newHealthProvider.getHealthProviderId());
             if (entityFound.isPresent()) {
                 this.defaultValues(entityFound.get(), newHealthProvider);
-                healthProviderRepo.save(newHealthProvider);
+                String id = healthProviderRepo.save(newHealthProvider).getHealthProviderId();
                 log.info("Proveedor de salud actualizado con exito");
-                return true;
+                return id;
             }
             String msg = "No se encontro el proveedor de salud con id " + newHealthProvider.getHealthProviderId();
             log.info(msg);

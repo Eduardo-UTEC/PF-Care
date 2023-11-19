@@ -7,7 +7,7 @@ import java.util.Optional;
 
 public interface IVolunteerActivityService {
     String save(VolunteerActivity volunteerActivity);
-    Boolean update(VolunteerActivity newVolunteerActivity);
+    String update(VolunteerActivity newVolunteerActivity);
     Optional<VolunteerActivity> findId(String id);
     List<VolunteerActivity> findIds(List<String> volunteersActivitiesId);
     Boolean exist(String name, String departmentName, String countryName);

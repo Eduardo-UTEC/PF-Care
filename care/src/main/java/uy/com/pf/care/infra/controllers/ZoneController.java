@@ -40,7 +40,7 @@ public class ZoneController {
     }
 
     @PutMapping("/update")
-    public ResponseEntity<Boolean> update(@Valid @NotNull @RequestBody Zone newZone){
+    public ResponseEntity<String> update(@Valid @NotNull @RequestBody Zone newZone){
         try {
             return ResponseEntity.ok(zoneService.update(newZone));
 

@@ -48,17 +48,17 @@ public class VideoService implements IVideoService{
     }
 
     @Override
-    public Boolean update(Video newVideo) {
+    public String update(Video newVideo) {
         try {
             Optional<Video> entityFound = videoRepo.findById(newVideo.getVideoId());
             if (entityFound.isPresent()) {
                 this.defaultValues(newVideo, entityFound.get());
-                videoRepo.save(newVideo);
+                String id = videoRepo.save(newVideo).getVideoId();
                 log.info("Video actualizado con exito");
-                return true;
+                return id;
             }
             this.notFound(newVideo.getVideoId());
-            return false;
+            return null;
 
         }catch (VideoNotFoundException e){
             throw new VideoNotFoundException(e.getMessage());

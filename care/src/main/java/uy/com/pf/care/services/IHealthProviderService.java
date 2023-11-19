@@ -7,7 +7,7 @@ import java.util.Optional;
 
 public interface IHealthProviderService {
     String save(HealthProvider healthProvider);
-    Boolean update(HealthProvider newHealtProvider);
+    String update(HealthProvider newHealtProvider);
     Optional<HealthProvider> findId(String id);
     HealthProvider findByName(String cityName, String departmentName, String countryName, String name);
     List<HealthProvider> findAll(Boolean includeDeleted, String countryName);

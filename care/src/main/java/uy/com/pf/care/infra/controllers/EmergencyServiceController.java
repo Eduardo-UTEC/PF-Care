@@ -38,7 +38,7 @@ public class EmergencyServiceController {
     }
 
     @PutMapping("/update")
-    public ResponseEntity<Boolean> update(@Valid @NotNull @RequestBody EmergencyService newEmergencyService){
+    public ResponseEntity<String> update(@Valid @NotNull @RequestBody EmergencyService newEmergencyService){
         try {
             return ResponseEntity.ok(emergencyServiceService.update(newEmergencyService));
 

@@ -36,7 +36,7 @@ public class FormalCaregiverController {
     }
 
     @PutMapping("/update")
-    public ResponseEntity<Boolean> update(@Valid @NotNull @RequestBody FormalCaregiver newFormalCaregiver){
+    public ResponseEntity<String> update(@Valid @NotNull @RequestBody FormalCaregiver newFormalCaregiver){
         try {
             return ResponseEntity.ok(formalCaregiverService.update(newFormalCaregiver));
 

@@ -39,7 +39,7 @@ public class VolunteerPersonController {
     }
 
     @PutMapping("/update")
-    public ResponseEntity<Boolean> update(@Valid @NotNull @RequestBody VolunteerPerson newVolunteerPerson){
+    public ResponseEntity<String> update(@Valid @NotNull @RequestBody VolunteerPerson newVolunteerPerson){
         try {
             return ResponseEntity.ok(volunteerPersonService.update(newVolunteerPerson));
 

@@ -12,7 +12,7 @@ import java.util.Optional;
 public interface IVolunteerPersonService {
 
     String save(VolunteerPerson volunteerPerson);
-    Boolean update(VolunteerPerson newVolunteerPerson);
+    String update(VolunteerPerson newVolunteerPerson);
     Boolean addVolunteerActivitiesId(String volunteerPersonId, List<String> volunteerActivitiesId);
     Boolean changeVolunteerActivityId(String volunteerPersonId, String oldVolunteerActivityId, String newVolunteerActivityId);
     Boolean delVolunteerActivitiesId(String volunteerPersonId, List<String> volunteerActivitiesId);

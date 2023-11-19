@@ -6,7 +6,7 @@ import java.util.Optional;
 
 public interface IEmergencyServiceService {
     String save(EmergencyService emergencyService);
-    Boolean update(EmergencyService newEmergencyService);
+    String update(EmergencyService newEmergencyService);
     boolean setDeletion(String id, Boolean isDeleted);
     List<EmergencyService> findAll(Boolean includeDeleted, String countryName);
     Optional<EmergencyService> findId(String id);

@@ -9,7 +9,7 @@ import java.util.Optional;
 
 public interface IPatientService {
     String save(Patient patient);
-    Boolean update(Patient newPatient);
+    String update(Patient newPatient);
     List<String> updateReferenceCaregiverOnPatients(List<String> patientsId, String referenceCaregiverId);
     Boolean sendRequestVolunteerPerson(String patientId, String volunteerPersonId);
     Boolean setMatchVolunteerPerson(String patientId, String volunteerPersonId, Boolean isMatch);

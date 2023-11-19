@@ -77,15 +77,15 @@ public class PatientService implements IPatientService{
     }
 
     @Override
-    public Boolean update(Patient newPatient) {
+    public String update(Patient newPatient) {
         try {
             Optional<Patient> entityFound = patientRepo.findById(newPatient.getPatientId());
             if (entityFound.isPresent()) {
                 this.defaultValues(entityFound.get(), newPatient);
                 ForceEnumsToPatient.execute(newPatient);
-                patientRepo.save(newPatient);
+                String id = patientRepo.save(newPatient).getPatientId();
                 log.info("Paciente actualizado con exito");
-                return true;
+                return id;
             }
             String msg = "No se encontro el paciente con id " + newPatient.getPatientId();
             log.info(msg);
@@ -401,6 +401,7 @@ public class PatientService implements IPatientService{
     // Asigna los valores a la nueva entitdad, tomados de la vieja entidad (de la persistida)
     private void defaultValues(Patient oldPatient, Patient newPatient){
         newPatient.setUserId(oldPatient.getUserId());
+        newPatient.setRegistrationDate(oldPatient.getRegistrationDate());
         newPatient.setValidate(oldPatient.getValidate());
         newPatient.setDeleted(oldPatient.getDeleted());
     }

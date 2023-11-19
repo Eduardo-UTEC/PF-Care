@@ -7,7 +7,7 @@ import java.util.Optional;
 
 public interface IResidentialService {
     String save(Residential residential);
-    Boolean update(Residential newResidential);
+    String update(Residential newResidential);
     Boolean setDeletion(String id, Boolean isDeleted);
     Optional<Residential> findId(String id);
     List<Residential> findCountry(Boolean includeDeleted, String countryName);
