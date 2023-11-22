@@ -859,12 +859,11 @@ public class VolunteerPersonService implements IVolunteerPersonService {
 
     private void defaultValues(VolunteerPerson volunteerPerson, VolunteerPerson oldVolunteerPerson){
         volunteerPerson.setUserId(oldVolunteerPerson.getUserId());
-        volunteerPerson.setVolunteerActivitiesId(oldVolunteerPerson.getVolunteerActivitiesId());
-        volunteerPerson.setAvailable(oldVolunteerPerson.getAvailable());
-        volunteerPerson.setValidate(oldVolunteerPerson.getValidate());
-        volunteerPerson.setDeleted(oldVolunteerPerson.getDeleted());
+        volunteerPerson.setRegistrationDate(oldVolunteerPerson.getRegistrationDate());
         volunteerPerson.setMatchPatientsId(oldVolunteerPerson.getMatchPatientsId());
         volunteerPerson.setMatchRequestPatientsId(oldVolunteerPerson.getMatchRequestPatientsId());
+        volunteerPerson.setValidate(oldVolunteerPerson.getValidate());
+        volunteerPerson.setDeleted(oldVolunteerPerson.getDeleted());
     }
 
     private void notFound(String volunteerPersonId){
