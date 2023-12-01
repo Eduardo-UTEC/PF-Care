@@ -402,6 +402,8 @@ public class PatientService implements IPatientService{
     private void defaultValues(Patient oldPatient, Patient newPatient){
         newPatient.setUserId(oldPatient.getUserId());
         newPatient.setRegistrationDate(oldPatient.getRegistrationDate());
+        newPatient.setFormalCaregiversId(oldPatient.getFormalCaregiversId());
+        newPatient.setVolunteerPeople(oldPatient.getVolunteerPeople());
         newPatient.setValidate(oldPatient.getValidate());
         newPatient.setDeleted(oldPatient.getDeleted());
     }
