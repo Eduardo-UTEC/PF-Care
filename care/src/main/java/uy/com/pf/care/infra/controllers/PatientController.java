@@ -65,6 +65,20 @@ public class PatientController {
         }
     }
 
+    @GetMapping(value = "existTelephone/{telephone}/{countryName}", produces = MediaType.APPLICATION_JSON_VALUE + ";charset=UTF-8")
+    public ResponseEntity<Boolean> existTelephone(
+            @PathVariable String telephone, @PathVariable String countryName) {
+        try{
+            return ResponseEntity.ok(patientService.findTelephone(countryName, telephone).isPresent());
+
+        } catch (PatientNotFoundException e) {
+            throw new PatientNotFoundException(e.getMessage());
+        } catch(Exception e) {
+            log.warning("Error buscando paciente con teléfono: " + telephone + ". " + e.getMessage());
+            throw new PatientFindTelephoneException("Error buscando paciente con teléfono: " + telephone);
+        }
+    }
+
     @GetMapping(
             value = "findAll/{withoutValidate}/{includeDeleted}/{countryName}",
             produces = MediaType.APPLICATION_JSON_VALUE + ";charset=UTF-8")

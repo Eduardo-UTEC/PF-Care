@@ -482,7 +482,7 @@ public class VolunteerPersonService implements IVolunteerPersonService {
             throw new VolunteerPersonNotFoundException(e.getMessage());
         }catch(Exception e){
             log.warning("Error buscando voluntario con teléfono: " + telephone + ". " + e.getMessage());
-            throw new VolunteerPersonFindTelephoneException("Error buscando cuidador formal con teléfono: " + telephone);
+            throw new VolunteerPersonFindTelephoneException("Error buscando voluntario con teléfono: " + telephone);
         }
     }
 
@@ -510,6 +510,7 @@ public class VolunteerPersonService implements IVolunteerPersonService {
         String msg = "No se encontro la Persona Voluntaria con mail: " + mail;
         log.info(msg);
         throw new VolunteerPersonNotFoundException(msg);
+
     }
 
     //Devuelve las 4 actividades mas demandadas, ordenadas descendente

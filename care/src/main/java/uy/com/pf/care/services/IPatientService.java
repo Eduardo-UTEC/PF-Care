@@ -18,6 +18,7 @@ public interface IPatientService {
     Optional<Patient> findId(String id);
     List<Patient> findIds(List<String> patientsId);
     Optional<Patient> findIdentificationDocument(Integer identificationDocument, String countryName);
+    Optional<Patient> findTelephone(String countryName, String telephone);
     Optional<Patient> findMail(String mail);
     List<MostDemandedServicesVolunteerDTO> getMostDemandedVolunteerActivities(
             Boolean withoutValidate, Boolean includeDeleted, String departmentName, String countryName);

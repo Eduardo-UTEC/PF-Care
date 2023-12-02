@@ -11,6 +11,7 @@ import java.util.Optional;
 public interface IPatientRepo extends MongoRepository<Patient, String> {
 
     Optional<Patient> findByIdentificationDocumentAndZone_CountryName(Integer identificationDocument, String countryName);
+    Optional<Patient> findByZone_CountryNameAndTelephone(String countryName, String telephone);
     Optional<Patient> findByMailIgnoreCase(String mail);
     List<Patient> findByZone_CountryNameAndValidateTrueOrderByName1(String countryName);
     List<Patient> findByZone_CountryNameAndValidateTrueAndDeletedFalseOrderByName1(String countryName);

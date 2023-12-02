@@ -259,6 +259,25 @@ public class PatientService implements IPatientService{
     }
 
     @Override
+    public Optional<Patient> findTelephone(String countryName, String telephone) {
+        try{
+            Optional<Patient> found = patientRepo.findByZone_CountryNameAndTelephone(countryName, telephone);
+            if (found.isPresent())
+                return found;
+
+            String msg = "No se encontro un Paciente con teléfono " + telephone;
+            log.warning(msg);
+            throw new PatientNotFoundException(msg);
+
+        }catch (PatientNotFoundException e) {
+            throw new PatientNotFoundException(e.getMessage());
+        }catch(Exception e){
+            log.warning("Error buscando paciente con teléfono: " + telephone + ". " + e.getMessage());
+            throw new PatientFindTelephoneException("Error buscando paciente con teléfono: " + telephone);
+        }
+    }
+
+    @Override
     public Optional<Patient> findMail(String mail) {
         return patientRepo.findByMailIgnoreCase(mail);
     }

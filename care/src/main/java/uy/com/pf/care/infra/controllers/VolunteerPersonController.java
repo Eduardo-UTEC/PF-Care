@@ -219,7 +219,7 @@ public class VolunteerPersonController {
             throw new VolunteerPersonNotFoundException(e.getMessage());
         } catch(Exception e) {
             log.warning("Error buscando voluntario con teléfono: " + telephone + ". " + e.getMessage());
-            throw new VolunteerPersonFindTelephoneException("Error buscando cuidador formal con teléfono: " + telephone);
+            throw new VolunteerPersonFindTelephoneException("Error buscando voluntario con teléfono: " + telephone);
         }
     }
 
@@ -241,7 +241,8 @@ public class VolunteerPersonController {
             return ResponseEntity.ok(volunteerPersonService.findMail(mail) != null);
 
         }catch(VolunteerPersonNotFoundException e){
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+            //throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+            return ResponseEntity.ok(false);
         }catch(Exception e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
         }
